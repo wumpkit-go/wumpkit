@@ -128,9 +128,9 @@ type FetchGuildScheduledEventUsersOptions struct {
 // ListGuildScheduledEvents returns a list of scheduled event objects for the given guild.
 //
 // Reference: https://discord.com/developers/docs/resources/guild-scheduled-event#list-scheduled-events-for-guild
-func (r *requester) ListGuildScheduledEvents(ctx context.Context, guildID Snowflake, opts ListGuildScheduledEventsOptions) ([]GuildScheduledEvent, error) {
+func (r *requester) ListGuildScheduledEvents(ctx context.Context, guildID Snowflake, opts ...ListGuildScheduledEventsOptions) ([]GuildScheduledEvent, error) {
 	params := url.Values{}
-	if opts.WithUserCount {
+	if len(opts) > 0 && opts[0].WithUserCount {
 		params.Set("with_user_count", "true")
 	}
 
@@ -272,19 +272,24 @@ func (r *requester) DeleteGuildScheduledEvent(ctx context.Context, guildID, even
 // FetchGuildScheduledEventUsers gets a list of users subscribed to a guild scheduled event.
 //
 // Reference: https://discord.com/developers/docs/resources/guild-scheduled-event#get-guild-scheduled-event-users
-func (r *requester) FetchGuildScheduledEventUsers(ctx context.Context, guildID, eventID Snowflake, opts FetchGuildScheduledEventUsersOptions) ([]GuildScheduledEventUser, error) {
-	params := url.Values{}
-	if opts.Limit > 0 {
-		params.Set("limit", strconv.Itoa(opts.Limit))
+func (r *requester) FetchGuildScheduledEventUsers(ctx context.Context, guildID, eventID Snowflake, opts ...FetchGuildScheduledEventUsersOptions) ([]GuildScheduledEventUser, error) {
+	var first FetchGuildScheduledEventUsersOptions
+	if len(opts) > 0 {
+		first = opts[0]
 	}
-	if opts.WithMember {
+
+	params := url.Values{}
+	if first.Limit > 0 {
+		params.Set("limit", strconv.Itoa(first.Limit))
+	}
+	if first.WithMember {
 		params.Set("with_member", "true")
 	}
-	if opts.Before != 0 {
-		params.Set("before", opts.Before.String())
+	if first.Before != 0 {
+		params.Set("before", first.Before.String())
 	}
-	if opts.After != 0 {
-		params.Set("after", opts.After.String())
+	if first.After != 0 {
+		params.Set("after", first.After.String())
 	}
 
 	endpoint := "/guilds/" + guildID.String() + "/scheduled-events/" + eventID.String() + "/users"

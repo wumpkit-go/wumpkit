@@ -15,6 +15,7 @@ package wumpkit
 
 import (
 	"fmt"
+	"slices"
 	"time"
 )
 
@@ -238,12 +239,7 @@ func (m *Member) AvatarDecorationURLWith(size ImageSize) string {
 
 // HasRole returns true if the member has the specified role.
 func (m *Member) HasRole(roleID Snowflake) bool {
-	for _, id := range m.RoleIDs {
-		if id == roleID {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(m.RoleIDs, roleID)
 }
 
 // IsTimedOut returns true if the member is currently timed out.
@@ -254,6 +250,24 @@ func (m *Member) IsTimedOut() bool {
 // IsBoosting returns true if the member is currently server boosting.
 func (m *Member) IsBoosting() bool {
 	return m.PremiumSince != nil
+}
+
+// PartialMember returns a PartialMember representation of the member.
+func (m *Member) PartialMember() PartialMember {
+	return PartialMember{
+		ID:                         m.ID,
+		GuildID:                    m.GuildID,
+		Nickname:                   m.Nickname,
+		Avatar:                     m.Avatar,
+		Banner:                     m.Banner,
+		RoleIDs:                    m.RoleIDs,
+		JoinedAt:                   m.JoinedAt,
+		PremiumSince:               m.PremiumSince,
+		Flags:                      m.Flags,
+		Pending:                    m.Pending,
+		CommunicationDisabledUntil: m.CommunicationDisabledUntil,
+		AvatarDecorationData:       m.AvatarDecorationData,
+	}
 }
 
 // FullMember represents a complete guild member with their associated user information.
@@ -367,6 +381,12 @@ type InteractionMember struct {
 //
 // Reference: https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-resolved-data-structure
 type PartialMember struct {
+	// ID is the unique ID of the user this member represents.
+	ID Snowflake `json:"id,omitzero"`
+
+	// GuildID is the ID of the guild this member belongs to.
+	GuildID Snowflake `json:"guild_id,omitzero"`
+
 	// Nickname is the member's guild-specific nickname.
 	// Empty if no nickname is set.
 	Nickname string `json:"nick"`
@@ -414,12 +434,7 @@ func (m *PartialMember) DisplayName() string {
 
 // HasRole returns true if the member has the specified role ID.
 func (m *PartialMember) HasRole(roleID Snowflake) bool {
-	for _, id := range m.RoleIDs {
-		if id == roleID {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(m.RoleIDs, roleID)
 }
 
 // IsTimedOut returns true if the member is currently timed out.
@@ -437,34 +452,34 @@ func (m *PartialMember) HasPermission(perm Permissions) bool {
 	return m.Permissions.Has(perm)
 }
 
-// AvatarURL returns the URL to the member's guild avatar image for the given guild and user.
-func (m *PartialMember) AvatarURL(guildID, userID Snowflake) string {
+// AvatarURL returns the URL to the member's guild avatar image.
+func (m *PartialMember) AvatarURL() string {
 	if m.Avatar != "" {
-		return GuildMemberAvatarURL(guildID, userID, m.Avatar, ImageFormatDefault, ImageSizeDefault)
+		return GuildMemberAvatarURL(m.GuildID, m.ID, m.Avatar, ImageFormatDefault, ImageSizeDefault)
 	}
 	return ""
 }
 
 // AvatarURLWith returns the URL to the member's guild avatar image with custom format and size.
-func (m *PartialMember) AvatarURLWith(guildID, userID Snowflake, format ImageFormat, size ImageSize) string {
+func (m *PartialMember) AvatarURLWith(format ImageFormat, size ImageSize) string {
 	if m.Avatar != "" {
-		return GuildMemberAvatarURL(guildID, userID, m.Avatar, format, size)
+		return GuildMemberAvatarURL(m.GuildID, m.ID, m.Avatar, format, size)
 	}
 	return ""
 }
 
-// BannerURL returns the URL to the member's guild banner image for the given guild and user.
-func (m *PartialMember) BannerURL(guildID, userID Snowflake) string {
+// BannerURL returns the URL to the member's guild banner image.
+func (m *PartialMember) BannerURL() string {
 	if m.Banner != "" {
-		return GuildMemberBannerURL(guildID, userID, m.Banner, ImageFormatDefault, ImageSizeDefault)
+		return GuildMemberBannerURL(m.GuildID, m.ID, m.Banner, ImageFormatDefault, ImageSizeDefault)
 	}
 	return ""
 }
 
 // BannerURLWith returns the URL to the member's guild banner image with custom format and size.
-func (m *PartialMember) BannerURLWith(guildID, userID Snowflake, format ImageFormat, size ImageSize) string {
+func (m *PartialMember) BannerURLWith(format ImageFormat, size ImageSize) string {
 	if m.Banner != "" {
-		return GuildMemberBannerURL(guildID, userID, m.Banner, format, size)
+		return GuildMemberBannerURL(m.GuildID, m.ID, m.Banner, format, size)
 	}
 	return ""
 }

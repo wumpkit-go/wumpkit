@@ -218,19 +218,24 @@ func (r *requester) CreateMessage(ctx context.Context, channelID Snowflake, opts
 // FetchChannelMessages returns the messages for a channel.
 //
 // Reference: https://discord.com/developers/docs/resources/message#get-channel-messages
-func (r *requester) FetchChannelMessages(ctx context.Context, channelID Snowflake, opts FetchMessagesOptions) ([]Message, error) {
+func (r *requester) FetchChannelMessages(ctx context.Context, channelID Snowflake, opts ...FetchMessagesOptions) ([]Message, error) {
+	var first FetchMessagesOptions
+	if len(opts) > 0 {
+		first = opts[0]
+	}
+
 	query := url.Values{}
-	if opts.Around != 0 {
-		query.Set("around", opts.Around.String())
+	if first.Around != 0 {
+		query.Set("around", first.Around.String())
 	}
-	if opts.Before != 0 {
-		query.Set("before", opts.Before.String())
+	if first.Before != 0 {
+		query.Set("before", first.Before.String())
 	}
-	if opts.After != 0 {
-		query.Set("after", opts.After.String())
+	if first.After != 0 {
+		query.Set("after", first.After.String())
 	}
-	if opts.Limit > 0 {
-		query.Set("limit", strconv.Itoa(opts.Limit))
+	if first.Limit > 0 {
+		query.Set("limit", strconv.Itoa(first.Limit))
 	}
 
 	endpoint := fmt.Sprintf("/channels/%s/messages", channelID)
@@ -302,16 +307,21 @@ func (r *requester) DeleteUserReaction(ctx context.Context, channelID, messageID
 // FetchReactions returns a list of users that reacted with the specified emoji.
 //
 // Reference: https://discord.com/developers/docs/resources/message#get-reactions
-func (r *requester) FetchReactions(ctx context.Context, channelID, messageID Snowflake, emoji string, opts FetchReactionsOptions) ([]User, error) {
+func (r *requester) FetchReactions(ctx context.Context, channelID, messageID Snowflake, emoji string, opts ...FetchReactionsOptions) ([]User, error) {
+	var first FetchReactionsOptions
+	if len(opts) > 0 {
+		first = opts[0]
+	}
+
 	query := url.Values{}
-	if opts.After != 0 {
-		query.Set("after", opts.After.String())
+	if first.After != 0 {
+		query.Set("after", first.After.String())
 	}
-	if opts.Limit > 0 {
-		query.Set("limit", strconv.Itoa(opts.Limit))
+	if first.Limit > 0 {
+		query.Set("limit", strconv.Itoa(first.Limit))
 	}
-	if opts.Type != 0 {
-		query.Set("type", strconv.Itoa(int(opts.Type)))
+	if first.Type != 0 {
+		query.Set("type", strconv.Itoa(int(first.Type)))
 	}
 
 	endpoint := fmt.Sprintf("/channels/%s/messages/%s/reactions/%s", channelID, messageID, url.PathEscape(emoji))

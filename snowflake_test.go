@@ -40,7 +40,7 @@ func TestParseAppIDFromToken(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, Snowflake(175928847299117063), id18)
 
-	// With "Bot " prefix
+	// with "Bot " prefix
 	idWithPrefix, err := ParseAppIDFromToken("Bot " + token18)
 	require.NoError(t, err)
 	assert.Equal(t, Snowflake(175928847299117063), idWithPrefix)
@@ -57,12 +57,12 @@ func TestParseAppIDFromToken(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, Snowflake(1759288472991170634), id19Raw)
 
-	// Alias TokenAppID
+	// alias TokenAppID
 	idAlias, err := TokenAppID(token18)
 	require.NoError(t, err)
 	assert.Equal(t, Snowflake(175928847299117063), idAlias)
 
-	// Invalid tokens
+	// invalid tokens
 	_, err = ParseAppIDFromToken("invalid-token")
 	assert.Error(t, err)
 

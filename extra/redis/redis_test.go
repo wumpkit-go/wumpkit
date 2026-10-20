@@ -109,7 +109,7 @@ func TestRedisCacheManager_CRUD(t *testing.T) {
 	eventID := wumpkit.Snowflake(9001)
 	ruleID := wumpkit.Snowflake(9002)
 
-	// 1. User
+	// 1. user
 	user := wumpkit.User{ID: userID, Username: "redis_user"}
 	cm.AddUser(ctx, user)
 	assert.True(t, cm.HasUser(ctx, userID))
@@ -118,7 +118,7 @@ func TestRedisCacheManager_CRUD(t *testing.T) {
 	assert.Equal(t, "redis_user", u.Username)
 	assert.Equal(t, 1, cm.CountUsers(ctx))
 
-	// 2. Guild
+	// 2. guild
 	guild := wumpkit.Guild{ID: guildID, Name: "Redis Guild"}
 	cm.AddGuild(ctx, guild)
 	assert.True(t, cm.HasGuild(ctx, guildID))
@@ -127,7 +127,7 @@ func TestRedisCacheManager_CRUD(t *testing.T) {
 	assert.Equal(t, "Redis Guild", g.Name)
 	assert.Equal(t, 1, cm.CountGuilds(ctx))
 
-	// 3. Member
+	// 3. member
 	member := wumpkit.Member{ID: userID, GuildID: guildID, Nickname: "Redis Member"}
 	cm.AddMember(ctx, member)
 	assert.True(t, cm.HasMember(ctx, guildID, userID))
@@ -139,7 +139,7 @@ func TestRedisCacheManager_CRUD(t *testing.T) {
 	assert.Len(t, members, 1)
 	assert.Equal(t, 1, cm.CountGuildMembers(ctx, guildID))
 
-	// 4. Channel
+	// 4. channel
 	ch := &wumpkit.TextChannel{
 		GuildChannelFields: wumpkit.GuildChannelFields{
 			ChannelFields: wumpkit.ChannelFields{
@@ -163,7 +163,7 @@ func TestRedisCacheManager_CRUD(t *testing.T) {
 	assert.Len(t, channels, 1)
 	assert.Equal(t, 1, cm.CountGuildChannels(ctx, guildID))
 
-	// 5. Message
+	// 5. message
 	msg := wumpkit.Message{ID: messageID, ChannelID: channelID, Content: "hello redis"}
 	cm.AddMessage(ctx, msg)
 	assert.True(t, cm.HasMessage(ctx, messageID))
@@ -172,7 +172,7 @@ func TestRedisCacheManager_CRUD(t *testing.T) {
 	assert.Equal(t, "hello redis", msgGot.Content)
 	assert.Equal(t, 1, cm.CountMessages(ctx))
 
-	// 6. VoiceState
+	// 6. voiceState
 	vs := wumpkit.VoiceState{GuildID: guildID, ChannelID: channelID, UserID: userID}
 	cm.AddVoiceState(ctx, vs)
 	assert.True(t, cm.HasVoiceState(ctx, guildID, userID))
@@ -184,7 +184,7 @@ func TestRedisCacheManager_CRUD(t *testing.T) {
 	require.True(t, ok)
 	assert.Len(t, vss, 1)
 
-	// 7. Role
+	// 7. role
 	role := wumpkit.Role{ID: roleID, GuildID: guildID, Name: "Admin"}
 	cm.AddRole(ctx, role)
 	assert.True(t, cm.HasRole(ctx, roleID))
@@ -196,7 +196,7 @@ func TestRedisCacheManager_CRUD(t *testing.T) {
 	assert.Len(t, roles, 1)
 	assert.Equal(t, 1, cm.CountGuildRoles(ctx, guildID))
 
-	// 8. Emoji
+	// 8. emoji
 	emoji := wumpkit.Emoji{ID: emojiID, GuildID: guildID, Name: "custom_emoji"}
 	cm.AddEmoji(ctx, emoji)
 	assert.True(t, cm.HasEmoji(ctx, emojiID))
@@ -208,7 +208,7 @@ func TestRedisCacheManager_CRUD(t *testing.T) {
 	assert.Len(t, emojis, 1)
 	assert.Equal(t, 1, cm.CountGuildEmojis(ctx, guildID))
 
-	// 9. Sticker
+	// 9. sticker
 	sticker := wumpkit.Sticker{ID: stickerID, GuildID: guildID, Name: "custom_sticker"}
 	cm.AddSticker(ctx, sticker)
 	assert.True(t, cm.HasSticker(ctx, stickerID))
@@ -220,7 +220,7 @@ func TestRedisCacheManager_CRUD(t *testing.T) {
 	assert.Len(t, stickers, 1)
 	assert.Equal(t, 1, cm.CountGuildStickers(ctx, guildID))
 
-	// 10. StageInstance
+	// 10. stageInstance
 	stage := wumpkit.StageInstance{ID: stageID, ChannelID: channelID, Topic: "Dev Talk"}
 	cm.AddStageInstance(ctx, stage)
 	assert.True(t, cm.HasStageInstance(ctx, channelID))
@@ -229,7 +229,7 @@ func TestRedisCacheManager_CRUD(t *testing.T) {
 	assert.Equal(t, "Dev Talk", stGot.Topic)
 	assert.Equal(t, 1, cm.CountStageInstances(ctx))
 
-	// 11. GuildScheduledEvent
+	// 11. guildScheduledEvent
 	event := wumpkit.GuildScheduledEvent{ID: eventID, GuildID: guildID, Name: "Weekly Meet"}
 	cm.AddGuildScheduledEvent(ctx, event)
 	assert.True(t, cm.HasGuildScheduledEvent(ctx, eventID))
@@ -238,7 +238,7 @@ func TestRedisCacheManager_CRUD(t *testing.T) {
 	assert.Equal(t, "Weekly Meet", evGot.Name)
 	assert.Equal(t, 1, cm.CountGuildScheduledEvents(ctx))
 
-	// 12. AutoModerationRule
+	// 12. autoModerationRule
 	rule := wumpkit.AutoModerationRule{ID: ruleID, GuildID: guildID, Name: "Anti-Spam"}
 	cm.AddAutoModerationRule(ctx, rule)
 	assert.True(t, cm.HasAutoModerationRule(ctx, ruleID))
@@ -363,9 +363,9 @@ func TestRedisCacheManager_SlidingExpiration(t *testing.T) {
 	require.True(t, ok)
 	assert.Equal(t, "fixed_ttl_message", m.Content)
 
-	// advance 500ms more.
-	// total elapsed for message: 1000ms (> 800ms TTL) -> should expire.
-	// total elapsed for user since read: 500ms (< 800ms TTL) -> should still exist.
+	// advance 500ms more
+	// total elapsed for message: 1000ms (> 800ms TTL) -> should expire
+	// total elapsed for user since read: 500ms (< 800ms TTL) -> should still exist
 	backend.AdvanceTime(500 * time.Millisecond)
 	assert.True(t, cm.HasUser(ctx, 5555))
 	assert.False(t, cm.HasMessage(ctx, 6666))
@@ -380,7 +380,7 @@ func TestRedisCacheManager_DefaultAndFunctionalOptions(t *testing.T) {
 	backend := setupRedisClient(t)
 	defer backend.cleanup()
 
-	// 1. Default creation without options
+	// 1. default creation without options
 	cmDefault := wumpkitredis.NewRedisCacheManager(backend.client)
 	require.NotNil(t, cmDefault)
 	cmDefault.AddUser(ctx, wumpkit.User{ID: 101, Username: "default_user"})
@@ -388,7 +388,7 @@ func TestRedisCacheManager_DefaultAndFunctionalOptions(t *testing.T) {
 	require.True(t, ok)
 	assert.Equal(t, "default_user", u.Username)
 
-	// 2. Creation with individual functional options
+	// 2. creation with individual functional options
 	cmCustom := wumpkitredis.NewRedisCacheManager(
 		backend.client,
 		wumpkitredis.WithRedisCachePrefix("custom:prefix:"),
@@ -438,13 +438,13 @@ func TestRedisRateLimitStore(t *testing.T) {
 	store := wumpkitredis.NewRedisRateLimitStore(backend.client, "test:ratelimit:")
 	require.NotNil(t, store)
 
-	// 1. Bucket Hash mapping
+	// 1. bucket Hash mapping
 	store.SetBucketHash("/channels/123/messages", "chanHash123")
 	hash, ok := store.GetBucketHash("/channels/123/messages")
 	require.True(t, ok)
 	assert.Equal(t, "chanHash123", hash)
 
-	// 2. Bucket State
+	// 2. bucket State
 	resetTime := time.Now().Add(5 * time.Second).Truncate(time.Millisecond)
 	store.SetBucket("chanHash123", wumpkit.RateLimitBucketState{
 		Limit:      5,
@@ -460,7 +460,7 @@ func TestRedisRateLimitStore(t *testing.T) {
 	assert.Equal(t, "chanHash123", state.BucketHash)
 	assert.WithinDuration(t, resetTime, state.ResetAt, 50*time.Millisecond)
 
-	// 3. Global Lock
+	// 3. global Lock
 	globalUntil := time.Now().Add(2 * time.Second).Truncate(time.Millisecond)
 	store.SetGlobalLock(globalUntil)
 	gotGlobal := store.GetGlobalLock()

@@ -326,6 +326,8 @@ func TestPartialMember_Helpers(t *testing.T) {
 	boostTime := time.Now().Add(-24 * time.Hour)
 
 	pm := PartialMember{
+		ID:                         2,
+		GuildID:                    1,
 		Nickname:                   "CoolNick",
 		Avatar:                     "avatarhash",
 		Banner:                     "bannerhash",
@@ -349,17 +351,53 @@ func TestPartialMember_Helpers(t *testing.T) {
 	assert.True(t, pm.HasPermission(PermissionBanMembers))
 
 	// without Administrator:
-	pmNormal := PartialMember{Permissions: PermissionManageMessages}
+	pmNormal := PartialMember{ID: 2, GuildID: 1, Permissions: PermissionManageMessages}
 	assert.True(t, pmNormal.HasPermission(PermissionManageMessages))
 	assert.False(t, pmNormal.HasPermission(PermissionBanMembers))
 
-	assert.Contains(t, pm.AvatarURL(1, 2), "avatarhash")
-	assert.Contains(t, pm.BannerURL(1, 2), "bannerhash")
+	assert.Contains(t, pm.AvatarURL(), "avatarhash")
+	assert.Contains(t, pm.BannerURL(), "bannerhash")
 	assert.Contains(t, pm.AvatarDecorationURL(), "decohash")
 
 	// expired timeout
 	pmPast := PartialMember{CommunicationDisabledUntil: &past}
 	assert.False(t, pmPast.IsTimedOut())
+}
+
+func TestUnmarshalInteraction_HydratesMemberGuildIDAndID(t *testing.T) {
+	raw := `{
+		"id": "1000",
+		"type": 2,
+		"guild_id": "5000",
+		"data": {
+			"id": "2000",
+			"name": "test",
+			"type": 1,
+			"resolved": {
+				"members": {
+					"3000": {
+						"nick": "TargetUser"
+					}
+				}
+			}
+		},
+		"member": {
+			"nick": "Invoker"
+		}
+	}`
+
+	in, err := UnmarshalInteraction([]byte(raw))
+	require.NoError(t, err)
+	chatIn, ok := in.(*ChatInputCommandInteraction)
+	require.True(t, ok)
+
+	require.NotNil(t, chatIn.Member)
+	assert.Equal(t, Snowflake(5000), chatIn.Member.GuildID)
+
+	targetMember, ok := chatIn.Data.Resolved.Members[Snowflake(3000)]
+	require.True(t, ok)
+	assert.Equal(t, Snowflake(3000), targetMember.ID)
+	assert.Equal(t, Snowflake(5000), targetMember.GuildID)
 }
 
 func TestMember_Helpers(t *testing.T) {
@@ -387,4 +425,60 @@ func TestMember_Helpers(t *testing.T) {
 	assert.Contains(t, m.AvatarURL(), "avhash")
 	assert.Contains(t, m.BannerURL(), "banhash")
 	assert.Contains(t, m.AvatarDecorationURL(), "decohash")
+}
+
+func TestChatInputInteractionCommandOption_GettersAndTypeMismatch(t *testing.T) {
+	strOpt := ChatInputInteractionCommandOption{Name: "str", Value: []byte(`"hello"`)}
+	assert.Equal(t, "hello", strOpt.String())
+
+	intOpt := ChatInputInteractionCommandOption{Name: "num", Value: []byte(`42`)}
+	assert.Equal(t, 42, intOpt.Int())
+
+	floatOpt := ChatInputInteractionCommandOption{Name: "flt", Value: []byte(`3.14`)}
+	assert.Equal(t, 3.14, floatOpt.Float())
+
+	boolOpt := ChatInputInteractionCommandOption{Name: "b", Value: []byte(`true`)}
+	assert.True(t, boolOpt.Bool())
+
+	snowOpt := ChatInputInteractionCommandOption{Name: "id", Value: []byte(`"123456789"`)}
+	assert.Equal(t, Snowflake(123456789), snowOpt.Snowflake())
+
+	// typeMismatchError panics
+	assert.Panics(t, func() {
+		invalidStr := ChatInputInteractionCommandOption{Name: "invalid", Value: []byte(`{"not": "a string"}`)}
+		_ = invalidStr.String()
+	})
+
+	assert.Panics(t, func() {
+		invalidInt := ChatInputInteractionCommandOption{Name: "invalid", Value: []byte(`"not an int"`)}
+		_ = invalidInt.Int()
+	})
+
+	assert.Panics(t, func() {
+		invalidFloat := ChatInputInteractionCommandOption{Name: "invalid", Value: []byte(`"not a float"`)}
+		_ = invalidFloat.Float()
+	})
+
+	assert.Panics(t, func() {
+		invalidBool := ChatInputInteractionCommandOption{Name: "invalid", Value: []byte(`"not a bool"`)}
+		_ = invalidBool.Bool()
+	})
+
+	assert.Panics(t, func() {
+		invalidSnowflake := ChatInputInteractionCommandOption{Name: "invalid", Value: []byte(`"not-a-snowflake"`)}
+		_ = invalidSnowflake.Snowflake()
+	})
+
+	// verify that panic value is *TypeMismatchError
+	defer func() {
+		r := recover()
+		require.NotNil(t, r)
+		tmErr, ok := r.(*TypeMismatchError)
+		require.True(t, ok)
+		assert.Equal(t, "str", tmErr.Option)
+		assert.Equal(t, "int", tmErr.Expected)
+		assert.Contains(t, tmErr.Error(), "type mismatch")
+	}()
+
+	_ = strOpt.Int()
 }

@@ -91,8 +91,8 @@ func (s *MemoryStore) Reserve(bucketKey string) time.Duration {
 
 		now := time.Now()
 
-		// bucket has expired — reset remaining and clear the window.
-		// the next Update() call will set a fresh ResetAt from Discord's headers.
+		// bucket has expired — reset remaining and clear the window
+		// the next Update() call will set a fresh ResetAt from Discord's headers
 		if !state.ResetAt.IsZero() && now.After(state.ResetAt) {
 			state.Remaining = state.Limit
 			state.ResetAt = time.Time{}
@@ -162,12 +162,12 @@ func (s *MemoryStore) Cleanup() {
 	now := time.Now()
 
 	// collect expired keys first (Range holds a read lock per shard, so we
-	// cannot call Delete inside Range without causing a deadlock).
+	// cannot call Delete inside Range without causing a deadlock)
 	var expiredKeys []string
 	s.buckets.Range(func(key string, state BucketState) bool {
-		// remove buckets that have been expired for more than 5 minutes.
+		// remove buckets that have been expired for more than 5 minutes
 		// this grace period prevents removing buckets that are about to be refreshed
-		// by an in-flight response.
+		// by an in-flight response
 		if !state.ResetAt.IsZero() && now.After(state.ResetAt.Add(5*time.Minute)) {
 			expiredKeys = append(expiredKeys, key)
 		}

@@ -18,13 +18,13 @@ func TestLimiter_BasicWaitAndUpdate(t *testing.T) {
 	route := "/channels/123456789012345678/messages"
 	method := "POST"
 
-	// 1. Initial wait should proceed immediately
+	// 1. initial wait should proceed immediately
 	start := time.Now()
 	err := limiter.Wait(ctx, route, method)
 	require.NoError(t, err)
 	assert.WithinDuration(t, time.Now(), start, 50*time.Millisecond)
 
-	// 2. Simulate Discord response headers
+	// 2. simulate Discord response headers
 	headers := make(http.Header)
 	headers.Set("X-RateLimit-Limit", "5")
 	headers.Set("X-RateLimit-Remaining", "4")

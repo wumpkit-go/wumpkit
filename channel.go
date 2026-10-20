@@ -1220,18 +1220,22 @@ func UnmarshalChannel(buf []byte) (Channel, error) {
 	}
 }
 
-// ResolvedChannel represents a partial channel object returned in interaction resolved data
-// (data.resolved.channels) and interaction root channel payload.
+// PartialChannel represents a partial channel object returned in interaction payloads,
+// interaction resolved data (data.resolved.channels), and invites.
+//
+// Partial Channel objects only have id, name, type, permissions, app_permissions,
+// last_message_id, last_pin_timestamp, nsfw, parent_id, guild_id, flags, rate_limit_per_user,
+// topic and position fields. Threads will also have the thread_metadata field.
 //
 // Reference: https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-resolved-data-structure
-type ResolvedChannel struct {
+type PartialChannel struct {
 	ChannelFields
 
 	// Name is the name of the channel.
-	Name string `json:"name"`
+	Name string `json:"name,omitempty"`
 
 	// Permissions contains the computed permissions for the invoking user in this channel.
-	Permissions Permissions `json:"permissions"`
+	Permissions Permissions `json:"permissions,omitempty"`
 
 	// AppPermissions contains the permissions the app has in this channel.
 	AppPermissions Permissions `json:"app_permissions,omitempty"`
@@ -1267,41 +1271,24 @@ type ResolvedChannel struct {
 	ThreadMetadata *ThreadMetaData `json:"thread_metadata,omitempty"`
 }
 
-func (c *ResolvedChannel) GetName() string {
-	return c.Name
-}
-
-func (c *ResolvedChannel) MarshalJSON() ([]byte, error) {
-	type alias ResolvedChannel
-	return json.Marshal((*alias)(c))
-}
-
-var _ Channel = (*ResolvedChannel)(nil)
-
-type ResolvedThread struct {
-	ThreadChannel
-	Permissions Permissions `json:"permissions"`
-}
-
-type PartialChannel struct {
-	ChannelFields
-
-	// Name is the name of the channel.
-	//
-	// Info:
-	//  - can be 1 to 100 characters.
-	Name string `json:"name,omitempty"`
-}
-
 func (c *PartialChannel) GetName() string {
 	return c.Name
 }
 
 func (c *PartialChannel) MarshalJSON() ([]byte, error) {
-	return json.Marshal(c)
+	type alias PartialChannel
+	return json.Marshal((*alias)(c))
 }
 
-var _ NamedChannel = (*PartialChannel)(nil)
+var _ Channel = (*PartialChannel)(nil)
+
+// ResolvedChannel is an alias for PartialChannel for backwards compatibility.
+type ResolvedChannel = PartialChannel
+
+type ResolvedThread struct {
+	ThreadChannel
+	Permissions Permissions `json:"permissions"`
+}
 
 type VideoQualityModes int
 

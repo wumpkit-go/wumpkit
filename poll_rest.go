@@ -34,13 +34,17 @@ type FetchAnswerVotersOptions struct {
 // FetchAnswerVoters returns a list of users that voted for the specific answer.
 //
 // Reference: https://discord.com/developers/docs/resources/poll#get-answer-voters
-func (r *requester) FetchAnswerVoters(ctx context.Context, channelID, messageID Snowflake, answerID int, opts FetchAnswerVotersOptions) ([]User, error) {
-	params := url.Values{}
-	if opts.After != 0 {
-		params.Set("after", opts.After.String())
+func (r *requester) FetchAnswerVoters(ctx context.Context, channelID, messageID Snowflake, answerID int, opts ...FetchAnswerVotersOptions) ([]User, error) {
+	var first FetchAnswerVotersOptions
+	if len(opts) > 0 {
+		first = opts[0]
 	}
-	if opts.Limit > 0 {
-		params.Set("limit", strconv.Itoa(opts.Limit))
+	params := url.Values{}
+	if first.After != 0 {
+		params.Set("after", first.After.String())
+	}
+	if first.Limit > 0 {
+		params.Set("limit", strconv.Itoa(first.Limit))
 	}
 
 	endpoint := "/channels/" + channelID.String() + "/polls/" + messageID.String() + "/answers/" + strconv.Itoa(answerID)

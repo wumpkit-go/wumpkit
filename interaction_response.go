@@ -22,6 +22,9 @@ type RespondMessageOptions struct {
 	// Content is the text content of the message.
 	Content string
 
+	// Flags specifies message bitfield flags (e.g. MessageFlagEphemeral, MessageFlagSuppressEmbeds).
+	Flags MessageFlags
+
 	// Ephemeral specifies whether the message is visible only to the invoking user.
 	Ephemeral bool
 
@@ -50,7 +53,13 @@ func (c *Client) RespondMessage(ctx context.Context, interaction Interaction, co
 	}
 
 	var flags *MessageFlags
-	if opt.Ephemeral {
+	if opt.Flags != 0 {
+		f := opt.Flags
+		if opt.Ephemeral {
+			f |= MessageFlagEphemeral
+		}
+		flags = &f
+	} else if opt.Ephemeral {
 		f := MessageFlagEphemeral
 		flags = &f
 	}

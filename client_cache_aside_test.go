@@ -42,13 +42,13 @@ func TestClient_CacheAside_User(t *testing.T) {
 		}),
 	)
 
-	// 1. Initial state: not in cache -> fetches from API & caches
+	// 1. initial state: not in cache -> fetches from API & caches
 	user, err := client.User(context.Background(), 12345)
 	require.NoError(t, err)
 	assert.Equal(t, "wumpkit_bot", user.Username)
 	assert.Equal(t, int64(1), apiCalls.Load())
 
-	// 2. Second call: found in cache -> 0 additional API calls
+	// 2. second call: found in cache -> 0 additional API calls
 	cachedUser, err := client.User(context.Background(), 12345)
 	require.NoError(t, err)
 	assert.Equal(t, "wumpkit_bot", cachedUser.Username)

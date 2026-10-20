@@ -74,7 +74,7 @@ func TestRequester_RateLimiterIntegration(t *testing.T) {
 
 	ctx := context.Background()
 
-	// 1. First request succeeds and sets remaining to 0
+	// 1. first request succeeds and sets remaining to 0
 	_, err := bot.FetchChannel(ctx, 123)
 	require.NoError(t, err)
 
@@ -84,7 +84,7 @@ func TestRequester_RateLimiterIntegration(t *testing.T) {
 	assert.Equal(t, int64(2), state.Limit)
 	assert.Equal(t, int64(0), state.Remaining)
 
-	// 2. Second request should automatically wait for bucket reset (100ms) before sending
+	// 2. second request should automatically wait for bucket reset (100ms) before sending
 	start := time.Now()
 	_, err = bot.FetchChannel(ctx, 123)
 	require.NoError(t, err)

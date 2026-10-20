@@ -33,8 +33,13 @@ type FetchGuildOptions struct {
 // FetchGuild retrieves a guild by its ID.
 //
 // Reference: https://discord.com/developers/docs/resources/guild#get-guild
-func (r *requester) FetchGuild(ctx context.Context, guildID Snowflake, opts FetchGuildOptions) (RestGuild, error) {
-	endpoint := "/guilds/" + guildID.String() + "?with_counts=" + strconv.FormatBool(opts.WithCounts)
+func (r *requester) FetchGuild(ctx context.Context, guildID Snowflake, opts ...FetchGuildOptions) (RestGuild, error) {
+	var first FetchGuildOptions
+	if len(opts) > 0 {
+		first = opts[0]
+	}
+
+	endpoint := "/guilds/" + guildID.String() + "?with_counts=" + strconv.FormatBool(first.WithCounts)
 
 	body, err := r.DoRequest(ctx, Request{Method: "GET", URL: endpoint})
 	if err != nil {
@@ -481,23 +486,20 @@ type ListMembersOptions struct {
 //
 //	Note:
 //	 - This endpoint is restricted according to whether the GUILD_MEMBERS Privileged Intent is enabled for your application.
-func (r *requester) ListMembers(ctx context.Context, guildID Snowflake) ([]FullMember, error) {
-	return r.ListMembersWithOptions(ctx, guildID, ListMembersOptions{})
-}
+func (r *requester) ListMembers(ctx context.Context, guildID Snowflake, opts ...ListMembersOptions) ([]FullMember, error) {
+	var first ListMembersOptions
+	if len(opts) > 0 {
+		first = opts[0]
+	}
 
-// ListMembers retrieves a paginated list of members in a guild.
-//
-//	Note:
-//	 - This endpoint is restricted according to whether the GUILD_MEMBERS Privileged Intent is enabled for your application.
-func (r *requester) ListMembersWithOptions(ctx context.Context, guildID Snowflake, opts ListMembersOptions) ([]FullMember, error) {
 	endpoint := "/guilds/" + guildID.String() + "/members"
 
 	params := url.Values{}
-	if opts.Limit > 0 {
-		params.Set("limit", strconv.Itoa(opts.Limit))
+	if first.Limit > 0 {
+		params.Set("limit", strconv.Itoa(first.Limit))
 	}
-	if opts.After != 0 {
-		params.Set("after", opts.After.String())
+	if first.After != 0 {
+		params.Set("after", first.After.String())
 	}
 	if len(params) > 0 {
 		endpoint += "?" + params.Encode()
@@ -570,6 +572,9 @@ func (r *requester) SearchMembers(ctx context.Context, guildID Snowflake, opts S
 	}
 	for i := range members {
 		members[i].GuildID = guildID
+		if members[i].ID == 0 && members[i].User.ID != 0 {
+			members[i].ID = members[i].User.ID
+		}
 	}
 	return members, nil
 }
@@ -639,6 +644,13 @@ func (r *requester) AddGuildMember(ctx context.Context, guildID, userID Snowflak
 		return FullMember{}, err
 	}
 	member.GuildID = guildID
+	if member.ID == 0 {
+		if member.User.ID != 0 {
+			member.ID = member.User.ID
+		} else {
+			member.ID = userID
+		}
+	}
 	return member, nil
 }
 
@@ -719,6 +731,13 @@ func (r *requester) ModifyMember(ctx context.Context, guildID, userID Snowflake,
 		return FullMember{}, err
 	}
 	member.GuildID = guildID
+	if member.ID == 0 {
+		if member.User.ID != 0 {
+			member.ID = member.User.ID
+		} else {
+			member.ID = userID
+		}
+	}
 	return member, nil
 }
 
@@ -770,6 +789,9 @@ func (r *requester) ModifyCurrentMember(ctx context.Context, guildID Snowflake, 
 		return FullMember{}, err
 	}
 	member.GuildID = guildID
+	if member.ID == 0 && member.User.ID != 0 {
+		member.ID = member.User.ID
+	}
 	return member, nil
 }
 
@@ -857,18 +879,22 @@ type FetchGuildBansOptions struct {
 //	   If both before and after are provided, only before is respected.
 //
 // Requires the PermissionBanMembers permission.
-func (r *requester) FetchGuildBans(ctx context.Context, guildID Snowflake, opts FetchGuildBansOptions) ([]Ban, error) {
+func (r *requester) FetchGuildBans(ctx context.Context, guildID Snowflake, opts ...FetchGuildBansOptions) ([]Ban, error) {
+	var first FetchGuildBansOptions
+	if len(opts) > 0 {
+		first = opts[0]
+	}
 	endpoint := "/guilds/" + guildID.String() + "/bans"
 
 	params := url.Values{}
-	if opts.Limit > 0 {
-		params.Set("limit", strconv.Itoa(opts.Limit))
+	if first.Limit > 0 {
+		params.Set("limit", strconv.Itoa(first.Limit))
 	}
-	if opts.Before != 0 {
-		params.Set("before", opts.Before.String())
+	if first.Before != 0 {
+		params.Set("before", first.Before.String())
 	}
-	if opts.After != 0 {
-		params.Set("after", opts.After.String())
+	if first.After != 0 {
+		params.Set("after", first.After.String())
 	}
 	if len(params) > 0 {
 		endpoint += "?" + params.Encode()
@@ -1298,16 +1324,21 @@ type PruneCount struct {
 // of members that would be removed in a prune operation.
 //
 // Requires the PermissionManageGuild and PermissionKickMembers permission.
-func (r *requester) FetchGuildPruneCount(ctx context.Context, guildID Snowflake, opts FetchGuildPruneCountOptions) (PruneCount, error) {
+func (r *requester) FetchGuildPruneCount(ctx context.Context, guildID Snowflake, opts ...FetchGuildPruneCountOptions) (PruneCount, error) {
+	var first FetchGuildPruneCountOptions
+	if len(opts) > 0 {
+		first = opts[0]
+	}
+
 	endpoint := "/guilds/" + guildID.String() + "/prune"
 
 	params := url.Values{}
-	if opts.Days > 0 {
-		params.Set("days", strconv.Itoa(opts.Days))
+	if first.Days > 0 {
+		params.Set("days", strconv.Itoa(first.Days))
 	}
-	if len(opts.IncludeRoles) > 0 {
+	if len(first.IncludeRoles) > 0 {
 		var b strings.Builder
-		for i, snowflake := range opts.IncludeRoles {
+		for i, snowflake := range first.IncludeRoles {
 			if i > 0 {
 				b.WriteByte(',')
 			}
@@ -1622,10 +1653,10 @@ type FetchGuildWidgetImageOptions struct {
 }
 
 // FetchGuildWidgetImage returns a URL for a PNG image widget for the guild.
-func (r *requester) FetchGuildWidgetImage(ctx context.Context, guildID Snowflake, opts FetchGuildWidgetImageOptions) string {
+func (r *requester) FetchGuildWidgetImage(ctx context.Context, guildID Snowflake, opts ...FetchGuildWidgetImageOptions) string {
 	url := "https://discord.com/api/v10/guilds/" + guildID.String() + "/widget.png"
-	if opts.Style != "" {
-		url += "?style=" + string(opts.Style)
+	if len(opts) > 0 && opts[0].Style != "" {
+		url += "?style=" + string(opts[0].Style)
 	}
 	return url
 }

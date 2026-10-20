@@ -86,7 +86,7 @@ func isWebhookInteractionFollowup(path string) bool {
 
 	// path format: /webhooks/{app_id}/{decoded_interaction_id}/...
 	// the decoded interaction ID is a snowflake inserted by NormalizeRoute
-	// when it decodes a base64 interaction token.
+	// when it decodes a base64 interaction token
 	rest := path[len("/webhooks/"):]
 
 	// skip webhook_id (first snowflake)
@@ -105,9 +105,9 @@ func isWebhookInteractionFollowup(path string) bool {
 		segment = rest[:nextSlash]
 	}
 
-	// regular webhook tokens are replaced with "!" by NormalizeRoute.
-	// interaction tokens are decoded to their interaction snowflake ID.
-	// so if this segment is a snowflake, it's an interaction followup.
+	// regular webhook tokens are replaced with "!" by NormalizeRoute
+	// interaction tokens are decoded to their interaction snowflake ID
+	// so if this segment is a snowflake, it's an interaction followup
 	return IsSnowflake(segment)
 }
 
@@ -119,12 +119,12 @@ func isWebhookInteractionFollowup(path string) bool {
 // represent independent rate limit buckets. Minor parameters (message_id, role_id, etc.) are
 // replaced with "!" since they share buckets within their major parameter scope.
 func NormalizeRoute(url string, method string) string {
-	// 1. Strip Query String
+	// 1. strip Query String
 	if qIdx := strings.IndexByte(url, '?'); qIdx != -1 {
 		url = url[:qIdx]
 	}
 
-	// 2. Strip /api/v* or /api/ prefix
+	// 2. strip /api/v* or /api/ prefix
 	var cleanPath string
 	if strings.HasPrefix(url, "/api/v") {
 		rest := url[6:]
@@ -141,7 +141,7 @@ func NormalizeRoute(url string, method string) string {
 		cleanPath = url
 	}
 
-	// 3. Tokenize path segments into stack array (max depth 16)
+	// 3. tokenize path segments into stack array (max depth 16)
 	var parts [16]string
 	numParts := 0
 	rem := cleanPath
@@ -163,7 +163,7 @@ func NormalizeRoute(url string, method string) string {
 		return "/" + cleanPath
 	}
 
-	// 4. Build normalized bucket into stack buffer
+	// 4. build normalized bucket into stack buffer
 	var out [160]byte
 	w := 0
 	out[w] = '/'
@@ -222,7 +222,7 @@ func NormalizeRoute(url string, method string) string {
 		return string(out[:w])
 	}
 
-	// 5. Process sub-resources
+	// 5. process sub-resources
 	for _, part := range parts[2:numParts] {
 		if IsSnowflake(part) {
 			// discord 14-day message delete rate limit rule
@@ -258,7 +258,7 @@ func NormalizeRoute(url string, method string) string {
 				}
 
 				// interaction token: decode to extract the interaction snowflake ID
-				// so interaction followup webhooks resolve to a per-interaction bucket.
+				// so interaction followup webhooks resolve to a per-interaction bucket
 				padded := part
 				if remLen := len(part) % 4; remLen != 0 {
 					padded += strings.Repeat("=", 4-remLen)

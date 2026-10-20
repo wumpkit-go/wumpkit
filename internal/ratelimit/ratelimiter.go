@@ -139,7 +139,7 @@ func (l *Limiter) Wait(ctx context.Context, route, method string) error {
 	bPath := l.bucketPath(route, method)
 	isInteraction := IsInteractionRoute(bPath)
 
-	// 1. Global pause check (skip for interaction endpoints per Discord docs)
+	// 1. global pause check (skip for interaction endpoints per Discord docs)
 	if !isInteraction {
 		if globalUntil := l.store.GetGlobalLock(); !globalUntil.IsZero() {
 			now := time.Now()
@@ -152,7 +152,7 @@ func (l *Limiter) Wait(ctx context.Context, route, method string) error {
 			}
 		}
 
-		// 2. Global 50 req/s token bucket (skip for interaction endpoints per Discord docs)
+		// 2. global 50 req/s token bucket (skip for interaction endpoints per Discord docs)
 		for {
 			if err := l.globalBucket.Add(1); err == nil {
 				break
@@ -170,7 +170,7 @@ func (l *Limiter) Wait(ctx context.Context, route, method string) error {
 		}
 	}
 
-	// 3. Per-route bucket check (applies to all routes including interactions)
+	// 3. per-route bucket check (applies to all routes including interactions)
 	bucketKey := l.resolveBucketKey(bPath)
 
 	for {
@@ -219,7 +219,7 @@ func (l *Limiter) Update(route, method string, headers http.Header, statusCode i
 			// for shared scope 429s, the per-route bucket may still have capacity —
 			// only the underlying resource is throttled. Don't zero out remaining;
 			// instead, use the reported remaining (which may be > 0) and set the
-			// reset time from the Retry-After to block this specific bucket.
+			// reset time from the Retry-After to block this specific bucket
 			if info.Scope != "shared" {
 				remaining = 0
 			}

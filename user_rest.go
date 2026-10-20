@@ -158,18 +158,23 @@ func (r *requester) ModifyCurrentUser(ctx context.Context, opts ModifyCurrentUse
 // FetchCurrentUserGuilds returns a list of partial guild objects the current user is a member of.
 //
 // Reference: https://discord.com/developers/docs/resources/user#get-current-user-guilds
-func (r *requester) FetchCurrentUserGuilds(ctx context.Context, opts FetchCurrentUserGuildsOptions) ([]PartialGuild, error) {
+func (r *requester) FetchCurrentUserGuilds(ctx context.Context, opts ...FetchCurrentUserGuildsOptions) ([]PartialGuild, error) {
+	var first FetchCurrentUserGuildsOptions
+	if len(opts) > 0{ 
+		first = opts[0]
+	}
+
 	params := url.Values{}
-	if opts.Before != 0 {
-		params.Set("before", opts.Before.String())
+	if first.Before != 0 {
+		params.Set("before", first.Before.String())
 	}
-	if opts.After != 0 {
-		params.Set("after", opts.After.String())
+	if first.After != 0 {
+		params.Set("after", first.After.String())
 	}
-	if opts.Limit > 0 {
-		params.Set("limit", strconv.Itoa(opts.Limit))
+	if first.Limit > 0 {
+		params.Set("limit", strconv.Itoa(first.Limit))
 	}
-	if opts.WithCounts {
+	if first.WithCounts {
 		params.Set("with_counts", "true")
 	}
 
@@ -222,6 +227,9 @@ func (r *requester) FetchCurrentUserGuildMember(ctx context.Context, guildID Sno
 		return FullMember{}, err
 	}
 	member.GuildID = guildID
+	if member.ID == 0 && member.User.ID != 0 {
+		member.ID = member.User.ID
+	}
 	return member, nil
 }
 

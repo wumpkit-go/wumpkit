@@ -726,8 +726,13 @@ func (r *requester) RemoveThreadMember(ctx context.Context, channelID Snowflake,
 }
 
 // FetchThreadMember retrieves a thread member.
-func (r *requester) FetchThreadMember(ctx context.Context, channelID Snowflake, userID Snowflake, opts FetchThreadMemberOptions) (ThreadMember, error) {
-	endpoint := "/channels/" + channelID.String() + "/thread-members/" + userID.String() + "?with_member=" + strconv.FormatBool(opts.WithMember)
+func (r *requester) FetchThreadMember(ctx context.Context, channelID Snowflake, userID Snowflake, opts ...FetchThreadMemberOptions) (ThreadMember, error) {
+	var withMember bool
+	if len(opts) > 0 {
+		withMember = opts[0].WithMember
+	}
+
+	endpoint := "/channels/" + channelID.String() + "/thread-members/" + userID.String() + "?with_member=" + strconv.FormatBool(withMember)
 	body, err := r.DoRequest(ctx, Request{Method: "GET", URL: endpoint})
 	if err != nil {
 		return ThreadMember{}, err
@@ -747,15 +752,20 @@ func (r *requester) FetchThreadMember(ctx context.Context, channelID Snowflake, 
 }
 
 // ListThreadMembers retrieves a list of thread members.
-func (r *requester) ListThreadMembers(ctx context.Context, channelID Snowflake, opts ListThreadMembersOptions) ([]ThreadMember, error) {
-	params := url.Values{}
-	params.Set("with_member", strconv.FormatBool(opts.WithMember))
-
-	if opts.Limit > 0 {
-		params.Set("limit", strconv.Itoa(opts.Limit))
+func (r *requester) ListThreadMembers(ctx context.Context, channelID Snowflake, opts ...ListThreadMembersOptions) ([]ThreadMember, error) {
+	var first ListThreadMembersOptions
+	if len(opts) > 0 {
+		first = opts[0]
 	}
-	if !opts.After.UnSet() {
-		params.Set("after", opts.After.String())
+
+	params := url.Values{}
+	params.Set("with_member", strconv.FormatBool(first.WithMember))
+
+	if first.Limit > 0 {
+		params.Set("limit", strconv.Itoa(first.Limit))
+	}
+	if !first.After.UnSet() {
+		params.Set("after", first.After.String())
 	}
 
 	endpoint := "/channels/" + channelID.String() + "/thread-members?" + params.Encode()
@@ -803,37 +813,52 @@ func (r *requester) listArchivedThreads(ctx context.Context, channelID Snowflake
 }
 
 // ListPublicArchivedThreads retrieves a list of public archived threads.
-func (r *requester) ListPublicArchivedThreads(ctx context.Context, channelID Snowflake, opts ListArchivedThreadsOptions) (ListArchivedThreadsResponse, error) {
-	params := url.Values{}
-	if opts.Limit > 0 {
-		params.Set("limit", strconv.Itoa(opts.Limit))
+func (r *requester) ListPublicArchivedThreads(ctx context.Context, channelID Snowflake, opts ...ListArchivedThreadsOptions) (ListArchivedThreadsResponse, error) {
+	var first ListArchivedThreadsOptions
+	if len(opts) > 0 {
+		first = opts[0]
 	}
-	if !opts.Before.IsZero() {
-		params.Set("before", opts.Before.Format(time.RFC3339))
+	
+	params := url.Values{}
+	if first.Limit > 0 {
+		params.Set("limit", strconv.Itoa(first.Limit))
+	}
+	if !first.Before.IsZero() {
+		params.Set("before", first.Before.Format(time.RFC3339))
 	}
 	return r.listArchivedThreads(ctx, channelID, "/threads/archived/public", params)
 }
 
 // ListPrivateArchivedThreads retrieves a list of private archived threads.
-func (r *requester) ListPrivateArchivedThreads(ctx context.Context, channelID Snowflake, opts ListArchivedThreadsOptions) (ListArchivedThreadsResponse, error) {
-	params := url.Values{}
-	if opts.Limit > 0 {
-		params.Set("limit", strconv.Itoa(opts.Limit))
+func (r *requester) ListPrivateArchivedThreads(ctx context.Context, channelID Snowflake, opts ...ListArchivedThreadsOptions) (ListArchivedThreadsResponse, error) {
+	var first ListArchivedThreadsOptions
+	if len(opts) > 0 {
+		first = opts[0]
 	}
-	if !opts.Before.IsZero() {
-		params.Set("before", opts.Before.Format(time.RFC3339))
+
+	params := url.Values{}
+	if first.Limit > 0 {
+		params.Set("limit", strconv.Itoa(first.Limit))
+	}
+	if !first.Before.IsZero() {
+		params.Set("before", first.Before.Format(time.RFC3339))
 	}
 	return r.listArchivedThreads(ctx, channelID, "/threads/archived/private", params)
 }
 
 // ListJoinedPrivateArchivedThreads retrieves a list of private archived threads that the current user has joined.
-func (r *requester) ListJoinedPrivateArchivedThreads(ctx context.Context, channelID Snowflake, opts ListJoinedPrivateArchivedThreadsOptions) (ListArchivedThreadsResponse, error) {
-	params := url.Values{}
-	if opts.Limit > 0 {
-		params.Set("limit", strconv.Itoa(opts.Limit))
+func (r *requester) ListJoinedPrivateArchivedThreads(ctx context.Context, channelID Snowflake, opts ...ListJoinedPrivateArchivedThreadsOptions) (ListArchivedThreadsResponse, error) {
+	var first ListJoinedPrivateArchivedThreadsOptions
+	if len(opts) > 0 {
+		first = opts[0]
 	}
-	if !opts.Before.UnSet() {
-		params.Set("before", opts.Before.String())
+
+	params := url.Values{}
+	if first.Limit > 0 {
+		params.Set("limit", strconv.Itoa(first.Limit))
+	}
+	if !first.Before.UnSet() {
+		params.Set("before", first.Before.String())
 	}
 	return r.listArchivedThreads(ctx, channelID, "/users/@me/threads/archived/private", params)
 }

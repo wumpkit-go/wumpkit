@@ -103,7 +103,7 @@ type ChatInputCommandResolvedInteractionData struct {
 	Roles map[Snowflake]Role `json:"roles,omitempty"`
 
 	// Channels is a map of channel IDs to partial Channel objects referenced by the command.
-	Channels map[Snowflake]ResolvedChannel `json:"channels,omitempty"`
+	Channels map[Snowflake]PartialChannel `json:"channels,omitempty"`
 
 	// Messages is a map of message IDs to partial Message objects referenced by the command.
 	Messages map[Snowflake]Message `json:"messages,omitempty"`
@@ -140,62 +140,84 @@ type ChatInputInteractionCommandOption struct {
 	Focused bool `json:"focused,omitempty"`
 }
 
+// TypeMismatchError represents an unrecoverable programmer contract violation where an option
+// was accessed with an incompatible type getter or failed type unmarshaling.
+type TypeMismatchError struct {
+	Option   string
+	Expected string
+	Cause    error
+}
+
+func (e *TypeMismatchError) Error() string {
+	if e.Cause != nil {
+		return fmt.Sprintf("wumpkit: type mismatch on option %q (expected %s): %v", e.Option, e.Expected, e.Cause)
+	}
+	return fmt.Sprintf("wumpkit: type mismatch on option %q (expected %s)", e.Option, e.Expected)
+}
+
+func (e *TypeMismatchError) Unwrap() error {
+	return e.Cause
+}
+
+func newOptionTypeMismatchError(option, expected string, cause error) *TypeMismatchError {
+	return &TypeMismatchError{
+		Option:   option,
+		Expected: expected,
+		Cause:    cause,
+	}
+}
+
 // String returns the option's value as a string.
 //
-// Panics if the underlying JSON value cannot be unmarshaled into a string.
-// Make sure the option's Type is ApplicationCommandOptionTypeString before calling.
+// Panics with *TypeMismatchError if the underlying JSON value cannot be unmarshaled into a string.
 func (o *ChatInputInteractionCommandOption) String() string {
 	var v string
 	if err := json.Unmarshal(o.Value, &v); err != nil {
-		panic(fmt.Sprintf("failed to unmarshal option %q as string: %v", o.Name, err))
+		panic(newOptionTypeMismatchError(o.Name, "string", err))
 	}
 	return v
 }
 
 // Int returns the option's value as an int.
 //
-// Panics if the underlying JSON value cannot be unmarshaled into an int.
-// Make sure the option's Type is ApplicationCommandOptionTypeInteger before calling.
+// Panics with *TypeMismatchError if the underlying JSON value cannot be unmarshaled into an int.
 func (o *ChatInputInteractionCommandOption) Int() int {
 	var v int
 	if err := json.Unmarshal(o.Value, &v); err != nil {
-		panic(fmt.Sprintf("failed to unmarshal option %q as int: %v", o.Name, err))
+		panic(newOptionTypeMismatchError(o.Name, "int", err))
 	}
 	return v
 }
 
 // Float returns the option's value as a float64.
 //
-// Panics if the underlying JSON value cannot be unmarshaled into a float64.
-// Make sure the option's Type is ApplicationCommandOptionTypeNumber before calling.
+// Panics with *TypeMismatchError if the underlying JSON value cannot be unmarshaled into a float64.
 func (o *ChatInputInteractionCommandOption) Float() float64 {
 	var v float64
 	if err := json.Unmarshal(o.Value, &v); err != nil {
-		panic(fmt.Sprintf("failed to unmarshal option %q as float64: %v", o.Name, err))
+		panic(newOptionTypeMismatchError(o.Name, "float64", err))
 	}
 	return v
 }
 
 // Bool returns the option's value as a boolean.
 //
-// Panics if the underlying JSON value cannot be unmarshaled into a bool.
-// Make sure the option's Type is ApplicationCommandOptionTypeBoolean before calling.
+// Panics with *TypeMismatchError if the underlying JSON value cannot be unmarshaled into a bool.
 func (o *ChatInputInteractionCommandOption) Bool() bool {
 	var v bool
 	if err := json.Unmarshal(o.Value, &v); err != nil {
-		panic(fmt.Sprintf("failed to unmarshal option %q as bool: %v", o.Name, err))
+		panic(newOptionTypeMismatchError(o.Name, "bool", err))
 	}
 	return v
 }
 
 // Snowflake returns the option's value as a Snowflake.
 //
-// Panics if the underlying JSON value cannot be unmarshaled into a Snowflake.
-// Make sure the option's Type corresponds to an ID-based option before calling.
+// Panics with *TypeMismatchError if the underlying JSON value cannot be unmarshaled into a Snowflake.
 func (o *ChatInputInteractionCommandOption) Snowflake() Snowflake {
 	var v Snowflake
 	if err := json.Unmarshal(o.Value, &v); err != nil {
-		panic(fmt.Sprintf("failed to unmarshal option %q as Snowflake: %v", o.Name, err))
+		panic(newOptionTypeMismatchError(o.Name, "Snowflake", err))
 	}
 	return v
 }
@@ -295,10 +317,10 @@ func (d *ChatInputCommandInteractionData) Role(optionName string) (Role, bool) {
 }
 
 // Channel returns the resolved Channel for the option with the given name.
-func (d *ChatInputCommandInteractionData) Channel(optionName string) (ResolvedChannel, bool) {
+func (d *ChatInputCommandInteractionData) Channel(optionName string) (PartialChannel, bool) {
 	opt := d.Option(optionName)
 	if opt == nil {
-		return ResolvedChannel{}, false
+		return PartialChannel{}, false
 	}
 	id := opt.Snowflake()
 	ch, ok := d.Resolved.Channels[id]
@@ -352,11 +374,11 @@ func (d *ChatInputCommandInteractionData) Bool(optionName string) (bool, bool) {
 	return opt.Bool(), true
 }
 
-// MessageCommandInteractionDataResolved represents the resolved data for a
-// message command interaction.
+// MessageContextMenuCommandInteractionDataResolved represents the resolved data for a
+// message context menu command interaction.
 //
 // Reference: https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-application-command-data-structure
-type MessageCommandInteractionDataResolved struct {
+type MessageContextMenuCommandInteractionDataResolved struct {
 	// Messages is a map of message IDs to partial Message objects
 	// referenced by the command.
 	Messages map[Snowflake]Message `json:"messages,omitempty"`
@@ -368,21 +390,21 @@ type MessageCommandInteractionDataResolved struct {
 	Members map[Snowflake]PartialMember `json:"members,omitempty"`
 }
 
-// MessageCommandInteractionData represents the data for a message command interaction.
+// MessageContextMenuCommandInteractionData represents the data for a message context menu command interaction.
 //
 // Reference: https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-application-command-data-structure
-type MessageCommandInteractionData struct {
+type MessageContextMenuCommandInteractionData struct {
 	ApplicationCommandInteractionDataFields
 
 	// Resolved contains the resolved objects referenced by the command, messages in this case.
-	Resolved MessageCommandInteractionDataResolved `json:"resolved"`
+	Resolved MessageContextMenuCommandInteractionDataResolved `json:"resolved"`
 
 	// TargetID is the id of the message targeted by the command.
 	TargetID Snowflake `json:"target_id"`
 }
 
 // Reference: https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-application-command-data-structure
-type UserCommandInteractionDataResolved struct {
+type UserContextMenuCommandInteractionDataResolved struct {
 	// Users is a map of user IDs to User objects referenced by the command.
 	Users map[Snowflake]User `json:"users,omitempty"`
 
@@ -390,14 +412,14 @@ type UserCommandInteractionDataResolved struct {
 	Members map[Snowflake]PartialMember `json:"members,omitempty"`
 }
 
-// UserCommandInteractionData represents the data for a user command interaction.
+// UserContextMenuCommandInteractionData represents the data for a user context menu command interaction.
 //
 // Reference: https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-application-command-data-structure
-type UserCommandInteractionData struct {
+type UserContextMenuCommandInteractionData struct {
 	ApplicationCommandInteractionDataFields
 
 	// Resolved contains the resolved objects referenced by the command, members and users in this case.
-	Resolved UserCommandInteractionDataResolved `json:"resolved"`
+	Resolved UserContextMenuCommandInteractionDataResolved `json:"resolved"`
 
 	// TargetID is the id of the user targeted by the command.
 	TargetID Snowflake `json:"target_id"`
@@ -459,8 +481,8 @@ type ApplicationCommandInteractionFields struct {
 	// ChannelID is the ID of the channel the interaction happened in.
 	ChannelID Snowflake `json:"channel_id,omitempty"`
 
-	// Channel is the channel the interaction happened in.
-	Channel ResolvedChannel `json:"channel,omitzero"`
+	// Channel is the partial channel the interaction happened in.
+	Channel PartialChannel `json:"channel,omitzero"`
 
 	// Member is the guild member data for the invoking user.
 	//
@@ -524,24 +546,24 @@ type ChatInputCommandInteraction struct {
 	Data ChatInputCommandInteractionData `json:"data"`
 }
 
-// UserCommandInteraction represents an interaction triggered by a user context menu command.
+// UserContextMenuCommandInteraction represents an interaction triggered by a user context menu command.
 //
 // Reference: https://discord.com/developers/docs/interactions/application-commands
-type UserCommandInteraction struct {
+type UserContextMenuCommandInteraction struct {
 	ApplicationCommandInteractionFields
 
 	// Data contains the payload of the interaction specific to user commands.
-	Data UserCommandInteractionData `json:"data"`
+	Data UserContextMenuCommandInteractionData `json:"data"`
 }
 
-// MessageCommandInteraction represents an interaction triggered by a message context menu command.
+// MessageContextMenuCommandInteraction represents an interaction triggered by a message context menu command.
 //
 // Reference: https://discord.com/developers/docs/interactions/application-commands
-type MessageCommandInteraction struct {
+type MessageContextMenuCommandInteraction struct {
 	ApplicationCommandInteractionFields
 
 	// Data contains the payload of the interaction specific to message commands.
-	Data MessageCommandInteractionData `json:"data"`
+	Data MessageContextMenuCommandInteractionData `json:"data"`
 }
 
 // ComponentInteractionFields holds fields common to message component interactions.
@@ -623,7 +645,7 @@ type ModalSubmitInteraction struct {
 //	    fmt.Println("Ping interaction ID:", in.ID)
 //	case *ChatInputCommandInteraction:
 //	    fmt.Println("Chat input command name:", in.Data.Name)
-//	case *UserCommandInteraction:
+//	case *UserContextMenuCommandInteraction:
 //	    fmt.Println("User command target ID:", in.Data.TargetID)
 //	default:
 //	    fmt.Println("Other interaction type:", in.GetType())
@@ -644,8 +666,8 @@ type Interaction interface {
 var (
 	_ Interaction = (*PingInteraction)(nil)
 	_ Interaction = (*ChatInputCommandInteraction)(nil)
-	_ Interaction = (*UserCommandInteraction)(nil)
-	_ Interaction = (*MessageCommandInteraction)(nil)
+	_ Interaction = (*UserContextMenuCommandInteraction)(nil)
+	_ Interaction = (*MessageContextMenuCommandInteraction)(nil)
 	_ Interaction = (*ComponentInteraction)(nil)
 	_ Interaction = (*AutoCompleteInteraction)(nil)
 	_ Interaction = (*ModalSubmitInteraction)(nil)
@@ -663,34 +685,153 @@ func UnmarshalInteraction(buf []byte) (Interaction, error) {
 		return nil, err
 	}
 
+	var in Interaction
 	switch meta.Type {
 	case InteractionTypePing:
 		var i PingInteraction
-		return &i, json.Unmarshal(buf, &i)
+		if err := json.Unmarshal(buf, &i); err != nil {
+			return nil, err
+		}
+		in = &i
 	case InteractionTypeApplicationCommand:
 		switch meta.Data.Type {
 		case 0, ApplicationCommandTypeChatInput:
 			var i ChatInputCommandInteraction
-			return &i, json.Unmarshal(buf, &i)
+			if err := json.Unmarshal(buf, &i); err != nil {
+				return nil, err
+			}
+			in = &i
 		case ApplicationCommandTypeUser:
-			var i UserCommandInteraction
-			return &i, json.Unmarshal(buf, &i)
+			var i UserContextMenuCommandInteraction
+			if err := json.Unmarshal(buf, &i); err != nil {
+				return nil, err
+			}
+			in = &i
 		case ApplicationCommandTypeMessage:
-			var i MessageCommandInteraction
-			return &i, json.Unmarshal(buf, &i)
+			var i MessageContextMenuCommandInteraction
+			if err := json.Unmarshal(buf, &i); err != nil {
+				return nil, err
+			}
+			in = &i
 		default:
 			return nil, errors.New("unknown application command interaction type")
 		}
 	case InteractionTypeComponent:
 		var i ComponentInteraction
-		return &i, json.Unmarshal(buf, &i)
+		if err := json.Unmarshal(buf, &i); err != nil {
+			return nil, err
+		}
+		in = &i
 	case InteractionTypeAutocomplete:
 		var i AutoCompleteInteraction
-		return &i, json.Unmarshal(buf, &i)
+		if err := json.Unmarshal(buf, &i); err != nil {
+			return nil, err
+		}
+		in = &i
 	case InteractionTypeModalSubmit:
 		var i ModalSubmitInteraction
-		return &i, json.Unmarshal(buf, &i)
+		if err := json.Unmarshal(buf, &i); err != nil {
+			return nil, err
+		}
+		in = &i
 	default:
 		return nil, errors.New("unknown interaction type")
+	}
+
+	hydrateInteractionMembers(in)
+	return in, nil
+}
+
+func hydrateInteractionMembers(in Interaction) {
+	switch it := in.(type) {
+	case *ChatInputCommandInteraction:
+		if it.Member != nil {
+			if it.GuildID != 0 {
+				it.Member.GuildID = it.GuildID
+			}
+			if it.Member.User.ID != 0 {
+				it.Member.ID = it.Member.User.ID
+			}
+		}
+		for id, m := range it.Data.Resolved.Members {
+			m.ID = id
+			if it.GuildID != 0 {
+				m.GuildID = it.GuildID
+			}
+			it.Data.Resolved.Members[id] = m
+		}
+	case *UserContextMenuCommandInteraction:
+		if it.Member != nil {
+			if it.GuildID != 0 {
+				it.Member.GuildID = it.GuildID
+			}
+			if it.Member.User.ID != 0 {
+				it.Member.ID = it.Member.User.ID
+			}
+		}
+		for id, m := range it.Data.Resolved.Members {
+			m.ID = id
+			if it.GuildID != 0 {
+				m.GuildID = it.GuildID
+			}
+			it.Data.Resolved.Members[id] = m
+		}
+	case *MessageContextMenuCommandInteraction:
+		if it.Member != nil {
+			if it.GuildID != 0 {
+				it.Member.GuildID = it.GuildID
+			}
+			if it.Member.User.ID != 0 {
+				it.Member.ID = it.Member.User.ID
+			}
+		}
+		for id, m := range it.Data.Resolved.Members {
+			m.ID = id
+			if it.GuildID != 0 {
+				m.GuildID = it.GuildID
+			}
+			it.Data.Resolved.Members[id] = m
+		}
+	case *ComponentInteraction:
+		if it.Member != nil {
+			if it.GuildID != 0 {
+				it.Member.GuildID = it.GuildID
+			}
+			if it.Member.User.ID != 0 {
+				it.Member.ID = it.Member.User.ID
+			}
+		}
+		for id, m := range it.Data.Resolved.Members {
+			m.ID = id
+			if it.GuildID != 0 {
+				m.GuildID = it.GuildID
+			}
+			it.Data.Resolved.Members[id] = m
+		}
+	case *AutoCompleteInteraction:
+		if it.Member != nil {
+			if it.GuildID != 0 {
+				it.Member.GuildID = it.GuildID
+			}
+			if it.Member.User.ID != 0 {
+				it.Member.ID = it.Member.User.ID
+			}
+		}
+	case *ModalSubmitInteraction:
+		if it.Member != nil {
+			if it.GuildID != 0 {
+				it.Member.GuildID = it.GuildID
+			}
+			if it.Member.User.ID != 0 {
+				it.Member.ID = it.Member.User.ID
+			}
+		}
+		for id, m := range it.Data.Resolved.Members {
+			m.ID = id
+			if it.GuildID != 0 {
+				m.GuildID = it.GuildID
+			}
+			it.Data.Resolved.Members[id] = m
+		}
 	}
 }

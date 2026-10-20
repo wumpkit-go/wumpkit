@@ -356,7 +356,10 @@ func (e *GuildMemberAddEvent) UnmarshalJSON(buf []byte) error {
 	}
 	e.Member = v.FullMember
 	e.GuildID = v.GuildID
-	e.Member.Member.GuildID = v.GuildID
+	e.Member.GuildID = v.GuildID
+	if e.Member.User.ID != 0 {
+		e.Member.ID = e.Member.User.ID
+	}
 	return nil
 }
 
@@ -397,6 +400,24 @@ type GuildMembersChunkEvent struct {
 	NotFound   []Snowflake       `json:"not_found,omitempty"`
 	Presences  []GatewayPresence `json:"presences,omitempty"`
 	Nonce      string            `json:"nonce,omitempty"`
+}
+
+func (e *GuildMembersChunkEvent) UnmarshalJSON(buf []byte) error {
+	type localEvent GuildMembersChunkEvent
+	var v localEvent
+	if err := json.Unmarshal(buf, &v); err != nil {
+		return err
+	}
+	*e = GuildMembersChunkEvent(v)
+	if e.GuildID != 0 {
+		for i := range e.Members {
+			e.Members[i].GuildID = e.GuildID
+			if e.Members[i].User.ID != 0 {
+				e.Members[i].ID = e.Members[i].User.ID
+			}
+		}
+	}
+	return nil
 }
 
 // GuildRoleCreateEvent is dispatched when a guild role is created.
@@ -562,6 +583,24 @@ type MessageReactionAddEvent struct {
 	Type            ReactionType `json:"type"`
 }
 
+func (e *MessageReactionAddEvent) UnmarshalJSON(buf []byte) error {
+	type localEvent MessageReactionAddEvent
+	var v localEvent
+	if err := json.Unmarshal(buf, &v); err != nil {
+		return err
+	}
+	*e = MessageReactionAddEvent(v)
+	if e.Member != nil {
+		if e.GuildID != 0 {
+			e.Member.GuildID = e.GuildID
+		}
+		if e.UserID != 0 {
+			e.Member.ID = e.UserID
+		}
+	}
+	return nil
+}
+
 // MessageReactionRemoveEvent is dispatched when a reaction is removed from a message.
 type MessageReactionRemoveEvent struct {
 	ShardID   ShardID
@@ -645,6 +684,24 @@ type TypingStartEvent struct {
 	UserID    Snowflake `json:"user_id"`
 	Timestamp int64     `json:"timestamp"`
 	Member    *Member   `json:"member,omitempty"`
+}
+
+func (e *TypingStartEvent) UnmarshalJSON(buf []byte) error {
+	type localEvent TypingStartEvent
+	var v localEvent
+	if err := json.Unmarshal(buf, &v); err != nil {
+		return err
+	}
+	*e = TypingStartEvent(v)
+	if e.Member != nil {
+		if e.GuildID != 0 {
+			e.Member.GuildID = e.GuildID
+		}
+		if e.UserID != 0 {
+			e.Member.ID = e.UserID
+		}
+	}
+	return nil
 }
 
 // UserUpdateEvent is dispatched when the current user's profile is updated.

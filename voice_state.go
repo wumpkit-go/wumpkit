@@ -13,7 +13,10 @@
 
 package wumpkit
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
 // VoiceState represents a user's voice connection status in a guild.
 //
@@ -63,6 +66,24 @@ type GatewayVoiceState struct {
 	VoiceState
 
 	Member FullMember `json:"member"`
+}
+
+func (g *GatewayVoiceState) UnmarshalJSON(buf []byte) error {
+	type localState GatewayVoiceState
+	var v localState
+	if err := json.Unmarshal(buf, &v); err != nil {
+		return err
+	}
+	*g = GatewayVoiceState(v)
+	if g.GuildID != 0 {
+		g.Member.GuildID = g.GuildID
+	}
+	if g.UserID != 0 {
+		g.Member.ID = g.UserID
+	} else if g.Member.User.ID != 0 {
+		g.Member.ID = g.Member.User.ID
+	}
+	return nil
 }
 
 // VoiceRegion represents a Discord voice region.

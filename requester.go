@@ -178,11 +178,11 @@ func (r *requester) Shutdown() {
 // isRetryableStatus checks if an HTTP response status code indicates a temporary failure worth retrying.
 func isRetryableStatus(code int) bool {
 	switch code {
-	case http.StatusTooManyRequests, // 429 Rate limited
-		http.StatusInternalServerError, // 500 Internal Discord error
-		http.StatusBadGateway,          // 502 Bad Gateway / Cloudflare issue
-		http.StatusServiceUnavailable,  // 503 Service Unavailable / Discord restart
-		http.StatusGatewayTimeout,      // 504 Gateway Timeout
+	case http.StatusTooManyRequests, // 429 rate limited
+		http.StatusInternalServerError, // 500 internal Discord error
+		http.StatusBadGateway,          // 502 bad Gateway / Cloudflare issue
+		http.StatusServiceUnavailable,  // 503 service Unavailable / Discord restart
+		http.StatusGatewayTimeout,      // 504 gateway Timeout
 		524:                            // cloudflare timeout
 		return true
 	default:

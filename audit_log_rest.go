@@ -44,22 +44,27 @@ type FetchAuditLogOptions struct {
 // FetchGuildAuditLog returns an audit log object for the guild. Requires 'VIEW_AUDIT_LOG' permission.
 //
 // Reference: https://discord.com/developers/docs/resources/audit-log#get-guild-audit-log
-func (r *requester) FetchGuildAuditLog(ctx context.Context, guildID Snowflake, opts FetchAuditLogOptions) (AuditLog, error) {
+func (r *requester) FetchGuildAuditLog(ctx context.Context, guildID Snowflake, opts ...FetchAuditLogOptions) (AuditLog, error) {
+	var first FetchAuditLogOptions
+	if len(opts) > 0 {
+		first = opts[0]
+	}
+
 	query := url.Values{}
-	if opts.UserID != 0 {
-		query.Set("user_id", opts.UserID.String())
+	if first.UserID != 0 {
+		query.Set("user_id", first.UserID.String())
 	}
-	if opts.ActionType != 0 {
-		query.Set("action_type", strconv.Itoa(int(opts.ActionType)))
+	if first.ActionType != 0 {
+		query.Set("action_type", strconv.Itoa(int(first.ActionType)))
 	}
-	if opts.Before != 0 {
-		query.Set("before", opts.Before.String())
+	if first.Before != 0 {
+		query.Set("before", first.Before.String())
 	}
-	if opts.After != 0 {
-		query.Set("after", opts.After.String())
+	if first.After != 0 {
+		query.Set("after", first.After.String())
 	}
-	if opts.Limit > 0 {
-		query.Set("limit", strconv.Itoa(opts.Limit))
+	if first.Limit > 0 {
+		query.Set("limit", strconv.Itoa(first.Limit))
 	}
 
 	endpoint := fmt.Sprintf("/guilds/%s/audit-logs", guildID)

@@ -32,7 +32,7 @@ func TestEdgeCases_RouteNormalizationExhaustive(t *testing.T) {
 		method string
 		want   string
 	}{
-		// 1. Guild Major
+		// 1. guild Major
 		{"/api/v10/guilds/103039963636301824", "GET", "/guilds/103039963636301824"},
 		{"/api/v9/guilds/103039963636301824/channels", "GET", "/guilds/103039963636301824/channels"},
 		{"/api/v10/guilds/999999999999999999/channels", "GET", "/guilds/999999999999999999/channels"},
@@ -43,12 +43,12 @@ func TestEdgeCases_RouteNormalizationExhaustive(t *testing.T) {
 		{"/api/v10/guilds/103039963636301824/emojis/103039963636301825", "GET", "/guilds/103039963636301824/emojis/!"},
 		{"/api/v10/guilds/templates/103039963636301824", "GET", "/guilds/templates/!"},
 
-		// 2. Channel Major (numParts == 2, preserves channel_id as major parameter)
+		// 2. channel Major (numParts == 2, preserves channel_id as major parameter)
 		{"/api/v10/channels/203039963636301824", "GET", "/channels/203039963636301824"},
 		{"/api/v10/channels/203039963636301824", "DELETE", "/channels/203039963636301824"},
 		{"/api/v10/channels/203039963636301824", "PATCH", "/channels/203039963636301824"},
 
-		// 3. Channel Sub-resources
+		// 3. channel Sub-resources
 		{"/api/v10/channels/203039963636301824/pins", "GET", "/channels/203039963636301824/pins"},
 		{"/api/v10/channels/203039963636301824/messages", "GET", "/channels/203039963636301824/messages"},
 		{"/api/v10/channels/203039963636301824/messages", "POST", "/channels/203039963636301824/messages"},
@@ -57,14 +57,14 @@ func TestEdgeCases_RouteNormalizationExhaustive(t *testing.T) {
 		{"/api/v10/channels/203039963636301824/invites", "GET", "/channels/203039963636301824/invites"},
 		{"/api/v10/channels/203039963636301824/threads", "POST", "/channels/203039963636301824/threads"},
 
-		// 4. Message Deletion Age Rules
+		// 4. message Deletion Age Rules
 		{"/api/v10/channels/203039963636301824/messages/" + old15d, "DELETE", "/channels/203039963636301824/messages/!14dmsg"},
 		{"/api/v10/channels/203039963636301824/messages/" + new5s, "DELETE", "/channels/203039963636301824/messages/!10smsg"},
 		{"/api/v10/channels/203039963636301824/messages/" + mid2d, "DELETE", "/channels/203039963636301824/messages/!"},
 		{"/api/v10/channels/203039963636301824/messages/" + old15d, "GET", "/channels/203039963636301824/messages/!"},
 		{"/api/v10/channels/203039963636301824/messages/" + old15d, "PATCH", "/channels/203039963636301824/messages/!"},
 
-		// 5. Reactions
+		// 5. reactions
 		{"/api/v10/channels/203039963636301824/messages/" + old15d + "/reactions/%F0%9F%98%8B", "GET", "/channels/203039963636301824/messages/!/reactions/!/!"},
 		{"/api/v10/channels/203039963636301824/messages/" + old15d + "/reactions/customEmoji:103039963636301825", "GET", "/channels/203039963636301824/messages/!/reactions/!/!"},
 		{"/api/v10/channels/203039963636301824/messages/" + old15d + "/reactions/%F0%9F%98%8B/@me", "PUT", "/channels/203039963636301824/messages/!/reactions/!modify"},
@@ -72,25 +72,25 @@ func TestEdgeCases_RouteNormalizationExhaustive(t *testing.T) {
 		{"/api/v10/channels/203039963636301824/messages/" + old15d + "/reactions/%F0%9F%98%8B/103039963636301825", "DELETE", "/channels/203039963636301824/messages/!/reactions/!modify"},
 		{"/api/v10/channels/203039963636301824/messages/" + old15d + "/reactions", "DELETE", "/channels/203039963636301824/messages/!/reactions/!modify"},
 
-		// 6. Webhooks & Followup Messages
+		// 6. webhooks & Followup Messages
 		{"/api/v10/webhooks/203039963636301824", "GET", "/webhooks/203039963636301824"},
 		{"/api/v10/webhooks/203039963636301824/VSOzAqY1OZFF5WJVtbIzFtmjGupk-84Hn0A_ZzToF_CHsPIeCk0Q9Uok_mjxR0dNtApI", "POST", "/webhooks/203039963636301824/!"},
 		{"/api/v10/webhooks/203039963636301824/aW50ZXJhY3Rpb246MTEwMzA0OTQyMDkzMDU2ODMyMjpOZUllWHdNU2J4RXBFMHVYRjBpU0pHMDdEb3BhM3ZlYklBODlMUmtlUXlRbzlpZzYyTnpLU0dqdWlyVlBvZnBSUlJHbUJHYlJ0N29MbE9KQUJVTFk4bTR4UzFtZEpEeXJyY0hBUERmTEhKVE9wRkNzU1FFWUkwTnlpWFY2WHdrRg/messages/@original", "POST", "/webhooks/203039963636301824/1103049420930568322/messages/@original"},
 
-		// 7. Invites
+		// 7. invites
 		{"/api/v10/invites/discord-developers", "GET", "/invites/!"},
 		{"/api/v10/invites/103039963636301824", "GET", "/invites/!"},
 
-		// 8. Interactions
+		// 8. interactions
 		{"/api/v10/interactions/203039963636301824/aW50ZXJhY3Rpb246ODg3NTU5MDA01AY4NTUxNDU0OnZwS3QycDhvREk2aVF3U1BqN2prcXBkRmNqNlp4VEhGRjZvSVlXSGh4WG4yb3l6Z3B6NTBPNVc3OHphV05OULLMOHBMa2RTZmVKd3lzVDA2b2h3OTUxaFJ4QlN0dkxXallPcmhnSHNJb0tSV0M5ZzY1NkN4VGRvemFOSHY4b05c/callback", "POST", "/interactions/203039963636301824/!/callback"},
 
-		// 9. Application Commands
+		// 9. application Commands
 		{"/api/v10/applications/103039963636301824/commands", "GET", "/applications/103039963636301824/commands"},
 		{"/api/v10/applications/103039963636301824/commands/103039963636301825", "DELETE", "/applications/103039963636301824/commands/!"},
 		{"/api/v10/applications/103039963636301824/guilds/103039963636301825/commands", "GET", "/applications/103039963636301824/guilds/!/commands"},
 		{"/api/v10/applications/103039963636301824/guilds/103039963636301825/commands/103039963636301826", "GET", "/applications/103039963636301824/guilds/!/commands/!"},
 
-		// 10. Query Parameters & Unversioned
+		// 10. query Parameters & Unversioned
 		{"/api/v10/channels/203039963636301824/messages?limit=50&around=103039963636301825", "GET", "/channels/203039963636301824/messages"},
 		{"/channels/203039963636301824/messages?limit=50", "GET", "/channels/203039963636301824/messages"},
 	}
@@ -146,8 +146,8 @@ func TestEdgeCases_DynamicBucketHashSharing(t *testing.T) {
 	limiter := ratelimit.New()
 	ctx := context.Background()
 
-	// same channel, different sub-resources that Discord groups under the same bucket hash.
-	// this tests that the hash correctly unifies routes within the same major parameter.
+	// same channel, different sub-resources that Discord groups under the same bucket hash
+	// this tests that the hash correctly unifies routes within the same major parameter
 	channelMessages := "/channels/111111111111111111/messages"
 	channelPins := "/channels/111111111111111111/pins"
 
@@ -202,9 +202,9 @@ func TestEdgeCases_IndependentBucketsDoNotBlockEachOther(t *testing.T) {
 	channelA := "/channels/111111111111111111/messages"
 	channelB := "/channels/222222222222222222/messages"
 
-	// exhaust quota on Channel A for 5 seconds using the SAME bucket hash as Channel B.
+	// exhaust quota on Channel A for 5 seconds using the SAME bucket hash as Channel B
 	// discord returns identical X-RateLimit-Bucket hashes for the same endpoint template,
-	// but per-route limits are independent across major parameters (channel_id).
+	// but per-route limits are independent across major parameters (channel_id)
 	h := make(http.Header)
 	h.Set("X-RateLimit-Limit", "5")
 	h.Set("X-RateLimit-Remaining", "0")
@@ -213,7 +213,7 @@ func TestEdgeCases_IndependentBucketsDoNotBlockEachOther(t *testing.T) {
 	limiter.Update(channelA, "POST", h, 200)
 
 	// channel B must proceed immediately despite sharing the same bucket hash!
-	// this verifies the major parameter isolation fix.
+	// this verifies the major parameter isolation fix
 	start := time.Now()
 	err := limiter.Wait(ctx, channelB, "POST")
 	require.NoError(t, err)
@@ -333,8 +333,8 @@ func TestEdgeCases_SharedScope429DoesNotZeroRemaining(t *testing.T) {
 	ctx := context.Background()
 	route := "/channels/123456789012345678/messages"
 
-	// simulate a shared scope 429 where the per-route bucket still has capacity.
-	// this happens when the underlying Discord resource is throttled across multiple bots.
+	// simulate a shared scope 429 where the per-route bucket still has capacity
+	// this happens when the underlying Discord resource is throttled across multiple bots
 	h := make(http.Header)
 	h.Set("X-RateLimit-Limit", "10")
 	h.Set("X-RateLimit-Remaining", "9") // per-route bucket still has 9 remaining!
@@ -344,9 +344,9 @@ func TestEdgeCases_SharedScope429DoesNotZeroRemaining(t *testing.T) {
 	h.Set("X-RateLimit-Scope", "shared")
 	limiter.Update(route, "POST", h, 429)
 
-	// the per-route bucket should still have remaining capacity (9, not 0).
+	// the per-route bucket should still have remaining capacity (9, not 0)
 	// the request should NOT be blocked for 64.57s — it should use the Retry-After
-	// duration from the shared scope as the reset time.
+	// duration from the shared scope as the reset time
 	start := time.Now()
 	err := limiter.Wait(ctx, route, "POST")
 	require.NoError(t, err)

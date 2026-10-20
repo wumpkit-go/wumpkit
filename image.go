@@ -1,6 +1,7 @@
 package wumpkit
 
 import (
+	"slices"
 	"strconv"
 )
 
@@ -62,14 +63,7 @@ func isAnimatedHash(hash string) bool {
 
 // buildImageURL constructs a URL for Discord assets with fallback logic.
 func buildImageURL(baseURL, path, hash string, config ImageConfig, allowedFormats [5]ImageFormat) string {
-	allowed := false
-	for _, f := range allowedFormats {
-		if config.Format == f {
-			allowed = true
-			break
-		}
-	}
-
+	allowed := slices.Contains(allowedFormats[:], config.Format)
 	animatedHash := isAnimatedHash(hash)
 
 	if !allowed || (config.Format == ImageFormatGIF && !animatedHash) {

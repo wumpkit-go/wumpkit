@@ -109,14 +109,19 @@ func (r *requester) ListSKUs(ctx context.Context, applicationID Snowflake) ([]SK
 // ListEntitlements returns all entitlements for a given app, active and expired.
 //
 // Reference: https://discord.com/developers/docs/resources/entitlement#list-entitlements
-func (r *requester) ListEntitlements(ctx context.Context, applicationID Snowflake, opts ListEntitlementsOptions) ([]Entitlement, error) {
-	params := url.Values{}
-	if opts.UserID != 0 {
-		params.Set("user_id", opts.UserID.String())
+func (r *requester) ListEntitlements(ctx context.Context, applicationID Snowflake, opts ...ListEntitlementsOptions) ([]Entitlement, error) {
+	var first ListEntitlementsOptions
+	if len(opts) > 0 {
+		first = opts[0]
 	}
-	if len(opts.SKUIDs) > 0 {
+
+	params := url.Values{}
+	if first.UserID != 0 {
+		params.Set("user_id", first.UserID.String())
+	}
+	if len(first.SKUIDs) > 0 {
 		var sb strings.Builder
-		for i, id := range opts.SKUIDs {
+		for i, id := range first.SKUIDs {
 			if i > 0 {
 				sb.WriteByte(',')
 			}
@@ -124,23 +129,23 @@ func (r *requester) ListEntitlements(ctx context.Context, applicationID Snowflak
 		}
 		params.Set("sku_ids", sb.String())
 	}
-	if opts.Before != 0 {
-		params.Set("before", opts.Before.String())
+	if first.Before != 0 {
+		params.Set("before", first.Before.String())
 	}
-	if opts.After != 0 {
-		params.Set("after", opts.After.String())
+	if first.After != 0 {
+		params.Set("after", first.After.String())
 	}
-	if opts.Limit > 0 {
-		params.Set("limit", strconv.Itoa(opts.Limit))
+	if first.Limit > 0 {
+		params.Set("limit", strconv.Itoa(first.Limit))
 	}
-	if opts.GuildID != 0 {
-		params.Set("guild_id", opts.GuildID.String())
+	if first.GuildID != 0 {
+		params.Set("guild_id", first.GuildID.String())
 	}
-	if opts.ExcludeEnded {
+	if first.ExcludeEnded {
 		params.Set("exclude_ended", "true")
 	}
-	if opts.ExcludeDeleted != nil {
-		params.Set("exclude_deleted", strconv.FormatBool(*opts.ExcludeDeleted))
+	if first.ExcludeDeleted != nil {
+		params.Set("exclude_deleted", strconv.FormatBool(*first.ExcludeDeleted))
 	}
 
 	endpoint := "/applications/" + applicationID.String() + "/entitlements"
@@ -254,19 +259,24 @@ func (r *requester) DeleteTestEntitlement(ctx context.Context, applicationID, en
 // ListSKUSubscriptions returns all subscriptions containing the SKU.
 //
 // Reference: https://discord.com/developers/docs/resources/subscription#list-sku-subscriptions
-func (r *requester) ListSKUSubscriptions(ctx context.Context, skuID Snowflake, opts ListSKUSubscriptionsOptions) ([]Subscription, error) {
+func (r *requester) ListSKUSubscriptions(ctx context.Context, skuID Snowflake, opts ...ListSKUSubscriptionsOptions) ([]Subscription, error) {
+	var first ListSKUSubscriptionsOptions
+	if len(opts) > 0 {
+		first = opts[0]
+	}
+
 	params := url.Values{}
-	if opts.Before != 0 {
-		params.Set("before", opts.Before.String())
+	if first.Before != 0 {
+		params.Set("before", first.Before.String())
 	}
-	if opts.After != 0 {
-		params.Set("after", opts.After.String())
+	if first.After != 0 {
+		params.Set("after", first.After.String())
 	}
-	if opts.Limit > 0 {
-		params.Set("limit", strconv.Itoa(opts.Limit))
+	if first.Limit > 0 {
+		params.Set("limit", strconv.Itoa(first.Limit))
 	}
-	if opts.UserID != 0 {
-		params.Set("user_id", opts.UserID.String())
+	if first.UserID != 0 {
+		params.Set("user_id", first.UserID.String())
 	}
 
 	endpoint := "/skus/" + skuID.String() + "/subscriptions"
