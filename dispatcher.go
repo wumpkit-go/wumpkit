@@ -152,6 +152,13 @@ func DefaultDispatcherConfig() DispatcherConfig {
 	}
 }
 
+// eventTask represents a queued gateway dispatch payload
+type eventTask struct {
+	shardID   ShardID
+	eventName string
+	data      []byte
+}
+
 // dispatcher manages registration of event handlers and dispatching of events.
 type dispatcher struct {
 	ctx                   context.Context
@@ -161,6 +168,8 @@ type dispatcher struct {
 	handlersExecutionMode HandlersExecutionMode
 	wg                    sync.WaitGroup
 	closed                atomic.Bool
+	queuesMu              sync.Mutex
+	queues                map[ShardID]chan eventTask
 }
 
 func newDispatcher(ctx context.Context, cache CacheManager, logger Logger, mode HandlersExecutionMode) *dispatcher {
@@ -170,6 +179,7 @@ func newDispatcher(ctx context.Context, cache CacheManager, logger Logger, mode 
 		logger:                logger,
 		handlersExecutionMode: mode,
 		handlersManagers:      make(map[GatewayEvent]eventhandlersManager, 80),
+		queues:                make(map[ShardID]chan eventTask),
 	}
 
 	// register all handler managers
@@ -269,30 +279,71 @@ func (d *dispatcher) Dispatch(shardID ShardID, eventName string, data []byte) {
 	if d.closed.Load() {
 		return
 	}
-	d.wg.Add(1)
-	d.logger.Debug("event dispatched", "shard_id", shardID, "event", eventName)
-	go func() {
-		defer d.wg.Done()
-		defer func() {
-			if r := recover(); r != nil {
-				d.logger.Error("Recovered from panic while handling event",
-					"event", eventName,
-					"shard_id", shardID,
-					"panic", r,
-					"stack", string(debug.Stack()),
-				)
-			}
-		}()
 
-		if hm, ok := d.handlersManagers[GatewayEvent(eventName)]; ok {
-			hm.handleEvent(d.ctx, d.cache, d.handlersExecutionMode == HandlersExecutionConcurrent, shardID, data)
+	d.queuesMu.Lock()
+	q, ok := d.queues[shardID]
+	if !ok {
+		if d.closed.Load() {
+			d.queuesMu.Unlock()
+			return
+		}
+		q = make(chan eventTask, 2048)
+		d.queues[shardID] = q
+		d.wg.Add(1)
+		go d.runWorker(q)
+	}
+	d.queuesMu.Unlock()
+
+	d.logger.Debug("event dispatched", "shard_id", shardID, "event", eventName)
+
+	select {
+	case q <- eventTask{shardID: shardID, eventName: eventName, data: data}:
+	default:
+		// queue overflow fallback to avoid blocking websocket read loop
+		go func() {
+			q <- eventTask{shardID: shardID, eventName: eventName, data: data}
+		}()
+	}
+}
+
+func (d *dispatcher) runWorker(ch chan eventTask) {
+	defer d.wg.Done()
+	for task := range ch {
+		d.processEvent(task.shardID, task.eventName, task.data)
+	}
+}
+
+func (d *dispatcher) processEvent(shardID ShardID, eventName string, data []byte) {
+	defer func() {
+		if r := recover(); r != nil {
+			if tmErr, ok := r.(*TypeMismatchError); ok {
+				panic(tmErr)
+			}
+			d.logger.Error("Recovered from panic while handling event",
+				"event", eventName,
+				"shard_id", shardID,
+				"panic", r,
+				"stack", string(debug.Stack()),
+			)
 		}
 	}()
+
+	if hm, ok := d.handlersManagers[GatewayEvent(eventName)]; ok {
+		hm.handleEvent(d.ctx, d.cache, d.handlersExecutionMode == HandlersExecutionConcurrent, shardID, data)
+	}
 }
 
 // Shutdown stops dispatching new events and gracefully waits for in-flight event handlers to complete.
 func (d *dispatcher) Shutdown(timeout time.Duration) {
 	d.closed.Store(true)
+
+	d.queuesMu.Lock()
+	for _, q := range d.queues {
+		close(q)
+	}
+	d.queues = make(map[ShardID]chan eventTask)
+	d.queuesMu.Unlock()
+
 	done := make(chan struct{})
 	go func() {
 		d.wg.Wait()

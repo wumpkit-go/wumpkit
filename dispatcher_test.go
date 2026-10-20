@@ -68,3 +68,46 @@ func TestDispatcher_CachePopulatedWithoutUserHandlers(t *testing.T) {
 	assert.True(t, roleFound, "Role should be cached even with no user handlers registered")
 	assert.Equal(t, "Member", role.Name)
 }
+
+func TestDispatcher_FIFOSequentialOrder(t *testing.T) {
+	client := New(context.Background(), WithToken("dummy_token"))
+	d := client.dispatcher
+
+	const totalEvents = 100
+	var order []int
+	var mu sync.Mutex
+	done := make(chan struct{})
+
+	d.OnMessageCreate(func(ctx context.Context, e MessageCreateEvent) {
+		mu.Lock()
+		defer mu.Unlock()
+		var idx int
+		for i := range e.Message.Content {
+			if e.Message.Content[i] >= '0' && e.Message.Content[i] <= '9' {
+				idx = idx*10 + int(e.Message.Content[i]-'0')
+			}
+		}
+		order = append(order, idx)
+		if len(order) == totalEvents {
+			close(done)
+		}
+	})
+
+	for i := range totalEvents {
+		msgJSON := `{"id":"` + string(rune('0'+i%10)) + `","channel_id":"1","content":"msg` + string(rune('0'+i/100)) + string(rune('0'+(i/10)%10)) + string(rune('0'+i%10)) + `"}`
+		d.Dispatch(0, "MESSAGE_CREATE", []byte(msgJSON))
+	}
+
+	select {
+	case <-done:
+	case <-time.After(5 * time.Second):
+		t.Fatal("timed out waiting for events")
+	}
+
+	mu.Lock()
+	defer mu.Unlock()
+	assert.Equal(t, totalEvents, len(order))
+	for i := range totalEvents {
+		assert.Equal(t, i, order[i], "events should be processed in strict fifo order")
+	}
+}

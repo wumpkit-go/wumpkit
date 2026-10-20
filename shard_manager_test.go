@@ -1,11 +1,13 @@
 package wumpkit
 
 import (
+	"bytes"
 	"context"
 	"log/slog"
 	"testing"
 	"time"
 
+	"github.com/klauspost/compress/zstd"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -205,4 +207,49 @@ func TestToken_PrefixSanitization(t *testing.T) {
 		c := New(context.Background(), WithToken(tt.input))
 		assert.Equal(t, tt.expected, c.Token())
 	}
+}
+
+func TestShard_ZstdDecompression(t *testing.T) {
+	s := newShard(
+		0, 1, "test_token", GatewayIntentGuilds,
+		slog.Default(), nil, nil,
+		GatewayCompressionZstdStream, IdentifyProperties{},
+		"wss://gateway.discord.gg", nil,
+	)
+	defer func() {
+		_ = s.Shutdown()
+	}()
+
+	original := []byte(`{"op":0,"s":1,"t":"READY","d":{"session_id":"abc","resume_gateway_url":"wss://resume.discord.gg"}}`)
+
+	var compressedBuf bytes.Buffer
+	enc, err := zstd.NewWriter(&compressedBuf)
+	require.NoError(t, err)
+	_, err = enc.Write(original)
+	require.NoError(t, err)
+	require.NoError(t, enc.Close())
+
+	decompressed, err := s.decompressZstd(compressedBuf.Bytes())
+	require.NoError(t, err)
+	assert.Equal(t, string(original), string(decompressed))
+}
+
+func TestShard_CommandRateLimiter(t *testing.T) {
+	s := newShard(
+		0, 1, "test_token", GatewayIntentGuilds,
+		slog.Default(), nil, nil,
+		GatewayCompressionNone, IdentifyProperties{},
+		"wss://gateway.discord.gg", nil,
+	)
+	defer func() {
+		_ = s.Shutdown()
+	}()
+
+	require.NotNil(t, s.commandLimiter)
+	assert.Equal(t, uint(120), s.commandLimiter.Capacity())
+	assert.Equal(t, uint(120), s.commandLimiter.Remaining())
+
+	err := s.commandLimiter.Add(1)
+	assert.NoError(t, err)
+	assert.Equal(t, uint(119), s.commandLimiter.Remaining())
 }

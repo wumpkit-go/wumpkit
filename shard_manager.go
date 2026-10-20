@@ -29,6 +29,8 @@ import (
 	"time"
 
 	"github.com/coder/websocket"
+	"github.com/klauspost/compress/zstd"
+	"github.com/wumpkit-go/wumpkit/internal/ratelimit"
 )
 
 /*******************************
@@ -597,13 +599,20 @@ type Shard struct {
 	gatewayURL  string
 	dialOptions *websocket.DialOptions
 
-	// Zlib buffer & reader for decompression
+	// zlib buffer and reader for decompression
 	zlibBuf    bytes.Buffer
 	zlibReader io.ReadCloser
 	zlibMu     sync.Mutex
+
+	// zstd decompression state
+	zstdDecoder *zstd.Decoder
+	zstdMu      sync.Mutex
+
+	// command rate limiter for outbound gateway commands
+	commandLimiter ratelimit.Bucket
 }
 
-// newShard constructs a new Shard instance with the specified parameters.
+// newShard constructs a new Shard instance with the specified parameters
 func newShard(
 	shardID, totalShards int, token string, intents GatewayIntent,
 	logger Logger, dispatcher *dispatcher, limiter ShardsIdentifyRateLimiter,
@@ -625,18 +634,15 @@ func newShard(
 		properties:      properties,
 		gatewayURL:      gatewayURL,
 		dialOptions:     dialOptions,
+		commandLimiter:  ratelimit.NewTokenBucket(120, 60*time.Second),
 		heartbeatStop:   make(chan struct{}),
 		stopChan:        make(chan struct{}),
 	}
 }
 
-// writeMessage safely writes a text message to the WebSocket connection.
+// writeMessage safely writes a text message to the WebSocket connection
 func (s *Shard) writeMessage(payload []byte) error {
-	s.writeMu.Lock()
-	conn := s.conn
-	s.writeMu.Unlock()
-
-	if conn == nil || s.closed.Load() {
+	if s.closed.Load() {
 		return errors.New("shard: connection is nil or closed")
 	}
 
@@ -649,6 +655,29 @@ func (s *Shard) writeMessage(payload []byte) error {
 		return errors.New("shard: connection is nil or closed")
 	}
 	return s.conn.Write(ctx, websocket.MessageText, payload)
+}
+
+// writeCommand writes an outbound gateway command with rate limiting
+func (s *Shard) writeCommand(op gatewayOpcode, payload []byte) error {
+	if op != gatewayOpcodeHeartbeat && s.commandLimiter != nil {
+		for {
+			if err := s.commandLimiter.Add(1); err == nil {
+				break
+			}
+			wait := time.Until(s.commandLimiter.Reset())
+			if wait <= 0 {
+				continue
+			}
+			select {
+			case <-time.After(wait):
+			case <-s.stopChan:
+				return errors.New("shard: connection stopped")
+			case <-s.ctx.Done():
+				return s.ctx.Err()
+			}
+		}
+	}
+	return s.writeMessage(payload)
 }
 
 // connect establishes or resumes a WebSocket connection to Discord Gateway.
@@ -676,6 +705,13 @@ func (s *Shard) connect(ctx context.Context) error {
 	}
 	s.zlibBuf.Reset()
 	s.zlibMu.Unlock()
+
+	s.zstdMu.Lock()
+	if s.zstdDecoder != nil {
+		s.zstdDecoder.Close()
+		s.zstdDecoder = nil
+	}
+	s.zstdMu.Unlock()
 
 	connURL := s.resumeURL
 	if connURL == "" {
@@ -758,17 +794,22 @@ func (s *Shard) readLoop(conn *websocket.Conn) {
 			if s.closed.Load() {
 				return
 			}
-			s.handleDisconnectError(err)
+			go s.handleDisconnectError(err)
 			return
 		}
 
 		var payload gatewayPayload
 
 		if typ == websocket.MessageBinary {
-			// zlib compressed chunk
-			data, err := s.decompressZlib(msg)
+			var data []byte
+			var err error
+			if s.compression == GatewayCompressionZstdStream {
+				data, err = s.decompressZstd(msg)
+			} else {
+				data, err = s.decompressZlib(msg)
+			}
 			if err != nil {
-				s.logger.Error("zlib decompression failed", "error", err)
+				s.logger.Error("payload decompression failed", "compression", s.compression, "error", err)
 				s.reconnect(true)
 				return
 			}
@@ -793,14 +834,14 @@ func (s *Shard) readLoop(conn *websocket.Conn) {
 	}
 }
 
-// decompressZlib buffers binary chunks and decompresses when flush suffix is reached.
+// decompressZlib buffers binary chunks and decompresses when flush suffix is reached
 func (s *Shard) decompressZlib(chunk []byte) ([]byte, error) {
 	s.zlibMu.Lock()
 	defer s.zlibMu.Unlock()
 
 	s.zlibBuf.Write(chunk)
 
-	// in Discord's zlib-stream, each full packet ends with \x00\x00\xff\xff
+	// in discord zlib-stream, each full packet ends with flush suffix
 	if len(chunk) < 4 || string(chunk[len(chunk)-4:]) != zlibFlushSuffix {
 		return nil, nil
 	}
@@ -825,6 +866,26 @@ func (s *Shard) decompressZlib(chunk []byte) ([]byte, error) {
 	}
 
 	return out.Bytes(), nil
+}
+
+// decompressZstd decompresses a zstd-stream chunk
+func (s *Shard) decompressZstd(chunk []byte) ([]byte, error) {
+	s.zstdMu.Lock()
+	defer s.zstdMu.Unlock()
+
+	if s.zstdDecoder == nil {
+		dec, err := zstd.NewReader(nil, zstd.WithDecoderLowmem(true))
+		if err != nil {
+			return nil, err
+		}
+		s.zstdDecoder = dec
+	}
+
+	if err := s.zstdDecoder.Reset(bytes.NewReader(chunk)); err != nil {
+		return nil, err
+	}
+
+	return io.ReadAll(s.zstdDecoder)
 }
 
 // isFatalCloseCode returns true if the close code is unrecoverable without configuration change.
@@ -912,17 +973,14 @@ func (s *Shard) handleGatewayPayload(payload gatewayPayload) {
 	case gatewayOpcodeInvalidSession:
 		var resumable bool
 		_ = json.Unmarshal(payload.D, &resumable)
-		// discord docs: wait 1 to 5 seconds before reconnecting/resuming
 		jitter := time.Duration(1000+rand.IntN(4000)) * time.Millisecond
-		time.Sleep(jitter)
+		s.logger.Info("invalid session received", "resumable", resumable, "jitter", jitter.String())
 
-		if resumable {
-			s.logger.Info("session invalid (resumable), sending resume")
-			_ = s.sendResume()
-		} else {
-			s.logger.Info("session invalid (non-resumable), reconnecting to start new session")
-			go s.reconnect(false)
-		}
+		// wait jitter then reconnect to resume or identify
+		go func() {
+			time.Sleep(jitter)
+			s.reconnect(resumable)
+		}()
 
 	case gatewayOpcodeHello:
 		var hello struct {
@@ -933,13 +991,16 @@ func (s *Shard) handleGatewayPayload(payload gatewayPayload) {
 		s.logger.Debug("HELLO received", "heartbeat_interval", interval.String())
 		go s.startHeartbeat(interval)
 
-		if s.sessionID != "" && s.seq.Load() > 0 {
-			s.logger.Info("resuming previous session")
-			_ = s.sendResume()
-		} else {
-			s.logger.Debug("identifying new session")
-			_ = s.sendIdentify()
-		}
+		// send handshake asynchronously so rate limit wait does not block read loop
+		go func() {
+			if s.sessionID != "" && s.seq.Load() > 0 {
+				s.logger.Info("resuming previous session")
+				_ = s.sendResume()
+			} else {
+				s.logger.Debug("identifying new session")
+				_ = s.sendIdentify()
+			}
+		}()
 
 	case gatewayOpcodeHeartbeatACK:
 		s.lastHeartbeatACK.Store(true)
@@ -982,10 +1043,10 @@ func (s *Shard) sendIdentify() error {
 			return err
 		}
 	}
-	return s.writeMessage(payload)
+	return s.writeCommand(gatewayOpcodeIdentify, payload)
 }
 
-// sendResume sends a Resume payload to Discord Gateway.
+// sendResume sends a Resume payload to Discord Gateway
 func (s *Shard) sendResume() error {
 	payload, _ := json.Marshal(map[string]any{
 		"op": gatewayOpcodeResume,
@@ -995,7 +1056,7 @@ func (s *Shard) sendResume() error {
 			"seq":        s.seq.Load(),
 		},
 	})
-	return s.writeMessage(payload)
+	return s.writeCommand(gatewayOpcodeResume, payload)
 }
 
 // sendHeartbeat sends a Heartbeat payload to Discord Gateway.
@@ -1127,7 +1188,7 @@ func (s *Shard) UpdatePresence(presence GatewayPresenceUpdate) error {
 	if err != nil {
 		return err
 	}
-	return s.writeMessage(payload)
+	return s.writeCommand(gatewayOpcodePresenceUpdate, payload)
 }
 
 // UpdateVoiceState sends an Opcode 4 Voice State Update to Discord Gateway.
@@ -1144,7 +1205,7 @@ func (s *Shard) UpdateVoiceState(guildID Snowflake, channelID *Snowflake, selfMu
 	if err != nil {
 		return err
 	}
-	return s.writeMessage(payload)
+	return s.writeCommand(gatewayOpcodeVoiceStateUpdate, payload)
 }
 
 // RequestGuildMembers sends an Opcode 8 Request Guild Members payload to Discord Gateway.
@@ -1156,7 +1217,7 @@ func (s *Shard) RequestGuildMembers(opts RequestGuildMembersOptions) error {
 	if err != nil {
 		return err
 	}
-	return s.writeMessage(payload)
+	return s.writeCommand(gatewayOpcodeRequestGuildMembers, payload)
 }
 
 // RequestSoundboardSounds sends an Opcode 31 Request Soundboard Sounds payload to Discord Gateway.
@@ -1170,7 +1231,7 @@ func (s *Shard) RequestSoundboardSounds(guildIDs []Snowflake) error {
 	if err != nil {
 		return err
 	}
-	return s.writeMessage(payload)
+	return s.writeCommand(gatewayOpcodeRequestSoundboardSounds, payload)
 }
 
 // RequestChannelInfo sends an Opcode 43 Request Channel Info payload to Discord Gateway.
@@ -1182,7 +1243,7 @@ func (s *Shard) RequestChannelInfo(opts RequestChannelInfoOptions) error {
 	if err != nil {
 		return err
 	}
-	return s.writeMessage(payload)
+	return s.writeCommand(gatewayOpcodeRequestChannelInfo, payload)
 }
 
 // ShardID returns the zero-based shard ID.
@@ -1241,7 +1302,7 @@ func (s *Shard) Send(op int, data any) error {
 	if err != nil {
 		return err
 	}
-	return s.writeMessage(payload)
+	return s.writeCommand(gatewayOpcode(op), payload)
 }
 
 // Context returns the shard's internal lifecycle context.
@@ -1266,6 +1327,12 @@ func (s *Shard) Shutdown() error {
 				close(s.heartbeatStop)
 			}
 		}
+		s.zstdMu.Lock()
+		if s.zstdDecoder != nil {
+			s.zstdDecoder.Close()
+			s.zstdDecoder = nil
+		}
+		s.zstdMu.Unlock()
 		s.writeMu.Lock()
 		defer s.writeMu.Unlock()
 		if s.conn != nil {
