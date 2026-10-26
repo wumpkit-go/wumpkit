@@ -237,6 +237,10 @@ const (
 	// Channel types: Text, Voice, Stage
 	PermissionSendVoiceMessages Permissions = 1 << 46
 
+	// set voice channel status allows setting voice channel status
+	// channel types: voice, stage
+	PermissionSetVoiceChannelStatus Permissions = 1 << 48
+
 	// SendPolls allows sending polls.
 	//
 	// Channel types: Text, Voice, Stage
@@ -308,6 +312,7 @@ const (
 		PermissionCreateEvents |
 		PermissionUseExternalSounds |
 		PermissionSendVoiceMessages |
+		PermissionSetVoiceChannelStatus |
 		PermissionSendPolls |
 		PermissionUseExternalApps |
 		PermissionPinMessages |
@@ -365,6 +370,7 @@ const (
 	PermissionNameCreateEvents                     PermissionName = "CreateEvents"
 	PermissionNameUseExternalSounds                PermissionName = "UseExternalSounds"
 	PermissionNameSendVoiceMessages                PermissionName = "SendVoiceMessages"
+	PermissionNameSetVoiceChannelStatus            PermissionName = "SetVoiceChannelStatus"
 	PermissionNameSendPolls                        PermissionName = "SendPolls"
 	PermissionNameUseExternalApps                  PermissionName = "UseExternalApps"
 	PermissionNamePinMessages                      PermissionName = "PinMessages"
@@ -430,6 +436,7 @@ var PermissionNames = map[Permissions]PermissionName{
 	PermissionCreateEvents:                     PermissionNameCreateEvents,
 	PermissionUseExternalSounds:                PermissionNameUseExternalSounds,
 	PermissionSendVoiceMessages:                PermissionNameSendVoiceMessages,
+	PermissionSetVoiceChannelStatus:            PermissionNameSetVoiceChannelStatus,
 	PermissionSendPolls:                        PermissionNameSendPolls,
 	PermissionUseExternalApps:                  PermissionNameUseExternalApps,
 	PermissionPinMessages:                      PermissionNamePinMessages,

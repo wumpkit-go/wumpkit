@@ -45,4 +45,7 @@ func TestPermissions_Stringer(t *testing.T) {
 	assert.Equal(t, "SendMessages", PermissionSendMessages.String())
 	assert.Equal(t, "BanMembers, AddReactions", (PermissionBanMembers | PermissionAddReactions).String())
 	assert.Equal(t, "ViewAuditLog", PermissionNameViewAuditLog.String())
+	assert.Equal(t, "SetVoiceChannelStatus", PermissionNameSetVoiceChannelStatus.String())
+	assert.True(t, PermissionAll.Has(PermissionSetVoiceChannelStatus))
+	assert.Equal(t, PermissionNameSetVoiceChannelStatus, PermissionNames[PermissionSetVoiceChannelStatus])
 }
