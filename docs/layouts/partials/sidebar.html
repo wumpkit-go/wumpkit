@@ -1,0 +1,24 @@
+<aside class="sqlite-sidebar" id="site-sidebar">
+  <div class="sidebar-box">
+    <div class="sidebar-box-header">Documentation</div>
+    <ul class="sidebar-menu">
+      <li><a href="{{ "/" | relURL }}" class="{{ if .IsHome }}current{{ end }}">Overview</a></li>
+      {{ range .Site.Home.Sections }}
+        <li class="sidebar-group">
+          <div class="sidebar-group-title">{{ .Title }}</div>
+          {{ if .Pages }}
+            <ul class="sidebar-sublist">
+              {{ range .Pages.ByWeight }}
+                <li>
+                  <a href="{{ .RelPermalink }}" class="{{ if eq $.RelPermalink .RelPermalink }}current{{ end }}">
+                    {{ .Title }}
+                  </a>
+                </li>
+              {{ end }}
+            </ul>
+          {{ end }}
+        </li>
+      {{ end }}
+    </ul>
+  </div>
+</aside>

@@ -1,0 +1,80 @@
+name: Documentation & Wiki Sync
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'docs/**'
+      - 'scripts/sync_wiki.go'
+      - '.github/workflows/docs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: 'latest'
+          extended: true
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25.x'
+          cache: false
+
+      - name: Build Hugo site
+        run: |
+          hugo --source docs --minify
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/public
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Sync to GitHub Wiki
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          WIKI_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.wiki.git"
+          
+          mkdir -p /tmp/wiki
+          if git clone "$WIKI_URL" /tmp/wiki; then
+            go run scripts/sync_wiki.go --target /tmp/wiki
+            cd /tmp/wiki
+            git add -A
+            if git diff-index --quiet HEAD; then
+              echo "No changes to sync to wiki"
+            else
+              git commit -m "docs(wiki): sync documentation from master"
+              git push origin master
+            fi
+          else
+            echo "Wiki repository not initialized or accessible. Please create the initial wiki page via GitHub UI if not enabled."
+          fi

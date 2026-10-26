@@ -1,0 +1,17 @@
+<div class="sqlite-header">
+  <div class="logo-banner">
+    <div class="brand">
+      <a href="{{ "/" | relURL }}" class="brand-title">Wumpkit</a>
+    </div>
+  </div>
+  <nav class="navbar">
+    <div class="navbar-links">
+      <a href="{{ "/" | relURL }}">Home</a>
+      {{ with .Site.Params.wikiURL }}<a href="{{ . }}" target="_blank" rel="noopener">GitHub Wiki</a>{{ end }}
+      {{ with .Site.Params.repoURL }}<a href="{{ . }}" target="_blank" rel="noopener">GitHub</a>{{ end }}
+    </div>
+    <div class="navbar-right">
+      <button id="theme-toggle" class="theme-btn" aria-label="Toggle theme">Dark Mode</button>
+    </div>
+  </nav>
+</div>

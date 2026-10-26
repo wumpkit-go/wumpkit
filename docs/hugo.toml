@@ -1,0 +1,23 @@
+baseURL = "/"
+locale = "en-us"
+title = "Wumpkit Documentation"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+    [markup.goldmark.parser]
+      [markup.goldmark.parser.attribute]
+        block = true
+        title = true
+  [markup.highlight]
+    codeFences = true
+    guessSyntax = true
+    lineNos = false
+    noClasses = false
+
+[params]
+  description = "A lightweight and high-performance Discord API library for Go"
+  repoURL = "https://github.com/wumpkit-go/wumpkit"
+  wikiURL = "https://github.com/wumpkit-go/wumpkit/wiki"
+  version = "v1.0.0"

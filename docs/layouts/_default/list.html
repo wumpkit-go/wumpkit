@@ -1,0 +1,19 @@
+{{ define "main" }}
+<div class="article-body">
+  {{ .Content }}
+
+  {{ if .Pages }}
+    <div class="index-section">
+      <h3>Documents in this section:</h3>
+      <ul class="index-bullets">
+        {{ range .Pages.ByWeight }}
+          <li>
+            <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+            {{ with .Description }} &mdash; {{ . }}{{ end }}
+          </li>
+        {{ end }}
+      </ul>
+    </div>
+  {{ end }}
+</div>
+{{ end }}

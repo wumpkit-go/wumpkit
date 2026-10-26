@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ if not .IsHome }}{{ .Title }} - {{ end }}{{ .Site.Title }}</title>
+  <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+  <link rel="stylesheet" href="{{ "css/style.css" | relURL }}">
+  <script>
+    (function() {
+      var saved = localStorage.getItem('wumpkit-theme');
+      if (saved) {
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    })();
+  </script>
+</head>
+<body id="top">
+  {{ partial "header.html" . }}
+
+  <div class="main-container">
+    {{ partial "sidebar.html" . }}
+    <main class="content-area">
+      {{ block "main" . }}{{ end }}
+    </main>
+  </div>
+
+  {{ partial "footer.html" . }}
+
+  <script>
+    (function() {
+      var btn = document.getElementById('theme-toggle');
+      if (!btn) return;
+
+      function updateBtnText(theme) {
+        btn.textContent = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
+      }
+
+      var current = document.documentElement.getAttribute('data-theme') || 'light';
+      updateBtnText(current);
+
+      btn.addEventListener('click', function() {
+        var cur = document.documentElement.getAttribute('data-theme') || 'light';
+        var next = cur === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('wumpkit-theme', next);
+        updateBtnText(next);
+      });
+    })();
+  </script>
+</body>
+</html>
