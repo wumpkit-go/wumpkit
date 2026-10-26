@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: GitHub Discussions
+    url: https://github.com/wumpkit-go/wumpkit/discussions
+    about: Ask questions, get help, or discuss bot architecture.
+  - name: Security Vulnerability Reporting
+    url: https://github.com/wumpkit-go/wumpkit/security/advisories
+    about: Privately report a security vulnerability to the maintainers.
