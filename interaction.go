@@ -14,6 +14,7 @@
 package wumpkit
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -611,6 +612,39 @@ type ModalSubmitInteractionData struct {
 	CustomID   string                                  `json:"custom_id"`
 	Components []Component                             `json:"components"`
 	Resolved   ChatInputCommandResolvedInteractionData `json:"resolved,omitzero"`
+}
+
+// unmarshal modal submit interaction data with concrete component types
+func (m *ModalSubmitInteractionData) UnmarshalJSON(data []byte) error {
+	type rawModalSubmitData struct {
+		CustomID   string                                  `json:"custom_id"`
+		Components []json.RawMessage                       `json:"components"`
+		Resolved   ChatInputCommandResolvedInteractionData `json:"resolved,omitzero"`
+	}
+
+	var raw rawModalSubmitData
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return err
+	}
+
+	m.CustomID = raw.CustomID
+	m.Resolved = raw.Resolved
+
+	if raw.Components != nil {
+		m.Components = make([]Component, 0, len(raw.Components))
+		for _, rawComp := range raw.Components {
+			if len(rawComp) == 0 || bytes.Equal(rawComp, []byte("null")) {
+				continue
+			}
+			comp, err := UnmarshalComponent(rawComp)
+			if err != nil {
+				return err
+			}
+			m.Components = append(m.Components, comp)
+		}
+	}
+
+	return nil
 }
 
 // ModalSubmitInteraction represents an interaction triggered by a modal submission.
