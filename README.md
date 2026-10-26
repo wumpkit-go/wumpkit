@@ -2,6 +2,8 @@
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/wumpkit-go/wumpkit.svg)](https://pkg.go.dev/github.com/wumpkit-go/wumpkit)
 [![Go Report Card](https://goreportcard.com/badge/github.com/wumpkit-go/wumpkit)](https://goreportcard.com/report/github.com/wumpkit-go/wumpkit)
+[![Test](https://github.com/wumpkit-go/wumpkit/actions/workflows/test.yml/badge.svg)](https://github.com/wumpkit-go/wumpkit/actions/workflows/test.yml)
+[![Release](https://img.shields.io/github/v/release/wumpkit-go/wumpkit?include_prereleases)](https://github.com/wumpkit-go/wumpkit/releases)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](LICENSE)
 
 A lightweight and idiomatic Discord API wrapper for Go.
@@ -114,6 +116,16 @@ Runnable examples are in the [`_examples`](_examples/) directory:
 - [`sharded_bot`](_examples/sharded_bot/) - Multi-sharded bot setup
 - [`redis_cache`](_examples/redis_cache/) - Distributed Redis cache and rate limiting
 - [`oauth2_server`](_examples/oauth2_server/) - Standalone OAuth2 web server
+
+---
+
+## Community & Governance
+
+- [Changelog](CHANGELOG.md) - Release history and version notes following Keep a Changelog.
+- [Contributing Guide](CONTRIBUTING.md) - Development workflow, code style, and PR guidelines.
+- [Security Policy](.github/SECURITY.md) - Vulnerability disclosure and reporting procedure.
+- [Code of Conduct](.github/CODE_OF_CONDUCT.md) - Contributor Covenant 2.1 standards.
+- [Support Guide](.github/SUPPORT.md) - Getting help, reporting bugs, and asking questions.
 
 ---
 

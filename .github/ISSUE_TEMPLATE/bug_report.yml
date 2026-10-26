@@ -1,0 +1,49 @@
+name: Bug Report
+description: Report a reproducible bug or unexpected behavior in Wumpkit
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report an issue! Please verify that the issue hasn't already been reported.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Go version and operating system (e.g. Go 1.24, Linux amd64, macOS arm64).
+      placeholder: "Go 1.24.0 on Linux x86_64"
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction Code
+      description: A minimal, runnable Go code snippet that reproduces the issue.
+      render: go
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What you expected to happen according to the Discord API specification.
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / Stack Trace
+      description: Any relevant error output or stack traces.
+      render: text
