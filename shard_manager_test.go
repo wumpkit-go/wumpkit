@@ -253,3 +253,56 @@ func TestShard_CommandRateLimiter(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, uint(119), s.commandLimiter.Remaining())
 }
+
+func TestShard_PresenceRateLimiter(t *testing.T) {
+	s := newShard(
+		0, 1, "test_token", GatewayIntentGuilds,
+		slog.Default(), nil, nil,
+		GatewayCompressionNone, IdentifyProperties{},
+		"wss://gateway.discord.gg", nil,
+	)
+	defer func() {
+		_ = s.Shutdown()
+	}()
+
+	require.NotNil(t, s.presenceLimiter)
+	assert.Equal(t, uint(5), s.presenceLimiter.Capacity())
+	assert.Equal(t, uint(5), s.presenceLimiter.Remaining())
+
+	err := s.presenceLimiter.Add(1)
+	assert.NoError(t, err)
+	assert.Equal(t, uint(4), s.presenceLimiter.Remaining())
+}
+
+func TestShard_SessionSynchronization(t *testing.T) {
+	s := newShard(
+		0, 1, "test_token", GatewayIntentGuilds,
+		slog.Default(), nil, nil,
+		GatewayCompressionNone, IdentifyProperties{},
+		"wss://gateway.discord.gg", nil,
+	)
+	defer func() {
+		_ = s.Shutdown()
+	}()
+
+	s.setSession("sess123", "wss://resume.discord.gg")
+	assert.Equal(t, "sess123", s.SessionID())
+	assert.Equal(t, "wss://resume.discord.gg", s.ResumeURL())
+
+	sess, url := s.getSession()
+	assert.Equal(t, "sess123", sess)
+	assert.Equal(t, "wss://resume.discord.gg", url)
+
+	s.clearSession()
+	assert.Empty(t, s.SessionID())
+	assert.Empty(t, s.ResumeURL())
+}
+
+func TestDefaultShardsRateLimiter_Close(t *testing.T) {
+	limiter := NewDefaultShardsRateLimiter(2, 50*time.Millisecond)
+	require.NotNil(t, limiter)
+	// closing must terminate goroutines without panic
+	limiter.Close()
+	// multiple close calls must be safe and idempotent
+	limiter.Close()
+}

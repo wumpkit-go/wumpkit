@@ -49,6 +49,8 @@ type DefaultShardsRateLimiter struct {
 	maxConcurrency int
 	interval       time.Duration
 	buckets        []chan struct{}
+	stopChan       chan struct{}
+	closed         sync.Once
 }
 
 var _ ShardsIdentifyRateLimiter = (*DefaultShardsRateLimiter)(nil)
@@ -60,6 +62,7 @@ func NewDefaultShardsRateLimiter(r int, interval time.Duration) *DefaultShardsRa
 		maxConcurrency: r,
 		interval:       interval,
 		buckets:        make([]chan struct{}, r),
+		stopChan:       make(chan struct{}),
 	}
 	for i := range r {
 		ch := make(chan struct{}, 1)
@@ -69,15 +72,27 @@ func NewDefaultShardsRateLimiter(r int, interval time.Duration) *DefaultShardsRa
 		go func(bucketChan chan struct{}) {
 			ticker := time.NewTicker(interval)
 			defer ticker.Stop()
-			for range ticker.C {
+			for {
 				select {
-				case bucketChan <- struct{}{}:
-				default:
+				case <-ticker.C:
+					select {
+					case bucketChan <- struct{}{}:
+					default:
+					}
+				case <-rl.stopChan:
+					return
 				}
 			}
 		}(ch)
 	}
 	return rl
+}
+
+// close stops all background refill tickers
+func (rl *DefaultShardsRateLimiter) Close() {
+	rl.closed.Do(func() {
+		close(rl.stopChan)
+	})
 }
 
 // Wait blocks until a token in bucket 0 is available for sending Identify or the context is cancelled.
@@ -429,6 +444,9 @@ func (sm *ShardManager) Shutdown() {
 			}(shard)
 		}
 		wg.Wait()
+		if closer, ok := sm.identifyLimiter.(interface{ Close() }); ok {
+			closer.Close()
+		}
 	})
 }
 
@@ -577,8 +595,9 @@ type Shard struct {
 	conn    *websocket.Conn // websocket connection
 
 	seq       atomic.Int64 // last received sequence number from Gateway
-	sessionID string       // current session id for resuming
-	resumeURL string       // Gateway URL to resume session on
+	sessionMu sync.RWMutex
+	sessionID string // current session id for resuming
+	resumeURL string // Gateway URL to resume session on
 
 	ctx    context.Context
 	cancel context.CancelFunc
@@ -610,6 +629,28 @@ type Shard struct {
 
 	// command rate limiter for outbound gateway commands
 	commandLimiter ratelimit.Bucket
+	// presence rate limiter (5 updates per 20s per shard)
+	presenceLimiter ratelimit.Bucket
+}
+
+func (s *Shard) getSession() (sessionID, resumeURL string) {
+	s.sessionMu.RLock()
+	defer s.sessionMu.RUnlock()
+	return s.sessionID, s.resumeURL
+}
+
+func (s *Shard) setSession(sessionID, resumeURL string) {
+	s.sessionMu.Lock()
+	defer s.sessionMu.Unlock()
+	s.sessionID = sessionID
+	s.resumeURL = resumeURL
+}
+
+func (s *Shard) clearSession() {
+	s.sessionMu.Lock()
+	defer s.sessionMu.Unlock()
+	s.sessionID = ""
+	s.resumeURL = ""
 }
 
 // newShard constructs a new Shard instance with the specified parameters
@@ -635,6 +676,7 @@ func newShard(
 		gatewayURL:      gatewayURL,
 		dialOptions:     dialOptions,
 		commandLimiter:  ratelimit.NewTokenBucket(120, 60*time.Second),
+		presenceLimiter: ratelimit.NewTokenBucket(5, 20*time.Second),
 		heartbeatStop:   make(chan struct{}),
 		stopChan:        make(chan struct{}),
 	}
@@ -713,7 +755,7 @@ func (s *Shard) connect(ctx context.Context) error {
 	}
 	s.zstdMu.Unlock()
 
-	connURL := s.resumeURL
+	connURL := s.ResumeURL()
 	if connURL == "" {
 		if s.gatewayURL != "" {
 			connURL = s.gatewayURL
@@ -959,8 +1001,7 @@ func (s *Shard) handleGatewayPayload(payload gatewayPayload) {
 				ResumeGatewayURL string `json:"resume_gateway_url"`
 			}
 			_ = json.Unmarshal(payload.D, &ready)
-			s.sessionID = ready.SessionID
-			s.resumeURL = ready.ResumeGatewayURL
+			s.setSession(ready.SessionID, ready.ResumeGatewayURL)
 			s.logger.Info("READY received from gateway")
 		case string(GatewayEventResumed):
 			s.logger.Info("RESUMED received, session replayed with 0 lost events")
@@ -975,6 +1016,11 @@ func (s *Shard) handleGatewayPayload(payload gatewayPayload) {
 		_ = json.Unmarshal(payload.D, &resumable)
 		jitter := time.Duration(1000+rand.IntN(4000)) * time.Millisecond
 		s.logger.Info("invalid session received", "resumable", resumable, "jitter", jitter.String())
+
+		if !resumable {
+			s.clearSession()
+			s.seq.Store(0)
+		}
 
 		// wait jitter then reconnect to resume or identify
 		go func() {
@@ -993,12 +1039,19 @@ func (s *Shard) handleGatewayPayload(payload gatewayPayload) {
 
 		// send handshake asynchronously so rate limit wait does not block read loop
 		go func() {
-			if s.sessionID != "" && s.seq.Load() > 0 {
+			sessionID, _ := s.getSession()
+			if sessionID != "" && s.seq.Load() > 0 {
 				s.logger.Info("resuming previous session")
-				_ = s.sendResume()
+				if err := s.sendResume(); err != nil {
+					s.logger.Error("failed to send resume handshake", "error", err)
+					go s.reconnect(false)
+				}
 			} else {
 				s.logger.Debug("identifying new session")
-				_ = s.sendIdentify()
+				if err := s.sendIdentify(); err != nil {
+					s.logger.Error("failed to send identify handshake", "error", err)
+					go s.reconnect(false)
+				}
 			}
 		}()
 
@@ -1048,11 +1101,12 @@ func (s *Shard) sendIdentify() error {
 
 // sendResume sends a Resume payload to Discord Gateway
 func (s *Shard) sendResume() error {
+	sessionID, _ := s.getSession()
 	payload, _ := json.Marshal(map[string]any{
 		"op": gatewayOpcodeResume,
 		"d": map[string]any{
 			"token":      s.token,
-			"session_id": s.sessionID,
+			"session_id": sessionID,
 			"seq":        s.seq.Load(),
 		},
 	})
@@ -1130,8 +1184,7 @@ func (s *Shard) reconnect(canResume bool) {
 	defer s.reconnecting.Store(false)
 
 	if !canResume {
-		s.sessionID = ""
-		s.resumeURL = ""
+		s.clearSession()
 		s.seq.Store(0)
 	}
 
@@ -1181,6 +1234,24 @@ func (s *Shard) reconnect(canResume bool) {
 
 // UpdatePresence sends an Opcode 3 Presence Update to Discord Gateway.
 func (s *Shard) UpdatePresence(presence GatewayPresenceUpdate) error {
+	if s.presenceLimiter != nil {
+		for {
+			if err := s.presenceLimiter.Add(1); err == nil {
+				break
+			}
+			wait := time.Until(s.presenceLimiter.Reset())
+			if wait <= 0 {
+				continue
+			}
+			select {
+			case <-time.After(wait):
+			case <-s.stopChan:
+				return errors.New("shard: connection stopped")
+			case <-s.ctx.Done():
+				return s.ctx.Err()
+			}
+		}
+	}
 	payload, err := json.Marshal(map[string]any{
 		"op": gatewayOpcodePresenceUpdate,
 		"d":  presence,
@@ -1263,11 +1334,15 @@ func (s *Shard) TotalShards() int {
 
 // SessionID returns the current Gateway session ID.
 func (s *Shard) SessionID() string {
+	s.sessionMu.RLock()
+	defer s.sessionMu.RUnlock()
 	return s.sessionID
 }
 
 // ResumeURL returns the gateway resume URL provided by Discord in the READY event.
 func (s *Shard) ResumeURL() string {
+	s.sessionMu.RLock()
+	defer s.sessionMu.RUnlock()
 	return s.resumeURL
 }
 
