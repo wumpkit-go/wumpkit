@@ -168,6 +168,7 @@ type dispatcher struct {
 	handlersExecutionMode HandlersExecutionMode
 	wg                    sync.WaitGroup
 	closed                atomic.Bool
+	stopCh                chan struct{}
 	queuesMu              sync.Mutex
 	queues                map[ShardID]chan eventTask
 }
@@ -180,6 +181,7 @@ func newDispatcher(ctx context.Context, cache CacheManager, logger Logger, mode 
 		handlersExecutionMode: mode,
 		handlersManagers:      make(map[GatewayEvent]eventhandlersManager, 80),
 		queues:                make(map[ShardID]chan eventTask),
+		stopCh:                make(chan struct{}),
 	}
 
 	// register all handler managers
@@ -301,7 +303,17 @@ func (d *dispatcher) Dispatch(shardID ShardID, eventName string, data []byte) {
 	default:
 		// queue overflow fallback to avoid blocking websocket read loop
 		go func() {
-			q <- eventTask{shardID: shardID, eventName: eventName, data: data}
+			defer func() {
+				_ = recover()
+			}()
+			if d.closed.Load() {
+				return
+			}
+			select {
+			case q <- eventTask{shardID: shardID, eventName: eventName, data: data}:
+			case <-d.stopCh:
+			case <-d.ctx.Done():
+			}
 		}()
 	}
 }
@@ -335,7 +347,10 @@ func (d *dispatcher) processEvent(shardID ShardID, eventName string, data []byte
 
 // Shutdown stops dispatching new events and gracefully waits for in-flight event handlers to complete.
 func (d *dispatcher) Shutdown(timeout time.Duration) {
-	d.closed.Store(true)
+	if !d.closed.CompareAndSwap(false, true) {
+		return
+	}
+	close(d.stopCh)
 
 	d.queuesMu.Lock()
 	for _, q := range d.queues {
