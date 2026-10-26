@@ -749,14 +749,17 @@ func (c *DMChannel) MarshalJSON() ([]byte, error) {
 	return json.Marshal((*NoMethod)(c))
 }
 
-// ThreadChannel represents a DM channel between the currect user and other user.
+// group dm channel between multiple users
 type GroupDMChannel struct {
 	DMChannelFields
+	// users participating in the group dm channel
+	Recipients []User `json:"recipients"`
 	// Icon is the custom icon for the group DM channel.
-	//
-	// Optional:
-	//   - Will be empty string if no icon.
 	Icon string `json:"icon"`
+	// id of the creator of the group dm
+	OwnerID Snowflake `json:"owner_id"`
+	// application id of the creator if bot-created
+	ApplicationID Snowflake `json:"application_id,omitempty"`
 }
 
 func (c *GroupDMChannel) MarshalJSON() ([]byte, error) {

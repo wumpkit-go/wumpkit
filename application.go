@@ -473,6 +473,9 @@ type Application struct {
 	// Flags are the app's public flags.
 	Flags ApplicationFlags `json:"flags"`
 
+	// flags_new is the string-serialized integer of public flags for flags > 30
+	FlagsNew string `json:"flags_new,omitempty"`
+
 	// ApproximateGuildCount is the approximate count of guilds the app has been added to.
 	ApproximateGuildCount *int `json:"approximate_guild_count,omitempty"`
 
