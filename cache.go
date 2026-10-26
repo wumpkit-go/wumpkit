@@ -77,6 +77,8 @@ type CacheConfig struct {
 	GuildToEmojiShardCount        int
 	GuildToStickerShardCount      int
 	ChannelToVoiceStateShardCount int
+	ChannelToMessageShardCount    int
+	MaxMessagesPerChannel         int
 }
 
 // DefaultCacheConfig returns optimal default shard configurations for concurrent maps.
@@ -101,6 +103,8 @@ func DefaultCacheConfig() CacheConfig {
 		GuildToEmojiShardCount:        32,
 		GuildToStickerShardCount:      32,
 		ChannelToVoiceStateShardCount: 32,
+		ChannelToMessageShardCount:    32,
+		MaxMessagesPerChannel:         100,
 	}
 }
 
@@ -312,10 +316,18 @@ type InMemoryCacheManager struct {
 	guildToStickerIDs          shardedmap.Map[Snowflake, map[Snowflake]struct{}]
 	guildToAutoModRuleIDs      shardedmap.Map[Snowflake, map[Snowflake]struct{}]
 	channelToVoiceStateUserIDs shardedmap.Map[Snowflake, map[Snowflake]struct{}]
+	channelToMessageIDs        shardedmap.Map[Snowflake, []Snowflake]
 }
 
 // NewInMemoryCacheManager creates an InMemoryCacheManager with the specified flags and sharding config.
 func NewInMemoryCacheManager(flags CacheFlags, config CacheConfig) *InMemoryCacheManager {
+	channelToMsgShards := config.ChannelToMessageShardCount
+	if channelToMsgShards <= 0 {
+		channelToMsgShards = 32
+	}
+	if config.MaxMessagesPerChannel <= 0 {
+		config.MaxMessagesPerChannel = 100
+	}
 	return &InMemoryCacheManager{
 		flags:                      flags,
 		config:                     config,
@@ -339,6 +351,7 @@ func NewInMemoryCacheManager(flags CacheFlags, config CacheConfig) *InMemoryCach
 		guildToStickerIDs:          shardedmap.New[Snowflake, map[Snowflake]struct{}](config.GuildToStickerShardCount),
 		guildToAutoModRuleIDs:      shardedmap.New[Snowflake, map[Snowflake]struct{}](config.GuildToRoleShardCount),
 		channelToVoiceStateUserIDs: shardedmap.New[Snowflake, map[Snowflake]struct{}](config.ChannelToVoiceStateShardCount),
+		channelToMessageIDs:        shardedmap.New[Snowflake, []Snowflake](channelToMsgShards),
 	}
 }
 
@@ -696,6 +709,30 @@ func (c *InMemoryCacheManager) AddMessage(ctx context.Context, message Message) 
 		return
 	}
 	c.messages.Set(message.ID, message)
+
+	maxPerChannel := c.config.MaxMessagesPerChannel
+	if maxPerChannel <= 0 {
+		maxPerChannel = 100
+	}
+
+	channelID := message.ChannelID
+	if channelID != 0 {
+		var evictedID Snowflake
+		c.channelToMessageIDs.Compute(channelID, func(list []Snowflake, exists bool) []Snowflake {
+			if !exists || list == nil {
+				list = make([]Snowflake, 0, min(maxPerChannel, 16))
+			}
+			list = append(list, message.ID)
+			if len(list) > maxPerChannel {
+				evictedID = list[0]
+				list = list[1:]
+			}
+			return list
+		})
+		if evictedID != 0 {
+			c.messages.Delete(evictedID)
+		}
+	}
 }
 
 func (c *InMemoryCacheManager) AddVoiceState(ctx context.Context, voiceState VoiceState) {
@@ -915,6 +952,11 @@ func (c *InMemoryCacheManager) DelMember(ctx context.Context, guildID, userID Sn
 func (c *InMemoryCacheManager) DelChannel(ctx context.Context, channelID Snowflake) bool {
 	channel, ok := c.channels.Delete(channelID)
 	if ok {
+		if list, hasMessages := c.channelToMessageIDs.Delete(channelID); hasMessages {
+			for _, mid := range list {
+				c.messages.Delete(mid)
+			}
+		}
 		if guildChannel, ok := channel.(GuildChannel); ok {
 			res := c.guildToChannelIDs.Compute(guildChannel.GetGuildID(), func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
 				if exists && set != nil {
@@ -933,7 +975,20 @@ func (c *InMemoryCacheManager) DelChannel(ctx context.Context, channelID Snowfla
 }
 
 func (c *InMemoryCacheManager) DelMessage(ctx context.Context, messageID Snowflake) bool {
-	_, ok := c.messages.Delete(messageID)
+	msg, ok := c.messages.Delete(messageID)
+	if ok && msg.ChannelID != 0 {
+		c.channelToMessageIDs.Compute(msg.ChannelID, func(list []Snowflake, exists bool) []Snowflake {
+			if !exists || len(list) == 0 {
+				return nil
+			}
+			for i, id := range list {
+				if id == messageID {
+					return append(list[:i], list[i+1:]...)
+				}
+			}
+			return list
+		})
+	}
 	return ok
 }
 

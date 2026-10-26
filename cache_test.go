@@ -89,3 +89,55 @@ func TestCacheManager_CRUD(t *testing.T) {
 	assert.True(t, cm.DelGuild(ctx, guildID))
 	assert.False(t, cm.HasGuild(ctx, guildID))
 }
+
+func TestCacheManager_MessageRingBuffer_JDAStyle(t *testing.T) {
+	ctx := context.Background()
+	cfg := DefaultCacheConfig()
+	cfg.MaxMessagesPerChannel = 3
+	cm := NewInMemoryCacheManager(CacheFlagsAll, cfg)
+
+	channelA := Snowflake(100)
+	channelB := Snowflake(200)
+
+	// add 5 messages to channel A (capacity is 3)
+	for i := 1; i <= 5; i++ {
+		cm.AddMessage(ctx, Message{
+			ID:        Snowflake(i),
+			ChannelID: channelA,
+			Content:   "msg",
+		})
+	}
+
+	// messages 1 and 2 should be evicted; 3, 4, 5 should remain
+	assert.False(t, cm.HasMessage(ctx, 1))
+	assert.False(t, cm.HasMessage(ctx, 2))
+	assert.True(t, cm.HasMessage(ctx, 3))
+	assert.True(t, cm.HasMessage(ctx, 4))
+	assert.True(t, cm.HasMessage(ctx, 5))
+	assert.Equal(t, 3, cm.CountMessages(ctx))
+
+	// add 2 messages to channel B
+	cm.AddMessage(ctx, Message{ID: 201, ChannelID: channelB, Content: "b1"})
+	cm.AddMessage(ctx, Message{ID: 202, ChannelID: channelB, Content: "b2"})
+	assert.True(t, cm.HasMessage(ctx, 201))
+	assert.True(t, cm.HasMessage(ctx, 202))
+	assert.Equal(t, 5, cm.CountMessages(ctx))
+
+	// deleting a message updates channel index
+	assert.True(t, cm.DelMessage(ctx, 201))
+	assert.False(t, cm.HasMessage(ctx, 201))
+	assert.True(t, cm.HasMessage(ctx, 202))
+
+	// deleting channel A evicts all its cached messages
+	chA := &TextChannel{
+		GuildChannelFields: GuildChannelFields{
+			ChannelFields: ChannelFields{ID: channelA, Type: ChannelTypeGuildText},
+		},
+	}
+	cm.AddChannel(ctx, chA)
+	cm.DelChannel(ctx, channelA)
+	assert.False(t, cm.HasMessage(ctx, 3))
+	assert.False(t, cm.HasMessage(ctx, 4))
+	assert.False(t, cm.HasMessage(ctx, 5))
+	assert.True(t, cm.HasMessage(ctx, 202))
+}
