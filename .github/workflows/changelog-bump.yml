@@ -1,0 +1,77 @@
+name: Bump Version & Update Changelog
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'New version to release (e.g. 1.0.1 or 1.1.0)'
+        required: true
+        type: string
+      create_tag:
+        description: 'Tag and push to trigger release workflow'
+        required: true
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    name: Bump Version in CHANGELOG.md
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Update CHANGELOG.md
+        run: |
+          NEW_VER="${{ github.event.inputs.version }}"
+          NEW_VER="${NEW_VER#v}"
+          TODAY=$(date -u +"%Y-%m-%d")
+
+          # Check if Unreleased section exists
+          if ! grep -q "^## \[Unreleased\]" CHANGELOG.md; then
+            echo "Error: [Unreleased] header not found in CHANGELOG.md"
+            exit 1
+          fi
+
+          # Replace [Unreleased] with new release section and fresh [Unreleased]
+          python3 -c "
+          import re, sys
+
+          new_ver = '$NEW_VER'
+          today = '$TODAY'
+
+          with open('CHANGELOG.md', 'r') as f:
+              content = f.read()
+
+          unreleased_pattern = r'## \[Unreleased\]\n'
+          replacement = f'## [Unreleased]\n\n## [{new_ver}] - {today}\n'
+          updated = re.sub(unreleased_pattern, replacement, content, count=1)
+
+          with open('CHANGELOG.md', 'w') as f:
+              f.write(updated)
+          "
+
+      - name: Commit and Push Changes
+        run: |
+          NEW_TAG="v${{ github.event.inputs.version }}"
+          NEW_TAG="v${NEW_TAG#v}"
+
+          git add CHANGELOG.md
+          git commit -m "chore(release): bump version to ${NEW_TAG}"
+          git push origin HEAD:${{ github.ref_name }}
+
+          if [ "${{ github.event.inputs.create_tag }}" = "true" ]; then
+            git tag -a "${NEW_TAG}" -m "release: ${NEW_TAG}"
+            git push origin "${NEW_TAG}"
+          fi
