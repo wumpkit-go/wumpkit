@@ -163,66 +163,58 @@ func NormalizeRoute(url string, method string) string {
 		return "/" + cleanPath
 	}
 
-	// 4. build normalized bucket into stack buffer
-	var out [160]byte
-	w := 0
-	out[w] = '/'
-	w++
-
-	writeStr := func(s string) {
-		w += copy(out[w:], s)
-	}
+	// build normalized bucket
+	var b strings.Builder
+	b.Grow(len(url) + 16)
+	b.WriteByte('/')
 
 	currMajor := MajorUnknown
 
 	switch parts[0] {
 	case MajorChannels:
-		writeStr("channels/")
-		writeStr(parts[1])
+		b.WriteString("channels/")
+		b.WriteString(parts[1])
 		if numParts == 2 {
-			return string(out[:w])
+			return b.String()
 		}
 		currMajor = MajorChannels
 	case MajorInvites:
-		writeStr("invites/!")
+		b.WriteString("invites/!")
 		currMajor = MajorInvites
 	case MajorGuilds:
 		if numParts == 3 && parts[2] == "channels" {
-			writeStr("guilds/")
-			writeStr(parts[1])
-			writeStr("/channels")
-			return string(out[:w])
+			b.WriteString("guilds/")
+			b.WriteString(parts[1])
+			b.WriteString("/channels")
+			return b.String()
 		}
-		writeStr(parts[0])
-		out[w] = '/'
-		w++
-		writeStr(parts[1])
+		b.WriteString(parts[0])
+		b.WriteByte('/')
+		b.WriteString(parts[1])
 		currMajor = parts[0]
 	case MajorInteractions:
 		if numParts == 4 && parts[3] == "callback" {
-			writeStr("interactions/")
-			writeStr(parts[1])
-			writeStr("/!/callback")
-			return string(out[:w])
+			b.WriteString("interactions/")
+			b.WriteString(parts[1])
+			b.WriteString("/!/callback")
+			return b.String()
 		}
-		writeStr(parts[0])
-		out[w] = '/'
-		w++
-		writeStr(parts[1])
+		b.WriteString(parts[0])
+		b.WriteByte('/')
+		b.WriteString(parts[1])
 		currMajor = parts[0]
 	default:
-		writeStr(parts[0])
-		out[w] = '/'
-		w++
-		writeStr(parts[1])
+		b.WriteString(parts[0])
+		b.WriteByte('/')
+		b.WriteString(parts[1])
 		currMajor = parts[0]
 	}
 
 	if numParts == 2 {
-		return string(out[:w])
+		return b.String()
 	}
 
-	// 5. process sub-resources
+	// process sub-resources
 	for _, part := range parts[2:numParts] {
 		if IsSnowflake(part) {
 			// discord 14-day message delete rate limit rule
@@ -230,22 +222,22 @@ func NormalizeRoute(url string, method string) string {
 				createdAt, _ := SnowflakeCreatedAt(part)
 				now := time.Now()
 				if createdAt.Before(now.Add(-14 * 24 * time.Hour)) {
-					writeStr("/!14dmsg")
+					b.WriteString("/!14dmsg")
 				} else if createdAt.After(now.Add(-10 * time.Second)) {
-					writeStr("/!10smsg")
+					b.WriteString("/!10smsg")
 				} else {
-					writeStr("/!")
+					b.WriteString("/!")
 				}
 				continue
 			}
-			writeStr("/!")
+			b.WriteString("/!")
 		} else {
 			if currMajor == MajorChannels && part == "reactions" {
 				if method == "PUT" || method == "DELETE" {
-					writeStr("/reactions/!modify")
+					b.WriteString("/reactions/!modify")
 					break
 				}
-				writeStr("/reactions/!/!")
+				b.WriteString("/reactions/!/!")
 				break
 			}
 
@@ -253,7 +245,7 @@ func NormalizeRoute(url string, method string) string {
 			if len(part) >= 64 {
 				if !strings.HasPrefix(part, interactionTokenPrefix) {
 					// regular webhook token — replace with placeholder
-					writeStr("/!")
+					b.WriteString("/!")
 					continue
 				}
 
@@ -273,17 +265,15 @@ func NormalizeRoute(url string, method string) string {
 				}
 				interactionID = cmp.Or(interactionID, "Unknown")
 
-				out[w] = '/'
-				w++
-				writeStr(interactionID)
+				b.WriteByte('/')
+				b.WriteString(interactionID)
 				continue
 			}
 
-			out[w] = '/'
-			w++
-			writeStr(part)
+			b.WriteByte('/')
+			b.WriteString(part)
 		}
 	}
 
-	return string(out[:w])
+	return b.String()
 }

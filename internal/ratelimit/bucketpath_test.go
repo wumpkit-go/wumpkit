@@ -44,6 +44,8 @@ func TestPaths(t *testing.T) {
 		// application commands
 		{"/api/v9/applications/203039963636301824/commands", "GET", "/applications/203039963636301824/commands"},
 		{"/api/v9/applications/203039963636301824/commands/203039963636301824", "GET", "/applications/203039963636301824/commands/!"},
+		// deep nested route exceeding 160 characters
+		{"/api/v10/applications/103039963636301824/guilds/203039963636301824/commands/303039963636301824/permissions/extra/nested/subresource/item/identifier/field/configuration/detail", "GET", "/applications/103039963636301824/guilds/!/commands/!/permissions/extra/nested/subresource/item/identifier/field/configuration/detail"},
 	}
 	for _, tt := range tests {
 		testname := fmt.Sprintf("%s-%s", tt.method, tt.path)
