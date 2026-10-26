@@ -52,7 +52,11 @@ func (h *readyHandlers) handleEvent(ctx context.Context, cache CacheManager, con
 
 	if cache != nil && cache.CacheFlags().Has(CacheFlagGuilds) {
 		for i := range evt.Guilds {
-			cache.AddGuild(ctx, evt.Guilds[i])
+			// update unavailable status for existing guilds without overwriting full data
+			if existing, ok := cache.GetGuild(ctx, evt.Guilds[i].ID); ok {
+				existing.Unavailable = evt.Guilds[i].Unavailable
+				cache.AddGuild(ctx, existing)
+			}
 		}
 	}
 
