@@ -41,7 +41,7 @@ import (
 const (
 	apiVersion          = "v10"
 	defaultBaseURL      = "https://discord.com/api/" + apiVersion
-	defaultUserAgent    = "DiscordBot (wumpkit, v0.0.1)"
+	defaultUserAgent    = "DiscordBot (wumpkit, v1.0.0)"
 	headerReason        = "X-Audit-Log-Reason"
 	headerAuthorization = "Authorization"
 	headerContentType   = "Content-Type"
@@ -53,6 +53,34 @@ const (
 
 // ErrMaxRetriesExceeded is a sentinel error returned when an HTTP request exceeds its maximum configured retries.
 var ErrMaxRetriesExceeded = errors.New("wumpkit: max retries exceeded")
+
+// discord rest error returned by discord api
+type DiscordRestError struct {
+	StatusCode int            `json:"-"`
+	Code       int            `json:"code"`
+	Message    string         `json:"message"`
+	Errors     map[string]any `json:"errors,omitempty"`
+	Raw        []byte         `json:"-"`
+}
+
+func (e *DiscordRestError) Error() string {
+	if e.Code != 0 {
+		return fmt.Sprintf("discord rest error: status %d, code %d: %s", e.StatusCode, e.Code, e.Message)
+	}
+	if len(e.Raw) > 0 {
+		return fmt.Sprintf("discord rest error: status %d: %s", e.StatusCode, string(e.Raw))
+	}
+	return fmt.Sprintf("discord rest error: status %d", e.StatusCode)
+}
+
+func newDiscordRestError(statusCode int, body []byte) *DiscordRestError {
+	restErr := &DiscordRestError{
+		StatusCode: statusCode,
+		Raw:        body,
+	}
+	_ = json.Unmarshal(body, restErr)
+	return restErr
+}
 
 // Buffer pool for multipart request encoding to minimize heap allocations.
 var bufferPool = sync.Pool{
@@ -349,7 +377,7 @@ func (r *requester) DoRequest(ctx context.Context, req Request) (io.ReadCloser, 
 
 		// non-retryable client errors (4xx except 429): fail fast immediately without retries
 		if !isRetryableStatus(resp.StatusCode) {
-			return nil, fmt.Errorf("request failed with status %d: %s", resp.StatusCode, string(bodyBytes))
+			return nil, newDiscordRestError(resp.StatusCode, bodyBytes)
 		}
 
 		if i == r.config.MaxRetries {
@@ -410,7 +438,7 @@ func (r *requester) DoRequest(ctx context.Context, req Request) (io.ReadCloser, 
 		return nil, fmt.Errorf("%w for %s %s: %w", ErrMaxRetriesExceeded, req.Method, req.URL, lastErr)
 	}
 	if lastStatus != 0 {
-		return nil, fmt.Errorf("%w for %s %s (status %d): %s", ErrMaxRetriesExceeded, req.Method, req.URL, lastStatus, string(lastBody))
+		return nil, fmt.Errorf("%w for %s %s: %w", ErrMaxRetriesExceeded, req.Method, req.URL, newDiscordRestError(lastStatus, lastBody))
 	}
 	return nil, fmt.Errorf("%w for %s %s", ErrMaxRetriesExceeded, req.Method, req.URL)
 }
