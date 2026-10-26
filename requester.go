@@ -356,12 +356,22 @@ func (r *requester) DoRequest(ctx context.Context, req Request) (io.ReadCloser, 
 			break
 		}
 
-		// rate Limited (429): sleep according to Retry-After header with small jitter
+		// rate limited (429): sleep according to retry-after header or json body with small jitter
 		if resp.StatusCode == http.StatusTooManyRequests {
 			var sleepDuration time.Duration = 500 * time.Millisecond
 			if retryAfterHeader := resp.Header.Get(headerRetryAfter); retryAfterHeader != "" {
 				if s, parseErr := strconv.ParseFloat(retryAfterHeader, 64); parseErr == nil && s > 0 {
 					sleepDuration = time.Duration(s * float64(time.Second))
+				}
+			} else {
+				// parse json response body fallback for retry_after
+				var rateLimitPayload struct {
+					Message    string  `json:"message"`
+					RetryAfter float64 `json:"retry_after"`
+					Global     bool    `json:"global"`
+				}
+				if err := json.Unmarshal(bodyBytes, &rateLimitPayload); err == nil && rateLimitPayload.RetryAfter > 0 {
+					sleepDuration = time.Duration(rateLimitPayload.RetryAfter * float64(time.Second))
 				}
 			}
 			// add 10-50ms random jitter to avoid thundering herd on rate limit expiration
@@ -409,7 +419,11 @@ func (r *requester) DoRequest(ctx context.Context, req Request) (io.ReadCloser, 
 func (r *requester) DoMultipartRequest(ctx context.Context, req MultipartRequest) (io.ReadCloser, error) {
 	buf := bufferPool.Get().(*bytes.Buffer)
 	buf.Reset()
-	defer bufferPool.Put(buf)
+	defer func() {
+		if buf.Cap() <= 512*1024 {
+			bufferPool.Put(buf)
+		}
+	}()
 
 	w := multipart.NewWriter(buf)
 
