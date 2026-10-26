@@ -51,6 +51,9 @@ type FetchCurrentUserGuildsOptions struct {
 
 	// WithCounts includes approximate member and presence counts in the response.
 	WithCounts bool `json:"with_counts,omitempty"`
+
+	// shard returns guilds that belong to this shard (required for bots in >10,000 guilds)
+	Shard *int `json:"shard,omitempty"`
 }
 
 // CreateGroupDMOptions contains parameters for creating a new group DM channel.
@@ -176,6 +179,9 @@ func (r *requester) FetchCurrentUserGuilds(ctx context.Context, opts ...FetchCur
 	}
 	if first.WithCounts {
 		params.Set("with_counts", "true")
+	}
+	if first.Shard != nil {
+		params.Set("shard", strconv.Itoa(*first.Shard))
 	}
 
 	endpoint := "/users/@me/guilds"
@@ -442,6 +448,9 @@ func (r *requester) FetchCurrentUserGuildsWithToken(ctx context.Context, accessT
 		}
 		if opts[0].WithCounts {
 			query.Set("with_counts", "true")
+		}
+		if opts[0].Shard != nil {
+			query.Set("shard", strconv.Itoa(*opts[0].Shard))
 		}
 		if q := query.Encode(); q != "" {
 			endpoint += "?" + q
