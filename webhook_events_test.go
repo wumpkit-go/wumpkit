@@ -184,6 +184,7 @@ func TestWebhookEventsHandler_PingAndEvents(t *testing.T) {
 	rec = httptest.NewRecorder()
 	handler.ServeHTTP(rec, req)
 	assert.Equal(t, http.StatusOK, rec.Code)
+	assert.JSONEq(t, `{"type":6}`, rec.Body.String())
 	assert.Eventually(t, func() bool {
 		return interactionReceived.Load()
 	}, 1*time.Second, 10*time.Millisecond)

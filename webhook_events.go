@@ -306,9 +306,17 @@ func (c *Client) WebhookEventsHandler() http.Handler {
 			c.dispatcher.Dispatch(-1, "INTERACTION_CREATE", body)
 		}
 
-		// acknowledge interaction with 200 OK
+		// acknowledge http interaction with deferred response to satisfy discord protocol
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
+		switch rawInteraction.Type {
+		case InteractionTypeComponent:
+			_, _ = w.Write([]byte(`{"type":6}`))
+		case InteractionTypeAutocomplete:
+			_, _ = w.Write([]byte(`{"type":8,"data":{"choices":[]}}`))
+		default:
+			_, _ = w.Write([]byte(`{"type":5}`))
+		}
 	})
 }
 
