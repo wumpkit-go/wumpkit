@@ -3,7 +3,7 @@
     <div class="sidebar-box-header">Documentation</div>
     <ul class="sidebar-menu">
       <li><a href="{{ "" | relURL }}" class="{{ if .IsHome }}current{{ end }}">Overview</a></li>
-      {{ range .Site.Home.Sections }}
+      {{ range .Site.Home.Sections.ByWeight }}
         <li class="sidebar-group">
           <div class="sidebar-group-title">{{ .Title }}</div>
           {{ if .Pages }}

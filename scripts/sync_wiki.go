@@ -75,6 +75,8 @@ func main() {
 func scanContent(root string) ([]Page, []string, error) {
 	var pages []Page
 	sectionsSet := make(map[string]bool)
+	sectionWeights := make(map[string]int)
+	sectionTitles := make(map[string]string)
 
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil || info.IsDir() || !strings.HasSuffix(info.Name(), ".md") {
@@ -92,8 +94,14 @@ func scanContent(root string) ([]Page, []string, error) {
 		section := ""
 		dir := filepath.Dir(rel)
 		if dir != "." {
-			section = cleanSectionName(dir)
+			section = dir
 			sectionsSet[section] = true
+			if info.Name() == "_index.md" {
+				sectionWeights[section] = weight
+				if title != "" && title != "_index" {
+					sectionTitles[section] = title
+				}
+			}
 		}
 
 		wikiName := toWikiName(rel, info.Name(), section)
@@ -114,9 +122,38 @@ func scanContent(root string) ([]Page, []string, error) {
 	for s := range sectionsSet {
 		sections = append(sections, s)
 	}
-	sort.Strings(sections)
+	sort.Slice(sections, func(i, j int) bool {
+		wi, okI := sectionWeights[sections[i]]
+		if !okI {
+			wi = 99
+		}
+		wj, okJ := sectionWeights[sections[j]]
+		if !okJ {
+			wj = 99
+		}
+		if wi != wj {
+			return wi < wj
+		}
+		return sections[i] < sections[j]
+	})
 
-	return pages, sections, err
+	// replace directory keys with human titles if available
+	var finalSections []string
+	for _, sec := range sections {
+		displayTitle := sectionTitles[sec]
+		if displayTitle == "" {
+			displayTitle = cleanSectionName(sec)
+		}
+		finalSections = append(finalSections, displayTitle)
+		// update page sections to match displayTitle
+		for idx := range pages {
+			if pages[idx].Section == sec {
+				pages[idx].Section = displayTitle
+			}
+		}
+	}
+
+	return pages, finalSections, err
 }
 
 func parseMarkdown(raw, fileName string) (string, string, int) {
