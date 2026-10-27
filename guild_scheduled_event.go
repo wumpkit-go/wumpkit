@@ -85,7 +85,9 @@ const (
 )
 
 // Is returns true if this GuildScheduledEventRecurrenceRuleFrequency matches the provided one.
-func (v GuildScheduledEventRecurrenceRuleFrequency) Is(other GuildScheduledEventRecurrenceRuleFrequency) bool {
+func (v GuildScheduledEventRecurrenceRuleFrequency) Is(
+	other GuildScheduledEventRecurrenceRuleFrequency,
+) bool {
 	return v == other
 }
 
@@ -103,7 +105,9 @@ const (
 )
 
 // Is returns true if this GuildScheduledEventRecurrenceRuleWeekday matches the provided one.
-func (v GuildScheduledEventRecurrenceRuleWeekday) Is(other GuildScheduledEventRecurrenceRuleWeekday) bool {
+func (v GuildScheduledEventRecurrenceRuleWeekday) Is(
+	other GuildScheduledEventRecurrenceRuleWeekday,
+) bool {
 	return v == other
 }
 
@@ -135,7 +139,9 @@ const (
 )
 
 // Is returns true if this GuildScheduledEventRecurrenceRuleMonth matches the provided one.
-func (v GuildScheduledEventRecurrenceRuleMonth) Is(other GuildScheduledEventRecurrenceRuleMonth) bool {
+func (v GuildScheduledEventRecurrenceRuleMonth) Is(
+	other GuildScheduledEventRecurrenceRuleMonth,
+) bool {
 	return v == other
 }
 

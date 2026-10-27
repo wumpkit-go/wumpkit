@@ -128,7 +128,11 @@ type FetchGuildScheduledEventUsersOptions struct {
 // ListGuildScheduledEvents returns a list of scheduled event objects for the given guild.
 //
 // Reference: https://discord.com/developers/docs/resources/guild-scheduled-event#list-scheduled-events-for-guild
-func (r *requester) ListGuildScheduledEvents(ctx context.Context, guildID Snowflake, opts ...ListGuildScheduledEventsOptions) ([]GuildScheduledEvent, error) {
+func (r *requester) ListGuildScheduledEvents(
+	ctx context.Context,
+	guildID Snowflake,
+	opts ...ListGuildScheduledEventsOptions,
+) ([]GuildScheduledEvent, error) {
 	params := url.Values{}
 	if len(opts) > 0 && opts[0].WithUserCount {
 		params.Set("with_user_count", "true")
@@ -169,7 +173,11 @@ func (r *requester) ListGuildScheduledEvents(ctx context.Context, guildID Snowfl
 // Requires the PermissionCreateEvents permission.
 //
 // Reference: https://discord.com/developers/docs/resources/guild-scheduled-event#create-guild-scheduled-event
-func (r *requester) CreateGuildScheduledEvent(ctx context.Context, guildID Snowflake, opts CreateGuildScheduledEventOptions) (GuildScheduledEvent, error) {
+func (r *requester) CreateGuildScheduledEvent(
+	ctx context.Context,
+	guildID Snowflake,
+	opts CreateGuildScheduledEventOptions,
+) (GuildScheduledEvent, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "POST",
@@ -199,7 +207,11 @@ func (r *requester) CreateGuildScheduledEvent(ctx context.Context, guildID Snowf
 // FetchGuildScheduledEvent returns a guild scheduled event by ID.
 //
 // Reference: https://discord.com/developers/docs/resources/guild-scheduled-event#get-guild-scheduled-event
-func (r *requester) FetchGuildScheduledEvent(ctx context.Context, guildID, eventID Snowflake, withUserCount bool) (GuildScheduledEvent, error) {
+func (r *requester) FetchGuildScheduledEvent(
+	ctx context.Context,
+	guildID, eventID Snowflake,
+	withUserCount bool,
+) (GuildScheduledEvent, error) {
 	endpoint := "/guilds/" + guildID.String() + "/scheduled-events/" + eventID.String()
 	if withUserCount {
 		endpoint += "?with_user_count=true"
@@ -231,7 +243,11 @@ func (r *requester) FetchGuildScheduledEvent(ctx context.Context, guildID, event
 // ModifyGuildScheduledEvent modifies a guild scheduled event.
 //
 // Reference: https://discord.com/developers/docs/resources/guild-scheduled-event#modify-guild-scheduled-event
-func (r *requester) ModifyGuildScheduledEvent(ctx context.Context, guildID, eventID Snowflake, opts ModifyGuildScheduledEventOptions) (GuildScheduledEvent, error) {
+func (r *requester) ModifyGuildScheduledEvent(
+	ctx context.Context,
+	guildID, eventID Snowflake,
+	opts ModifyGuildScheduledEventOptions,
+) (GuildScheduledEvent, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "PATCH",
@@ -261,7 +277,10 @@ func (r *requester) ModifyGuildScheduledEvent(ctx context.Context, guildID, even
 // DeleteGuildScheduledEvent deletes a guild scheduled event.
 //
 // Reference: https://discord.com/developers/docs/resources/guild-scheduled-event#delete-guild-scheduled-event
-func (r *requester) DeleteGuildScheduledEvent(ctx context.Context, guildID, eventID Snowflake) error {
+func (r *requester) DeleteGuildScheduledEvent(
+	ctx context.Context,
+	guildID, eventID Snowflake,
+) error {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "DELETE",
 		URL:    "/guilds/" + guildID.String() + "/scheduled-events/" + eventID.String(),
@@ -276,7 +295,11 @@ func (r *requester) DeleteGuildScheduledEvent(ctx context.Context, guildID, even
 // FetchGuildScheduledEventUsers gets a list of users subscribed to a guild scheduled event.
 //
 // Reference: https://discord.com/developers/docs/resources/guild-scheduled-event#get-guild-scheduled-event-users
-func (r *requester) FetchGuildScheduledEventUsers(ctx context.Context, guildID, eventID Snowflake, opts ...FetchGuildScheduledEventUsersOptions) ([]GuildScheduledEventUser, error) {
+func (r *requester) FetchGuildScheduledEventUsers(
+	ctx context.Context,
+	guildID, eventID Snowflake,
+	opts ...FetchGuildScheduledEventUsersOptions,
+) ([]GuildScheduledEventUser, error) {
 	var first FetchGuildScheduledEventUsersOptions
 	if len(opts) > 0 {
 		first = opts[0]

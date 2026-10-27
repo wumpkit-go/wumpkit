@@ -36,7 +36,11 @@ type EditApplicationCommandPermissionsOptions struct {
 // FetchGlobalApplicationCommands fetches all global commands for your application.
 //
 // Reference: https://discord.com/developers/docs/interactions/application-commands#get-global-application-commands
-func (r *requester) FetchGlobalApplicationCommands(ctx context.Context, appID Snowflake, opts ...FetchApplicationCommandsOptions) ([]ApplicationCommand, error) {
+func (r *requester) FetchGlobalApplicationCommands(
+	ctx context.Context,
+	appID Snowflake,
+	opts ...FetchApplicationCommandsOptions,
+) ([]ApplicationCommand, error) {
 	endpoint := fmt.Sprintf("/applications/%s/commands", appID)
 	if len(opts) > 0 && opts[0].WithLocalizations {
 		endpoint += "?with_localizations=true"
@@ -61,7 +65,11 @@ func (r *requester) FetchGlobalApplicationCommands(ctx context.Context, appID Sn
 // CreateGlobalApplicationCommand creates a new global command.
 //
 // Reference: https://discord.com/developers/docs/interactions/application-commands#create-global-application-command
-func (r *requester) CreateGlobalApplicationCommand(ctx context.Context, appID Snowflake, cmd ApplicationCommand) (ApplicationCommand, error) {
+func (r *requester) CreateGlobalApplicationCommand(
+	ctx context.Context,
+	appID Snowflake,
+	cmd ApplicationCommand,
+) (ApplicationCommand, error) {
 	payload, err := json.Marshal(cmd)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal ApplicationCommand: %w", err)
@@ -87,7 +95,10 @@ func (r *requester) CreateGlobalApplicationCommand(ctx context.Context, appID Sn
 // FetchGlobalApplicationCommand fetches a global command by ID.
 //
 // Reference: https://discord.com/developers/docs/interactions/application-commands#get-global-application-command
-func (r *requester) FetchGlobalApplicationCommand(ctx context.Context, appID, cmdID Snowflake) (ApplicationCommand, error) {
+func (r *requester) FetchGlobalApplicationCommand(
+	ctx context.Context,
+	appID, cmdID Snowflake,
+) (ApplicationCommand, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: http.MethodGet,
 		URL:    fmt.Sprintf("/applications/%s/commands/%s", appID, cmdID),
@@ -107,7 +118,11 @@ func (r *requester) FetchGlobalApplicationCommand(ctx context.Context, appID, cm
 // EditGlobalApplicationCommand edits a global command.
 //
 // Reference: https://discord.com/developers/docs/interactions/application-commands#edit-global-application-command
-func (r *requester) EditGlobalApplicationCommand(ctx context.Context, appID, cmdID Snowflake, cmd ApplicationCommand) (ApplicationCommand, error) {
+func (r *requester) EditGlobalApplicationCommand(
+	ctx context.Context,
+	appID, cmdID Snowflake,
+	cmd ApplicationCommand,
+) (ApplicationCommand, error) {
 	payload, err := json.Marshal(cmd)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal ApplicationCommand: %w", err)
@@ -133,7 +148,10 @@ func (r *requester) EditGlobalApplicationCommand(ctx context.Context, appID, cmd
 // DeleteGlobalApplicationCommand deletes a global command.
 //
 // Reference: https://discord.com/developers/docs/interactions/application-commands#delete-global-application-command
-func (r *requester) DeleteGlobalApplicationCommand(ctx context.Context, appID, cmdID Snowflake) error {
+func (r *requester) DeleteGlobalApplicationCommand(
+	ctx context.Context,
+	appID, cmdID Snowflake,
+) error {
 	return requestVoid(ctx, r, Request{
 		Method: http.MethodDelete,
 		URL:    fmt.Sprintf("/applications/%s/commands/%s", appID, cmdID),
@@ -143,7 +161,11 @@ func (r *requester) DeleteGlobalApplicationCommand(ctx context.Context, appID, c
 // BulkOverwriteGlobalApplicationCommands takes a list of application commands, overwriting all existing commands.
 //
 // Reference: https://discord.com/developers/docs/interactions/application-commands#bulk-overwrite-global-application-commands
-func (r *requester) BulkOverwriteGlobalApplicationCommands(ctx context.Context, appID Snowflake, cmds []ApplicationCommand) ([]ApplicationCommand, error) {
+func (r *requester) BulkOverwriteGlobalApplicationCommands(
+	ctx context.Context,
+	appID Snowflake,
+	cmds []ApplicationCommand,
+) ([]ApplicationCommand, error) {
 	payload, err := json.Marshal(cmds)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal commands: %w", err)
@@ -169,7 +191,11 @@ func (r *requester) BulkOverwriteGlobalApplicationCommands(ctx context.Context, 
 // FetchGuildApplicationCommands fetches all commands for a specific guild.
 //
 // Reference: https://discord.com/developers/docs/interactions/application-commands#get-guild-application-commands
-func (r *requester) FetchGuildApplicationCommands(ctx context.Context, appID, guildID Snowflake, opts ...FetchApplicationCommandsOptions) ([]ApplicationCommand, error) {
+func (r *requester) FetchGuildApplicationCommands(
+	ctx context.Context,
+	appID, guildID Snowflake,
+	opts ...FetchApplicationCommandsOptions,
+) ([]ApplicationCommand, error) {
 	endpoint := fmt.Sprintf("/applications/%s/guilds/%s/commands", appID, guildID)
 	if len(opts) > 0 && opts[0].WithLocalizations {
 		endpoint += "?with_localizations=true"
@@ -194,7 +220,11 @@ func (r *requester) FetchGuildApplicationCommands(ctx context.Context, appID, gu
 // CreateGuildApplicationCommand creates a new command in a specific guild.
 //
 // Reference: https://discord.com/developers/docs/interactions/application-commands#create-guild-application-command
-func (r *requester) CreateGuildApplicationCommand(ctx context.Context, appID, guildID Snowflake, cmd ApplicationCommand) (ApplicationCommand, error) {
+func (r *requester) CreateGuildApplicationCommand(
+	ctx context.Context,
+	appID, guildID Snowflake,
+	cmd ApplicationCommand,
+) (ApplicationCommand, error) {
 	payload, err := json.Marshal(cmd)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal ApplicationCommand: %w", err)
@@ -220,7 +250,10 @@ func (r *requester) CreateGuildApplicationCommand(ctx context.Context, appID, gu
 // FetchGuildApplicationCommand fetches a guild command by ID.
 //
 // Reference: https://discord.com/developers/docs/interactions/application-commands#get-guild-application-command
-func (r *requester) FetchGuildApplicationCommand(ctx context.Context, appID, guildID, cmdID Snowflake) (ApplicationCommand, error) {
+func (r *requester) FetchGuildApplicationCommand(
+	ctx context.Context,
+	appID, guildID, cmdID Snowflake,
+) (ApplicationCommand, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: http.MethodGet,
 		URL:    fmt.Sprintf("/applications/%s/guilds/%s/commands/%s", appID, guildID, cmdID),
@@ -240,7 +273,11 @@ func (r *requester) FetchGuildApplicationCommand(ctx context.Context, appID, gui
 // EditGuildApplicationCommand edits a guild command.
 //
 // Reference: https://discord.com/developers/docs/interactions/application-commands#edit-guild-application-command
-func (r *requester) EditGuildApplicationCommand(ctx context.Context, appID, guildID, cmdID Snowflake, cmd ApplicationCommand) (ApplicationCommand, error) {
+func (r *requester) EditGuildApplicationCommand(
+	ctx context.Context,
+	appID, guildID, cmdID Snowflake,
+	cmd ApplicationCommand,
+) (ApplicationCommand, error) {
 	payload, err := json.Marshal(cmd)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal ApplicationCommand: %w", err)
@@ -266,7 +303,10 @@ func (r *requester) EditGuildApplicationCommand(ctx context.Context, appID, guil
 // DeleteGuildApplicationCommand deletes a guild command.
 //
 // Reference: https://discord.com/developers/docs/interactions/application-commands#delete-guild-application-command
-func (r *requester) DeleteGuildApplicationCommand(ctx context.Context, appID, guildID, cmdID Snowflake) error {
+func (r *requester) DeleteGuildApplicationCommand(
+	ctx context.Context,
+	appID, guildID, cmdID Snowflake,
+) error {
 	return requestVoid(ctx, r, Request{
 		Method: http.MethodDelete,
 		URL:    fmt.Sprintf("/applications/%s/guilds/%s/commands/%s", appID, guildID, cmdID),
@@ -276,7 +316,11 @@ func (r *requester) DeleteGuildApplicationCommand(ctx context.Context, appID, gu
 // BulkOverwriteGuildApplicationCommands overwrites all commands in a guild.
 //
 // Reference: https://discord.com/developers/docs/interactions/application-commands#bulk-overwrite-guild-application-commands
-func (r *requester) BulkOverwriteGuildApplicationCommands(ctx context.Context, appID, guildID Snowflake, cmds []ApplicationCommand) ([]ApplicationCommand, error) {
+func (r *requester) BulkOverwriteGuildApplicationCommands(
+	ctx context.Context,
+	appID, guildID Snowflake,
+	cmds []ApplicationCommand,
+) ([]ApplicationCommand, error) {
 	payload, err := json.Marshal(cmds)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal commands: %w", err)
@@ -302,7 +346,10 @@ func (r *requester) BulkOverwriteGuildApplicationCommands(ctx context.Context, a
 // FetchGuildApplicationCommandPermissions fetches command permissions for all commands for your application in a guild.
 //
 // Reference: https://discord.com/developers/docs/interactions/application-commands#get-guild-application-command-permissions
-func (r *requester) FetchGuildApplicationCommandPermissions(ctx context.Context, appID, guildID Snowflake) ([]GuildApplicationCommandPermissions, error) {
+func (r *requester) FetchGuildApplicationCommandPermissions(
+	ctx context.Context,
+	appID, guildID Snowflake,
+) ([]GuildApplicationCommandPermissions, error) {
 	return requestJSON[[]GuildApplicationCommandPermissions](ctx, r, Request{
 		Method: http.MethodGet,
 		URL:    fmt.Sprintf("/applications/%s/guilds/%s/commands/permissions", appID, guildID),
@@ -312,25 +359,45 @@ func (r *requester) FetchGuildApplicationCommandPermissions(ctx context.Context,
 // FetchApplicationCommandPermissions fetches command permissions for a specific command for your application in a guild.
 //
 // Reference: https://discord.com/developers/docs/interactions/application-commands#get-application-command-permissions
-func (r *requester) FetchApplicationCommandPermissions(ctx context.Context, appID, guildID, cmdID Snowflake) (GuildApplicationCommandPermissions, error) {
+func (r *requester) FetchApplicationCommandPermissions(
+	ctx context.Context,
+	appID, guildID, cmdID Snowflake,
+) (GuildApplicationCommandPermissions, error) {
 	return requestJSON[GuildApplicationCommandPermissions](ctx, r, Request{
 		Method: http.MethodGet,
-		URL:    fmt.Sprintf("/applications/%s/guilds/%s/commands/%s/permissions", appID, guildID, cmdID),
+		URL: fmt.Sprintf(
+			"/applications/%s/guilds/%s/commands/%s/permissions",
+			appID,
+			guildID,
+			cmdID,
+		),
 	})
 }
 
 // EditApplicationCommandPermissions edits permissions for a specific command for your application in a guild.
 //
 // Reference: https://discord.com/developers/docs/interactions/application-commands#edit-application-command-permissions
-func (r *requester) EditApplicationCommandPermissions(ctx context.Context, appID, guildID, cmdID Snowflake, opts EditApplicationCommandPermissionsOptions) (GuildApplicationCommandPermissions, error) {
+func (r *requester) EditApplicationCommandPermissions(
+	ctx context.Context,
+	appID, guildID, cmdID Snowflake,
+	opts EditApplicationCommandPermissionsOptions,
+) (GuildApplicationCommandPermissions, error) {
 	payload, err := json.Marshal(opts)
 	if err != nil {
-		return GuildApplicationCommandPermissions{}, fmt.Errorf("failed to marshal EditApplicationCommandPermissionsOptions: %w", err)
+		return GuildApplicationCommandPermissions{}, fmt.Errorf(
+			"failed to marshal EditApplicationCommandPermissionsOptions: %w",
+			err,
+		)
 	}
 
 	return requestJSON[GuildApplicationCommandPermissions](ctx, r, Request{
 		Method: http.MethodPut,
-		URL:    fmt.Sprintf("/applications/%s/guilds/%s/commands/%s/permissions", appID, guildID, cmdID),
-		Body:   payload,
+		URL: fmt.Sprintf(
+			"/applications/%s/guilds/%s/commands/%s/permissions",
+			appID,
+			guildID,
+			cmdID,
+		),
+		Body: payload,
 	})
 }

@@ -35,7 +35,11 @@ type DeleteInviteOptions struct {
 }
 
 // FetchInvite retrieves a invite by its code.
-func (r *requester) FetchInvite(ctx context.Context, code string, opts FetchInviteOptions) (Invite, error) {
+func (r *requester) FetchInvite(
+	ctx context.Context,
+	code string,
+	opts FetchInviteOptions,
+) (Invite, error) {
 	endpoint := "/invites/" + code + "?with_counts=" + strconv.FormatBool(opts.WithCounts)
 	if opts.GuildScheduledEventID > 0 {
 		endpoint += "&guild_scheduled_event_id=" + opts.GuildScheduledEventID.String()
@@ -65,7 +69,11 @@ func (r *requester) FetchInvite(ctx context.Context, code string, opts FetchInvi
 // DeleteInvite deletes an invite.
 //
 // Requires the PermissionManageChannels permission on the channel this invite belongs to, or PermissionManageGuild to remove any invite across the guild.
-func (r *requester) DeleteInvite(ctx context.Context, code string, opts DeleteInviteOptions) (Invite, error) {
+func (r *requester) DeleteInvite(
+	ctx context.Context,
+	code string,
+	opts DeleteInviteOptions,
+) (Invite, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "DELETE",
 		URL:    "/invites/" + code,

@@ -166,7 +166,12 @@ type EditFollowupMessageOptions struct {
 // CreateInteractionResponse creates a response to an Interaction.
 //
 // Reference: https://discord.com/developers/docs/interactions/receiving-and-responding#create-interaction-response
-func (r *requester) CreateInteractionResponse(ctx context.Context, interactionID Snowflake, interactionToken string, opts CreateInteractionResponseOptions) (*InteractionCallbackResponse, error) {
+func (r *requester) CreateInteractionResponse(
+	ctx context.Context,
+	interactionID Snowflake,
+	interactionToken string,
+	opts CreateInteractionResponseOptions,
+) (*InteractionCallbackResponse, error) {
 	endpoint := "/interactions/" + interactionID.String() + "/" + interactionToken + "/callback"
 	if opts.WithResponse {
 		endpoint += "?with_response=true"
@@ -219,7 +224,11 @@ func (r *requester) CreateInteractionResponse(ctx context.Context, interactionID
 // FetchOriginalInteractionResponse returns the initial Interaction response.
 //
 // Reference: https://discord.com/developers/docs/interactions/receiving-and-responding#get-original-interaction-response
-func (r *requester) FetchOriginalInteractionResponse(ctx context.Context, applicationID Snowflake, interactionToken string) (Message, error) {
+func (r *requester) FetchOriginalInteractionResponse(
+	ctx context.Context,
+	applicationID Snowflake,
+	interactionToken string,
+) (Message, error) {
 	endpoint := "/webhooks/" + applicationID.String() + "/" + interactionToken + "/messages/@original"
 	body, err := r.DoRequest(ctx, Request{
 		Method: "GET",
@@ -246,7 +255,12 @@ func (r *requester) FetchOriginalInteractionResponse(ctx context.Context, applic
 // EditOriginalInteractionResponse edits the initial Interaction response.
 //
 // Reference: https://discord.com/developers/docs/interactions/receiving-and-responding#edit-original-interaction-response
-func (r *requester) EditOriginalInteractionResponse(ctx context.Context, applicationID Snowflake, interactionToken string, opts EditFollowupMessageOptions) (Message, error) {
+func (r *requester) EditOriginalInteractionResponse(
+	ctx context.Context,
+	applicationID Snowflake,
+	interactionToken string,
+	opts EditFollowupMessageOptions,
+) (Message, error) {
 	endpoint := "/webhooks/" + applicationID.String() + "/" + interactionToken + "/messages/@original"
 
 	if len(opts.Files) > 0 {
@@ -296,7 +310,11 @@ func (r *requester) EditOriginalInteractionResponse(ctx context.Context, applica
 // DeleteOriginalInteractionResponse deletes the initial Interaction response.
 //
 // Reference: https://discord.com/developers/docs/interactions/receiving-and-responding#delete-original-interaction-response
-func (r *requester) DeleteOriginalInteractionResponse(ctx context.Context, applicationID Snowflake, interactionToken string) error {
+func (r *requester) DeleteOriginalInteractionResponse(
+	ctx context.Context,
+	applicationID Snowflake,
+	interactionToken string,
+) error {
 	endpoint := "/webhooks/" + applicationID.String() + "/" + interactionToken + "/messages/@original"
 	body, err := r.DoRequest(ctx, Request{
 		Method: "DELETE",
@@ -312,7 +330,12 @@ func (r *requester) DeleteOriginalInteractionResponse(ctx context.Context, appli
 // CreateFollowupMessage creates a followup message for an Interaction.
 //
 // Reference: https://discord.com/developers/docs/interactions/receiving-and-responding#create-followup-message
-func (r *requester) CreateFollowupMessage(ctx context.Context, applicationID Snowflake, interactionToken string, opts CreateFollowupMessageOptions) (Message, error) {
+func (r *requester) CreateFollowupMessage(
+	ctx context.Context,
+	applicationID Snowflake,
+	interactionToken string,
+	opts CreateFollowupMessageOptions,
+) (Message, error) {
 	endpoint := "/webhooks/" + applicationID.String() + "/" + interactionToken
 
 	if len(opts.Files) > 0 {
@@ -362,7 +385,12 @@ func (r *requester) CreateFollowupMessage(ctx context.Context, applicationID Sno
 // FetchFollowupMessage returns a followup message for an Interaction.
 //
 // Reference: https://discord.com/developers/docs/interactions/receiving-and-responding#get-followup-message
-func (r *requester) FetchFollowupMessage(ctx context.Context, applicationID Snowflake, interactionToken string, messageID Snowflake) (Message, error) {
+func (r *requester) FetchFollowupMessage(
+	ctx context.Context,
+	applicationID Snowflake,
+	interactionToken string,
+	messageID Snowflake,
+) (Message, error) {
 	endpoint := "/webhooks/" + applicationID.String() + "/" + interactionToken + "/messages/" + messageID.String()
 	body, err := r.DoRequest(ctx, Request{
 		Method: "GET",
@@ -389,7 +417,13 @@ func (r *requester) FetchFollowupMessage(ctx context.Context, applicationID Snow
 // EditFollowupMessage edits a followup message for an Interaction.
 //
 // Reference: https://discord.com/developers/docs/interactions/receiving-and-responding#edit-followup-message
-func (r *requester) EditFollowupMessage(ctx context.Context, applicationID Snowflake, interactionToken string, messageID Snowflake, opts EditFollowupMessageOptions) (Message, error) {
+func (r *requester) EditFollowupMessage(
+	ctx context.Context,
+	applicationID Snowflake,
+	interactionToken string,
+	messageID Snowflake,
+	opts EditFollowupMessageOptions,
+) (Message, error) {
 	endpoint := "/webhooks/" + applicationID.String() + "/" + interactionToken + "/messages/" + messageID.String()
 
 	if len(opts.Files) > 0 {
@@ -439,7 +473,12 @@ func (r *requester) EditFollowupMessage(ctx context.Context, applicationID Snowf
 // DeleteFollowupMessage deletes a followup message for an Interaction.
 //
 // Reference: https://discord.com/developers/docs/interactions/receiving-and-responding#delete-followup-message
-func (r *requester) DeleteFollowupMessage(ctx context.Context, applicationID Snowflake, interactionToken string, messageID Snowflake) error {
+func (r *requester) DeleteFollowupMessage(
+	ctx context.Context,
+	applicationID Snowflake,
+	interactionToken string,
+	messageID Snowflake,
+) error {
 	endpoint := "/webhooks/" + applicationID.String() + "/" + interactionToken + "/messages/" + messageID.String()
 	body, err := r.DoRequest(ctx, Request{
 		Method: "DELETE",

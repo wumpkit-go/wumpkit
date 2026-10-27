@@ -52,7 +52,10 @@ type CreateGuildFromTemplateOptions struct {
 // FetchGuildTemplate returns a guild template object for the given code.
 //
 // Reference: https://discord.com/developers/docs/resources/guild-template#get-guild-template
-func (r *requester) FetchGuildTemplate(ctx context.Context, templateCode string) (GuildTemplate, error) {
+func (r *requester) FetchGuildTemplate(
+	ctx context.Context,
+	templateCode string,
+) (GuildTemplate, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "GET",
 		URL:    "/guilds/templates/" + templateCode,
@@ -81,7 +84,11 @@ func (r *requester) FetchGuildTemplate(ctx context.Context, templateCode string)
 //   - This endpoint can be used only by bots in less than 10 guilds.
 //
 // Reference: https://discord.com/developers/docs/resources/guild-template#create-guild-from-guild-template
-func (r *requester) CreateGuildFromTemplate(ctx context.Context, templateCode string, opts CreateGuildFromTemplateOptions) (RestGuild, error) {
+func (r *requester) CreateGuildFromTemplate(
+	ctx context.Context,
+	templateCode string,
+	opts CreateGuildFromTemplateOptions,
+) (RestGuild, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "POST",
@@ -111,7 +118,10 @@ func (r *requester) CreateGuildFromTemplate(ctx context.Context, templateCode st
 // Requires the PermissionManageGuild permission.
 //
 // Reference: https://discord.com/developers/docs/resources/guild-template#get-guild-templates
-func (r *requester) FetchGuildTemplates(ctx context.Context, guildID Snowflake) ([]GuildTemplate, error) {
+func (r *requester) FetchGuildTemplates(
+	ctx context.Context,
+	guildID Snowflake,
+) ([]GuildTemplate, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "GET",
 		URL:    "/guilds/" + guildID.String() + "/templates",
@@ -139,7 +149,11 @@ func (r *requester) FetchGuildTemplates(ctx context.Context, guildID Snowflake) 
 // Requires the PermissionManageGuild permission.
 //
 // Reference: https://discord.com/developers/docs/resources/guild-template#create-guild-template
-func (r *requester) CreateGuildTemplate(ctx context.Context, guildID Snowflake, opts CreateGuildTemplateOptions) (GuildTemplate, error) {
+func (r *requester) CreateGuildTemplate(
+	ctx context.Context,
+	guildID Snowflake,
+	opts CreateGuildTemplateOptions,
+) (GuildTemplate, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "POST",
@@ -169,7 +183,11 @@ func (r *requester) CreateGuildTemplate(ctx context.Context, guildID Snowflake, 
 // Requires the PermissionManageGuild permission.
 //
 // Reference: https://discord.com/developers/docs/resources/guild-template#sync-guild-template
-func (r *requester) SyncGuildTemplate(ctx context.Context, guildID Snowflake, templateCode string) (GuildTemplate, error) {
+func (r *requester) SyncGuildTemplate(
+	ctx context.Context,
+	guildID Snowflake,
+	templateCode string,
+) (GuildTemplate, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "PUT",
 		URL:    "/guilds/" + guildID.String() + "/templates/" + templateCode,
@@ -197,7 +215,12 @@ func (r *requester) SyncGuildTemplate(ctx context.Context, guildID Snowflake, te
 // Requires the PermissionManageGuild permission.
 //
 // Reference: https://discord.com/developers/docs/resources/guild-template#modify-guild-template
-func (r *requester) ModifyGuildTemplate(ctx context.Context, guildID Snowflake, templateCode string, opts ModifyGuildTemplateOptions) (GuildTemplate, error) {
+func (r *requester) ModifyGuildTemplate(
+	ctx context.Context,
+	guildID Snowflake,
+	templateCode string,
+	opts ModifyGuildTemplateOptions,
+) (GuildTemplate, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "PATCH",
@@ -227,7 +250,11 @@ func (r *requester) ModifyGuildTemplate(ctx context.Context, guildID Snowflake, 
 // Requires the PermissionManageGuild permission.
 //
 // Reference: https://discord.com/developers/docs/resources/guild-template#delete-guild-template
-func (r *requester) DeleteGuildTemplate(ctx context.Context, guildID Snowflake, templateCode string) error {
+func (r *requester) DeleteGuildTemplate(
+	ctx context.Context,
+	guildID Snowflake,
+	templateCode string,
+) error {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "DELETE",
 		URL:    "/guilds/" + guildID.String() + "/templates/" + templateCode,

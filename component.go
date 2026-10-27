@@ -326,7 +326,9 @@ func (c *ActionRowComponent) UnmarshalJSON(buf []byte) error {
 			if interactiveComponent, ok := component.(InteractiveComponent); ok {
 				c.Components = append(c.Components, interactiveComponent)
 			} else {
-				return errors.New("cannot unmarshal non-InteractiveComponent into InteractiveComponent")
+				return errors.New(
+					"cannot unmarshal non-InteractiveComponent into InteractiveComponent",
+				)
 			}
 		}
 	}
@@ -922,7 +924,9 @@ func (c *SectionComponent) UnmarshalJSON(buf []byte) error {
 			if sub, ok := component.(SectionSubComponent); ok {
 				c.Components = append(c.Components, sub)
 			} else {
-				return errors.New("cannot unmarshal non-SectionSubComponent into SectionSubComponent")
+				return errors.New(
+					"cannot unmarshal non-SectionSubComponent into SectionSubComponent",
+				)
 			}
 		}
 	}
@@ -1271,7 +1275,9 @@ func (c *ContainerComponent) UnmarshalJSON(buf []byte) error {
 			if sub, ok := component.(ContainerSubComponent); ok {
 				c.Components = append(c.Components, sub)
 			} else {
-				return errors.New("cannot unmarshal non-ContainerSubComponent into ContainerSubComponent")
+				return errors.New(
+					"cannot unmarshal non-ContainerSubComponent into ContainerSubComponent",
+				)
 			}
 		}
 	}
@@ -1453,7 +1459,13 @@ func NewActionRowBuilder() *ActionRowBuilder {
 // SetComponent sets the action row components.
 func (b *ActionRowBuilder) SetComponent(components ...InteractiveComponent) *ActionRowBuilder {
 	if len(components) > ActionRowMaxComponents {
-		panic("ActionRow can contain a maximum of " + strconv.Itoa(ActionRowMaxComponents) + " components, got " + strconv.Itoa(len(components)))
+		panic(
+			"ActionRow can contain a maximum of " + strconv.Itoa(
+				ActionRowMaxComponents,
+			) + " components, got " + strconv.Itoa(
+				len(components),
+			),
+		)
 	}
 	b.actionRow.Components = components
 	return b
@@ -1462,7 +1474,11 @@ func (b *ActionRowBuilder) SetComponent(components ...InteractiveComponent) *Act
 // AddComponent add's a component to the action row components.
 func (b *ActionRowBuilder) AddComponent(component InteractiveComponent) *ActionRowBuilder {
 	if len(b.actionRow.Components) >= ActionRowMaxComponents {
-		panic("ActionRow can contain a maximum of " + strconv.Itoa(ActionRowMaxComponents) + " components")
+		panic(
+			"ActionRow can contain a maximum of " + strconv.Itoa(
+				ActionRowMaxComponents,
+			) + " components",
+		)
 	}
 	b.actionRow.Components = append(b.actionRow.Components, component)
 	return b
@@ -1580,9 +1596,17 @@ func (b *StringSelectMenuBuilder) SetPlaceholder(placeholder string) *StringSele
 }
 
 // SetOptions sets all options at once.
-func (b *StringSelectMenuBuilder) SetOptions(options []SelectOptionStructure) *StringSelectMenuBuilder {
+func (b *StringSelectMenuBuilder) SetOptions(
+	options []SelectOptionStructure,
+) *StringSelectMenuBuilder {
 	if len(options) > StringSelectMenuMaxOptions {
-		panic("StringSelectMenu can contain a maximum of " + strconv.Itoa(StringSelectMenuMaxOptions) + " options, got " + strconv.Itoa(len(options)))
+		panic(
+			"StringSelectMenu can contain a maximum of " + strconv.Itoa(
+				StringSelectMenuMaxOptions,
+			) + " options, got " + strconv.Itoa(
+				len(options),
+			),
+		)
 	}
 	b.selectMenu.Options = options
 	return b
@@ -1591,7 +1615,11 @@ func (b *StringSelectMenuBuilder) SetOptions(options []SelectOptionStructure) *S
 // AddOption adds a single option.
 func (b *StringSelectMenuBuilder) AddOption(option SelectOptionStructure) *StringSelectMenuBuilder {
 	if len(b.selectMenu.Options) >= StringSelectMenuMaxOptions {
-		panic("StringSelectMenu can contain a maximum of " + strconv.Itoa(StringSelectMenuMaxOptions) + " options")
+		panic(
+			"StringSelectMenu can contain a maximum of " + strconv.Itoa(
+				StringSelectMenuMaxOptions,
+			) + " options",
+		)
 	}
 	b.selectMenu.Options = append(b.selectMenu.Options, option)
 	return b
@@ -1728,13 +1756,17 @@ func (b *UserSelectMenuBuilder) SetPlaceholder(placeholder string) *UserSelectMe
 }
 
 // SetDefaultValues sets all default values at once.
-func (b *UserSelectMenuBuilder) SetDefaultValues(defaults []SelectDefaultValue) *UserSelectMenuBuilder {
+func (b *UserSelectMenuBuilder) SetDefaultValues(
+	defaults []SelectDefaultValue,
+) *UserSelectMenuBuilder {
 	b.selectMenu.DefaultValues = defaults
 	return b
 }
 
 // AddDefaultValue adds a single default value.
-func (b *UserSelectMenuBuilder) AddDefaultValue(defaultValue SelectDefaultValue) *UserSelectMenuBuilder {
+func (b *UserSelectMenuBuilder) AddDefaultValue(
+	defaultValue SelectDefaultValue,
+) *UserSelectMenuBuilder {
 	b.selectMenu.DefaultValues = append(b.selectMenu.DefaultValues, defaultValue)
 	return b
 }
@@ -1796,13 +1828,17 @@ func (b *RoleSelectMenuBuilder) SetPlaceholder(placeholder string) *RoleSelectMe
 }
 
 // SetDefaultValues sets all default values at once.
-func (b *RoleSelectMenuBuilder) SetDefaultValues(defaults []SelectDefaultValue) *RoleSelectMenuBuilder {
+func (b *RoleSelectMenuBuilder) SetDefaultValues(
+	defaults []SelectDefaultValue,
+) *RoleSelectMenuBuilder {
 	b.selectMenu.DefaultValues = defaults
 	return b
 }
 
 // AddDefaultValue adds a single default value.
-func (b *RoleSelectMenuBuilder) AddDefaultValue(defaultValue SelectDefaultValue) *RoleSelectMenuBuilder {
+func (b *RoleSelectMenuBuilder) AddDefaultValue(
+	defaultValue SelectDefaultValue,
+) *RoleSelectMenuBuilder {
 	b.selectMenu.DefaultValues = append(b.selectMenu.DefaultValues, defaultValue)
 	return b
 }
@@ -1858,19 +1894,25 @@ func (b *MentionableSelectMenuBuilder) SetCustomID(customID string) *Mentionable
 }
 
 // SetPlaceholder sets the placeholder text.
-func (b *MentionableSelectMenuBuilder) SetPlaceholder(placeholder string) *MentionableSelectMenuBuilder {
+func (b *MentionableSelectMenuBuilder) SetPlaceholder(
+	placeholder string,
+) *MentionableSelectMenuBuilder {
 	b.selectMenu.Placeholder = placeholder
 	return b
 }
 
 // SetDefaultValues sets all default values at once.
-func (b *MentionableSelectMenuBuilder) SetDefaultValues(defaults []SelectDefaultValue) *MentionableSelectMenuBuilder {
+func (b *MentionableSelectMenuBuilder) SetDefaultValues(
+	defaults []SelectDefaultValue,
+) *MentionableSelectMenuBuilder {
 	b.selectMenu.DefaultValues = defaults
 	return b
 }
 
 // AddDefaultValue adds a single default value.
-func (b *MentionableSelectMenuBuilder) AddDefaultValue(defaultValue SelectDefaultValue) *MentionableSelectMenuBuilder {
+func (b *MentionableSelectMenuBuilder) AddDefaultValue(
+	defaultValue SelectDefaultValue,
+) *MentionableSelectMenuBuilder {
 	b.selectMenu.DefaultValues = append(b.selectMenu.DefaultValues, defaultValue)
 	return b
 }
@@ -1932,7 +1974,9 @@ func (b *ChannelSelectMenuBuilder) SetChannelTypes(types []ChannelType) *Channel
 }
 
 // AddChannelType adds a single channel type.
-func (b *ChannelSelectMenuBuilder) AddChannelType(channelType ChannelType) *ChannelSelectMenuBuilder {
+func (b *ChannelSelectMenuBuilder) AddChannelType(
+	channelType ChannelType,
+) *ChannelSelectMenuBuilder {
 	b.selectMenu.ChannelTypes = append(b.selectMenu.ChannelTypes, channelType)
 	return b
 }
@@ -1944,13 +1988,17 @@ func (b *ChannelSelectMenuBuilder) SetPlaceholder(placeholder string) *ChannelSe
 }
 
 // SetDefaultValues sets all default values at once.
-func (b *ChannelSelectMenuBuilder) SetDefaultValues(defaults []SelectDefaultValue) *ChannelSelectMenuBuilder {
+func (b *ChannelSelectMenuBuilder) SetDefaultValues(
+	defaults []SelectDefaultValue,
+) *ChannelSelectMenuBuilder {
 	b.selectMenu.DefaultValues = defaults
 	return b
 }
 
 // AddDefaultValue adds a single default value.
-func (b *ChannelSelectMenuBuilder) AddDefaultValue(defaultValue SelectDefaultValue) *ChannelSelectMenuBuilder {
+func (b *ChannelSelectMenuBuilder) AddDefaultValue(
+	defaultValue SelectDefaultValue,
+) *ChannelSelectMenuBuilder {
 	b.selectMenu.DefaultValues = append(b.selectMenu.DefaultValues, defaultValue)
 	return b
 }
@@ -2008,7 +2056,15 @@ func (b *SectionBuilder) SetID(id int) *SectionBuilder {
 // SetComponents sets all components at once.
 func (b *SectionBuilder) SetComponents(components []SectionSubComponent) *SectionBuilder {
 	if len(components) < SectionMinComponents || len(components) > SectionMaxComponents {
-		panic("Section must contain between " + strconv.Itoa(SectionMinComponents) + " and " + strconv.Itoa(SectionMaxComponents) + " components, got " + strconv.Itoa(len(components)))
+		panic(
+			"Section must contain between " + strconv.Itoa(
+				SectionMinComponents,
+			) + " and " + strconv.Itoa(
+				SectionMaxComponents,
+			) + " components, got " + strconv.Itoa(
+				len(components),
+			),
+		)
 	}
 	b.section.Components = components
 	return b
@@ -2017,7 +2073,11 @@ func (b *SectionBuilder) SetComponents(components []SectionSubComponent) *Sectio
 // AddComponent adds a single component.
 func (b *SectionBuilder) AddComponent(component SectionSubComponent) *SectionBuilder {
 	if len(b.section.Components) >= SectionMaxComponents {
-		panic("Section can contain a maximum of " + strconv.Itoa(SectionMaxComponents) + " components")
+		panic(
+			"Section can contain a maximum of " + strconv.Itoa(
+				SectionMaxComponents,
+			) + " components",
+		)
 	}
 	b.section.Components = append(b.section.Components, component)
 	return b
@@ -2148,7 +2208,15 @@ func (b *MediaGalleryBuilder) SetID(id int) *MediaGalleryBuilder {
 // SetItems sets all gallery items at once.
 func (b *MediaGalleryBuilder) SetItems(items []MediaGalleryItem) *MediaGalleryBuilder {
 	if len(items) < MediaGalleryMinItems || len(items) > MediaGalleryMaxItems {
-		panic("MediaGallery must contain between " + strconv.Itoa(MediaGalleryMinItems) + " and " + strconv.Itoa(MediaGalleryMaxItems) + " items, got " + strconv.Itoa(len(items)))
+		panic(
+			"MediaGallery must contain between " + strconv.Itoa(
+				MediaGalleryMinItems,
+			) + " and " + strconv.Itoa(
+				MediaGalleryMaxItems,
+			) + " items, got " + strconv.Itoa(
+				len(items),
+			),
+		)
 	}
 	b.gallery.Items = items
 	return b
@@ -2157,7 +2225,11 @@ func (b *MediaGalleryBuilder) SetItems(items []MediaGalleryItem) *MediaGalleryBu
 // AddItem adds a single gallery item.
 func (b *MediaGalleryBuilder) AddItem(item MediaGalleryItem) *MediaGalleryBuilder {
 	if len(b.gallery.Items) >= MediaGalleryMaxItems {
-		panic("MediaGallery can contain a maximum of " + strconv.Itoa(MediaGalleryMaxItems) + " items")
+		panic(
+			"MediaGallery can contain a maximum of " + strconv.Itoa(
+				MediaGalleryMaxItems,
+			) + " items",
+		)
 	}
 	b.gallery.Items = append(b.gallery.Items, item)
 	return b

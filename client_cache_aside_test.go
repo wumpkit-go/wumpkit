@@ -61,7 +61,9 @@ func TestClient_CacheAside_Guild(t *testing.T) {
 		apiCalls.Add(1)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte(`{"id":"55555","name":"Wumpkit Guild","roles":[],"emojis":[],"stickers":[]}`))
+		_, _ = w.Write(
+			[]byte(`{"id":"55555","name":"Wumpkit Guild","roles":[],"emojis":[],"stickers":[]}`),
+		)
 	}))
 	defer server.Close()
 
@@ -91,7 +93,9 @@ func TestClient_CacheAside_Member(t *testing.T) {
 		apiCalls.Add(1)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte(`{"user":{"id":"2001","username":"zwafriya"},"nick":"Zwafr","roles":[]}`))
+		_, _ = w.Write(
+			[]byte(`{"user":{"id":"2001","username":"zwafriya"},"nick":"Zwafr","roles":[]}`),
+		)
 	}))
 	defer server.Close()
 

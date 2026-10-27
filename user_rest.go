@@ -136,7 +136,10 @@ func (r *requester) FetchUser(ctx context.Context, userID Snowflake) (User, erro
 // ModifyCurrentUser modifies the requester's user account settings.
 //
 // Reference: https://discord.com/developers/docs/resources/user#modify-current-user
-func (r *requester) ModifyCurrentUser(ctx context.Context, opts ModifyCurrentUserOptions) (User, error) {
+func (r *requester) ModifyCurrentUser(
+	ctx context.Context,
+	opts ModifyCurrentUserOptions,
+) (User, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "PATCH",
@@ -164,7 +167,10 @@ func (r *requester) ModifyCurrentUser(ctx context.Context, opts ModifyCurrentUse
 // FetchCurrentUserGuilds returns a list of partial guild objects the current user is a member of.
 //
 // Reference: https://discord.com/developers/docs/resources/user#get-current-user-guilds
-func (r *requester) FetchCurrentUserGuilds(ctx context.Context, opts ...FetchCurrentUserGuildsOptions) ([]PartialGuild, error) {
+func (r *requester) FetchCurrentUserGuilds(
+	ctx context.Context,
+	opts ...FetchCurrentUserGuildsOptions,
+) ([]PartialGuild, error) {
 	var first FetchCurrentUserGuildsOptions
 	if len(opts) > 0 {
 		first = opts[0]
@@ -217,7 +223,10 @@ func (r *requester) FetchCurrentUserGuilds(ctx context.Context, opts ...FetchCur
 // FetchCurrentUserGuildMember returns a guild member object for the current user in a guild.
 //
 // Reference: https://discord.com/developers/docs/resources/user#get-current-user-guild-member
-func (r *requester) FetchCurrentUserGuildMember(ctx context.Context, guildID Snowflake) (FullMember, error) {
+func (r *requester) FetchCurrentUserGuildMember(
+	ctx context.Context,
+	guildID Snowflake,
+) (FullMember, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "GET",
 		URL:    "/users/@me/guilds/" + guildID.String() + "/member",
@@ -298,7 +307,10 @@ func (r *requester) CreateDM(ctx context.Context, recipientID Snowflake) (*DMCha
 // CreateGroupDM creates a new group direct message channel with multiple users.
 //
 // Reference: https://discord.com/developers/docs/resources/user#create-group-dm
-func (r *requester) CreateGroupDM(ctx context.Context, opts CreateGroupDMOptions) (*GroupDMChannel, error) {
+func (r *requester) CreateGroupDM(
+	ctx context.Context,
+	opts CreateGroupDMOptions,
+) (*GroupDMChannel, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "POST",
@@ -360,7 +372,10 @@ func (r *requester) FetchCurrentUserConnections(ctx context.Context) ([]Connecti
 // FetchCurrentUserApplicationRoleConnection returns the application role connection for the user.
 //
 // Reference: https://discord.com/developers/docs/resources/user#get-current-user-application-role-connection
-func (r *requester) FetchCurrentUserApplicationRoleConnection(ctx context.Context, applicationID Snowflake) (ApplicationRoleConnection, error) {
+func (r *requester) FetchCurrentUserApplicationRoleConnection(
+	ctx context.Context,
+	applicationID Snowflake,
+) (ApplicationRoleConnection, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "GET",
 		URL:    "/users/@me/applications/" + applicationID.String() + "/role-connection",
@@ -386,7 +401,11 @@ func (r *requester) FetchCurrentUserApplicationRoleConnection(ctx context.Contex
 // UpdateCurrentUserApplicationRoleConnection updates and returns the application role connection for the user.
 //
 // Reference: https://discord.com/developers/docs/resources/user#update-current-user-application-role-connection
-func (r *requester) UpdateCurrentUserApplicationRoleConnection(ctx context.Context, applicationID Snowflake, opts UpdateApplicationRoleConnectionOptions) (ApplicationRoleConnection, error) {
+func (r *requester) UpdateCurrentUserApplicationRoleConnection(
+	ctx context.Context,
+	applicationID Snowflake,
+	opts UpdateApplicationRoleConnectionOptions,
+) (ApplicationRoleConnection, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "PUT",
@@ -414,7 +433,10 @@ func (r *requester) UpdateCurrentUserApplicationRoleConnection(ctx context.Conte
 // FetchCurrentUserWithToken retrieves the user object of the requester using a user Bearer access token.
 //
 // Reference: https://discord.com/developers/docs/resources/user#get-current-user
-func (r *requester) FetchCurrentUserWithToken(ctx context.Context, accessToken string) (User, error) {
+func (r *requester) FetchCurrentUserWithToken(
+	ctx context.Context,
+	accessToken string,
+) (User, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "GET",
 		URL:    "/users/@me",
@@ -444,7 +466,11 @@ func (r *requester) FetchCurrentUserWithToken(ctx context.Context, accessToken s
 // FetchCurrentUserGuildsWithToken returns a list of partial guild objects the current user is a member of using a user Bearer token.
 //
 // Reference: https://discord.com/developers/docs/resources/user#get-current-user-guilds
-func (r *requester) FetchCurrentUserGuildsWithToken(ctx context.Context, accessToken string, opts ...FetchCurrentUserGuildsOptions) ([]PartialGuild, error) {
+func (r *requester) FetchCurrentUserGuildsWithToken(
+	ctx context.Context,
+	accessToken string,
+	opts ...FetchCurrentUserGuildsOptions,
+) ([]PartialGuild, error) {
 	endpoint := "/users/@me/guilds"
 	if len(opts) > 0 {
 		query := url.Values{}

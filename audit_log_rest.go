@@ -44,7 +44,11 @@ type FetchAuditLogOptions struct {
 // FetchGuildAuditLog returns an audit log object for the guild. Requires 'VIEW_AUDIT_LOG' permission.
 //
 // Reference: https://discord.com/developers/docs/resources/audit-log#get-guild-audit-log
-func (r *requester) FetchGuildAuditLog(ctx context.Context, guildID Snowflake, opts ...FetchAuditLogOptions) (AuditLog, error) {
+func (r *requester) FetchGuildAuditLog(
+	ctx context.Context,
+	guildID Snowflake,
+	opts ...FetchAuditLogOptions,
+) (AuditLog, error) {
 	var first FetchAuditLogOptions
 	if len(opts) > 0 {
 		first = opts[0]

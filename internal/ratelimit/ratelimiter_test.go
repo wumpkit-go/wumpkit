@@ -143,5 +143,10 @@ func TestLimiter_InteractionRouteBypassesGlobalBucket(t *testing.T) {
 	require.NoError(t, err)
 	elapsed := time.Since(start)
 
-	assert.Less(t, elapsed, 50*time.Millisecond, "interaction route should not wait for global bucket")
+	assert.Less(
+		t,
+		elapsed,
+		50*time.Millisecond,
+		"interaction route should not wait for global bucket",
+	)
 }

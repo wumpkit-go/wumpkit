@@ -251,7 +251,10 @@ func New(ctx context.Context, options ...clientOption) *Client {
 
 	var pubKeyBytes ed25519.PublicKey
 	if cfg.publicKey != "" {
-		if b, err := hex.DecodeString(cfg.publicKey); err == nil && len(b) == ed25519.PublicKeySize {
+		if b, err := hex.DecodeString(
+			cfg.publicKey,
+		); err == nil &&
+			len(b) == ed25519.PublicKeySize {
 			pubKeyBytes = ed25519.PublicKey(b)
 		}
 	}
@@ -309,7 +312,8 @@ func (c *Client) StartGateway(options ...GatewayStartOption) error {
 
 	// discover Gateway configuration & recommended shard count if not configured
 	totalShards := c.shardManager.totalShards
-	if totalShards <= 0 || c.shardManager.gatewayURL == "" || c.shardManager.identifyLimiter == nil {
+	if totalShards <= 0 || c.shardManager.gatewayURL == "" ||
+		c.shardManager.identifyLimiter == nil {
 		gatewayBotData, err := c.FetchGatewayBot(c.ctx)
 		if err != nil {
 			return fmt.Errorf("failed fetching gateway bot info: %w", err)
@@ -368,7 +372,11 @@ func (c *Client) StartGatewayWithSignals(signals ...os.Signal) error {
 
 // StartBoth starts both the Gateway WebSocket connection and the Webhook Events HTTP server simultaneously on the same client.
 // Blocks until client context is cancelled or Shutdown() is called.
-func (c *Client) StartBoth(addr string, gatewayOpts []GatewayStartOption, webhookOpts ...WebhookEventsStartOption) error {
+func (c *Client) StartBoth(
+	addr string,
+	gatewayOpts []GatewayStartOption,
+	webhookOpts ...WebhookEventsStartOption,
+) error {
 	errChan := make(chan error, 2)
 
 	go func() {
@@ -394,7 +402,11 @@ func (c *Client) StartBoth(addr string, gatewayOpts []GatewayStartOption, webhoo
 }
 
 // StartBothWithSignals starts both Gateway and Webhook Events simultaneously, blocking until an OS signal is received.
-func (c *Client) StartBothWithSignals(addr string, gatewayOpts []GatewayStartOption, webhookOpts ...WebhookEventsStartOption) error {
+func (c *Client) StartBothWithSignals(
+	addr string,
+	gatewayOpts []GatewayStartOption,
+	webhookOpts ...WebhookEventsStartOption,
+) error {
 	sigCtx, stop := signal.NotifyContext(c.ctx, os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
@@ -622,7 +634,11 @@ func (c *Client) UpdatePresence(presence GatewayPresenceUpdate) error {
 // UpdateVoiceState joins, moves, or disconnects the client from a voice channel in a guild.
 //
 // Reference: https://discord.com/developers/docs/events/gateway-events#update-voice-state
-func (c *Client) UpdateVoiceState(guildID Snowflake, channelID *Snowflake, selfMute, selfDeaf bool) error {
+func (c *Client) UpdateVoiceState(
+	guildID Snowflake,
+	channelID *Snowflake,
+	selfMute, selfDeaf bool,
+) error {
 	if c.shardManager == nil {
 		return errors.New("client: shard manager is not started")
 	}
@@ -720,7 +736,11 @@ func (c *Client) ComputeMemberPermissions(ctx context.Context, member Member) Pe
 
 // ComputeChannelPermissions calculates a member's effective permissions in a guild channel,
 // factoring in base permissions and channel-specific permission overwrites.
-func (c *Client) ComputeChannelPermissions(ctx context.Context, member Member, channel GuildChannel) Permissions {
+func (c *Client) ComputeChannelPermissions(
+	ctx context.Context,
+	member Member,
+	channel GuildChannel,
+) Permissions {
 	basePerms := c.ComputeMemberPermissions(ctx, member)
 	return channel.PermissionsFor(basePerms, member)
 }
@@ -731,6 +751,10 @@ func (c *Client) MemberPermissions(ctx context.Context, member Member) Permissio
 }
 
 // ChannelPermissions is an alias for ComputeChannelPermissions.
-func (c *Client) ChannelPermissions(ctx context.Context, member Member, channel GuildChannel) Permissions {
+func (c *Client) ChannelPermissions(
+	ctx context.Context,
+	member Member,
+	channel GuildChannel,
+) Permissions {
 	return c.ComputeChannelPermissions(ctx, member, channel)
 }

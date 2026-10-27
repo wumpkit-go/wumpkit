@@ -188,7 +188,11 @@ type FetchReactionsOptions struct {
 // CreateMessage sends a message to a guild text or DM channel.
 //
 // Reference: https://discord.com/developers/docs/resources/message#create-message
-func (r *requester) CreateMessage(ctx context.Context, channelID Snowflake, opts CreateMessageOptions) (Message, error) {
+func (r *requester) CreateMessage(
+	ctx context.Context,
+	channelID Snowflake,
+	opts CreateMessageOptions,
+) (Message, error) {
 	endpoint := fmt.Sprintf("/channels/%s/messages", channelID)
 	if len(opts.Files) > 0 {
 		payload, err := json.Marshal(opts)
@@ -218,7 +222,11 @@ func (r *requester) CreateMessage(ctx context.Context, channelID Snowflake, opts
 // FetchChannelMessages returns the messages for a channel.
 //
 // Reference: https://discord.com/developers/docs/resources/message#get-channel-messages
-func (r *requester) FetchChannelMessages(ctx context.Context, channelID Snowflake, opts ...FetchMessagesOptions) ([]Message, error) {
+func (r *requester) FetchChannelMessages(
+	ctx context.Context,
+	channelID Snowflake,
+	opts ...FetchMessagesOptions,
+) ([]Message, error) {
 	var first FetchMessagesOptions
 	if len(opts) > 0 {
 		first = opts[0]
@@ -252,7 +260,10 @@ func (r *requester) FetchChannelMessages(ctx context.Context, channelID Snowflak
 // FetchChannelMessage returns a specific message in the channel.
 //
 // Reference: https://discord.com/developers/docs/resources/message#get-channel-message
-func (r *requester) FetchChannelMessage(ctx context.Context, channelID, messageID Snowflake) (Message, error) {
+func (r *requester) FetchChannelMessage(
+	ctx context.Context,
+	channelID, messageID Snowflake,
+) (Message, error) {
 	endpoint := fmt.Sprintf("/channels/%s/messages/%s", channelID, messageID)
 	return requestJSON[Message](ctx, r, Request{
 		Method: http.MethodGet,
@@ -263,7 +274,10 @@ func (r *requester) FetchChannelMessage(ctx context.Context, channelID, messageI
 // CrosspostMessage crossposts a message in an Announcement Channel to following channels.
 //
 // Reference: https://discord.com/developers/docs/resources/message#crosspost-message
-func (r *requester) CrosspostMessage(ctx context.Context, channelID, messageID Snowflake) (Message, error) {
+func (r *requester) CrosspostMessage(
+	ctx context.Context,
+	channelID, messageID Snowflake,
+) (Message, error) {
 	endpoint := fmt.Sprintf("/channels/%s/messages/%s/crosspost", channelID, messageID)
 	return requestJSON[Message](ctx, r, Request{
 		Method: http.MethodPost,
@@ -274,8 +288,17 @@ func (r *requester) CrosspostMessage(ctx context.Context, channelID, messageID S
 // CreateReaction adds a reaction to a message with an emoji (e.g. "😀" or "name:123456789").
 //
 // Reference: https://discord.com/developers/docs/resources/message#create-reaction
-func (r *requester) CreateReaction(ctx context.Context, channelID, messageID Snowflake, emoji string) error {
-	endpoint := fmt.Sprintf("/channels/%s/messages/%s/reactions/%s/@me", channelID, messageID, url.PathEscape(emoji))
+func (r *requester) CreateReaction(
+	ctx context.Context,
+	channelID, messageID Snowflake,
+	emoji string,
+) error {
+	endpoint := fmt.Sprintf(
+		"/channels/%s/messages/%s/reactions/%s/@me",
+		channelID,
+		messageID,
+		url.PathEscape(emoji),
+	)
 	return requestVoid(ctx, r, Request{
 		Method: http.MethodPut,
 		URL:    endpoint,
@@ -285,8 +308,17 @@ func (r *requester) CreateReaction(ctx context.Context, channelID, messageID Sno
 // DeleteOwnReaction deletes a reaction the current user has made for the specified emoji.
 //
 // Reference: https://discord.com/developers/docs/resources/message#delete-own-reaction
-func (r *requester) DeleteOwnReaction(ctx context.Context, channelID, messageID Snowflake, emoji string) error {
-	endpoint := fmt.Sprintf("/channels/%s/messages/%s/reactions/%s/@me", channelID, messageID, url.PathEscape(emoji))
+func (r *requester) DeleteOwnReaction(
+	ctx context.Context,
+	channelID, messageID Snowflake,
+	emoji string,
+) error {
+	endpoint := fmt.Sprintf(
+		"/channels/%s/messages/%s/reactions/%s/@me",
+		channelID,
+		messageID,
+		url.PathEscape(emoji),
+	)
 	return requestVoid(ctx, r, Request{
 		Method: http.MethodDelete,
 		URL:    endpoint,
@@ -296,8 +328,18 @@ func (r *requester) DeleteOwnReaction(ctx context.Context, channelID, messageID 
 // DeleteUserReaction deletes another user's reaction for the specified emoji.
 //
 // Reference: https://discord.com/developers/docs/resources/message#delete-user-reaction
-func (r *requester) DeleteUserReaction(ctx context.Context, channelID, messageID, userID Snowflake, emoji string) error {
-	endpoint := fmt.Sprintf("/channels/%s/messages/%s/reactions/%s/%s", channelID, messageID, url.PathEscape(emoji), userID)
+func (r *requester) DeleteUserReaction(
+	ctx context.Context,
+	channelID, messageID, userID Snowflake,
+	emoji string,
+) error {
+	endpoint := fmt.Sprintf(
+		"/channels/%s/messages/%s/reactions/%s/%s",
+		channelID,
+		messageID,
+		url.PathEscape(emoji),
+		userID,
+	)
 	return requestVoid(ctx, r, Request{
 		Method: http.MethodDelete,
 		URL:    endpoint,
@@ -307,7 +349,12 @@ func (r *requester) DeleteUserReaction(ctx context.Context, channelID, messageID
 // FetchReactions returns a list of users that reacted with the specified emoji.
 //
 // Reference: https://discord.com/developers/docs/resources/message#get-reactions
-func (r *requester) FetchReactions(ctx context.Context, channelID, messageID Snowflake, emoji string, opts ...FetchReactionsOptions) ([]User, error) {
+func (r *requester) FetchReactions(
+	ctx context.Context,
+	channelID, messageID Snowflake,
+	emoji string,
+	opts ...FetchReactionsOptions,
+) ([]User, error) {
 	var first FetchReactionsOptions
 	if len(opts) > 0 {
 		first = opts[0]
@@ -324,7 +371,12 @@ func (r *requester) FetchReactions(ctx context.Context, channelID, messageID Sno
 		query.Set("type", strconv.Itoa(int(first.Type)))
 	}
 
-	endpoint := fmt.Sprintf("/channels/%s/messages/%s/reactions/%s", channelID, messageID, url.PathEscape(emoji))
+	endpoint := fmt.Sprintf(
+		"/channels/%s/messages/%s/reactions/%s",
+		channelID,
+		messageID,
+		url.PathEscape(emoji),
+	)
 	if q := query.Encode(); q != "" {
 		endpoint += "?" + q
 	}
@@ -349,8 +401,17 @@ func (r *requester) DeleteAllReactions(ctx context.Context, channelID, messageID
 // DeleteAllReactionsForEmoji deletes all reactions for a specific emoji on a message.
 //
 // Reference: https://discord.com/developers/docs/resources/message#delete-all-reactions-for-emoji
-func (r *requester) DeleteAllReactionsForEmoji(ctx context.Context, channelID, messageID Snowflake, emoji string) error {
-	endpoint := fmt.Sprintf("/channels/%s/messages/%s/reactions/%s", channelID, messageID, url.PathEscape(emoji))
+func (r *requester) DeleteAllReactionsForEmoji(
+	ctx context.Context,
+	channelID, messageID Snowflake,
+	emoji string,
+) error {
+	endpoint := fmt.Sprintf(
+		"/channels/%s/messages/%s/reactions/%s",
+		channelID,
+		messageID,
+		url.PathEscape(emoji),
+	)
 	return requestVoid(ctx, r, Request{
 		Method: http.MethodDelete,
 		URL:    endpoint,
@@ -360,7 +421,11 @@ func (r *requester) DeleteAllReactionsForEmoji(ctx context.Context, channelID, m
 // EditMessage edits a previously sent message.
 //
 // Reference: https://discord.com/developers/docs/resources/message#edit-message
-func (r *requester) EditMessage(ctx context.Context, channelID, messageID Snowflake, opts EditMessageOptions) (Message, error) {
+func (r *requester) EditMessage(
+	ctx context.Context,
+	channelID, messageID Snowflake,
+	opts EditMessageOptions,
+) (Message, error) {
 	endpoint := fmt.Sprintf("/channels/%s/messages/%s", channelID, messageID)
 	if len(opts.Files) > 0 {
 		payload, err := json.Marshal(opts)
@@ -390,7 +455,11 @@ func (r *requester) EditMessage(ctx context.Context, channelID, messageID Snowfl
 // DeleteMessage deletes a message in a channel.
 //
 // Reference: https://discord.com/developers/docs/resources/message#delete-message
-func (r *requester) DeleteMessage(ctx context.Context, channelID, messageID Snowflake, reason ...string) error {
+func (r *requester) DeleteMessage(
+	ctx context.Context,
+	channelID, messageID Snowflake,
+	reason ...string,
+) error {
 	auditReason := ""
 	if len(reason) > 0 {
 		auditReason = reason[0]
@@ -406,7 +475,11 @@ func (r *requester) DeleteMessage(ctx context.Context, channelID, messageID Snow
 // BulkDeleteMessages deletes multiple messages in a single request (2-100 messages, younger than 2 weeks).
 //
 // Reference: https://discord.com/developers/docs/resources/message#bulk-delete-messages
-func (r *requester) BulkDeleteMessages(ctx context.Context, channelID Snowflake, opts BulkDeleteMessagesOptions) error {
+func (r *requester) BulkDeleteMessages(
+	ctx context.Context,
+	channelID Snowflake,
+	opts BulkDeleteMessagesOptions,
+) error {
 	payload, err := json.Marshal(opts)
 	if err != nil {
 		return fmt.Errorf("failed to marshal BulkDeleteMessagesOptions: %w", err)
@@ -424,7 +497,10 @@ func (r *requester) BulkDeleteMessages(ctx context.Context, channelID Snowflake,
 // FetchPinnedMessages returns all pinned messages in the channel.
 //
 // Reference: https://discord.com/developers/docs/resources/message#get-pinned-messages
-func (r *requester) FetchPinnedMessages(ctx context.Context, channelID Snowflake) ([]Message, error) {
+func (r *requester) FetchPinnedMessages(
+	ctx context.Context,
+	channelID Snowflake,
+) ([]Message, error) {
 	endpoint := fmt.Sprintf("/channels/%s/pins", channelID)
 	return requestJSON[[]Message](ctx, r, Request{
 		Method: http.MethodGet,
@@ -435,7 +511,11 @@ func (r *requester) FetchPinnedMessages(ctx context.Context, channelID Snowflake
 // PinMessage pins a message in the channel.
 //
 // Reference: https://discord.com/developers/docs/resources/message#pin-message
-func (r *requester) PinMessage(ctx context.Context, channelID, messageID Snowflake, reason ...string) error {
+func (r *requester) PinMessage(
+	ctx context.Context,
+	channelID, messageID Snowflake,
+	reason ...string,
+) error {
 	auditReason := ""
 	if len(reason) > 0 {
 		auditReason = reason[0]
@@ -451,7 +531,11 @@ func (r *requester) PinMessage(ctx context.Context, channelID, messageID Snowfla
 // UnpinMessage unpins a message in the channel.
 //
 // Reference: https://discord.com/developers/docs/resources/message#unpin-message
-func (r *requester) UnpinMessage(ctx context.Context, channelID, messageID Snowflake, reason ...string) error {
+func (r *requester) UnpinMessage(
+	ctx context.Context,
+	channelID, messageID Snowflake,
+	reason ...string,
+) error {
 	auditReason := ""
 	if len(reason) > 0 {
 		auditReason = reason[0]

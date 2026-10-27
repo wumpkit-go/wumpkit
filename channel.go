@@ -190,7 +190,11 @@ type MemberPermissionOverwrites struct {
 }
 
 // permissionOverwritesFor is a helper function to compute member permission overwrites.
-func permissionOverwritesFor(guildID Snowflake, overwrites []PermissionOverwrite, m Member) MemberPermissionOverwrites {
+func permissionOverwritesFor(
+	guildID Snowflake,
+	overwrites []PermissionOverwrite,
+	m Member,
+) MemberPermissionOverwrites {
 	var result MemberPermissionOverwrites
 
 	roleMap := make(map[Snowflake]struct{}, len(m.RoleIDs))

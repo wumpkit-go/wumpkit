@@ -24,7 +24,11 @@ import (
 // ExchangeOAuth2Code exchanges an authorization code for an access token and refresh token.
 //
 // Reference: https://discord.com/developers/docs/topics/oauth2#authorization-code-grant-access-token-exchange
-func (r *requester) ExchangeOAuth2Code(ctx context.Context, clientID Snowflake, clientSecret, code, redirectURI string) (OAuth2TokenResponse, error) {
+func (r *requester) ExchangeOAuth2Code(
+	ctx context.Context,
+	clientID Snowflake,
+	clientSecret, code, redirectURI string,
+) (OAuth2TokenResponse, error) {
 	form := url.Values{}
 	form.Set("grant_type", "authorization_code")
 	form.Set("code", code)
@@ -62,7 +66,11 @@ func (r *requester) ExchangeOAuth2Code(ctx context.Context, clientID Snowflake, 
 // RefreshOAuth2Token exchanges a refresh token for a newly refreshed access token and refresh token.
 //
 // Reference: https://discord.com/developers/docs/topics/oauth2#authorization-code-grant-refresh-token-exchange
-func (r *requester) RefreshOAuth2Token(ctx context.Context, clientID Snowflake, clientSecret, refreshToken string) (OAuth2TokenResponse, error) {
+func (r *requester) RefreshOAuth2Token(
+	ctx context.Context,
+	clientID Snowflake,
+	clientSecret, refreshToken string,
+) (OAuth2TokenResponse, error) {
 	form := url.Values{}
 	form.Set("grant_type", "refresh_token")
 	form.Set("refresh_token", refreshToken)
@@ -99,7 +107,12 @@ func (r *requester) RefreshOAuth2Token(ctx context.Context, clientID Snowflake, 
 // ClientCredentialsGrant requests an access token using client credentials grant.
 //
 // Reference: https://discord.com/developers/docs/topics/oauth2#client-credentials-grant
-func (r *requester) ClientCredentialsGrant(ctx context.Context, clientID Snowflake, clientSecret string, scopes ...OAuth2Scope) (OAuth2TokenResponse, error) {
+func (r *requester) ClientCredentialsGrant(
+	ctx context.Context,
+	clientID Snowflake,
+	clientSecret string,
+	scopes ...OAuth2Scope,
+) (OAuth2TokenResponse, error) {
 	form := url.Values{}
 	form.Set("grant_type", "client_credentials")
 	form.Set("client_id", clientID.String())
@@ -143,7 +156,12 @@ func (r *requester) ClientCredentialsGrant(ctx context.Context, clientID Snowfla
 // RevokeOAuth2Token revokes an access token or refresh token.
 //
 // Reference: https://discord.com/developers/docs/topics/oauth2#authorization-code-grant-token-revocation
-func (r *requester) RevokeOAuth2Token(ctx context.Context, clientID Snowflake, clientSecret, token string, tokenTypeHint ...string) error {
+func (r *requester) RevokeOAuth2Token(
+	ctx context.Context,
+	clientID Snowflake,
+	clientSecret, token string,
+	tokenTypeHint ...string,
+) error {
 	form := url.Values{}
 	form.Set("token", token)
 	form.Set("client_id", clientID.String())
@@ -172,7 +190,10 @@ func (r *requester) RevokeOAuth2Token(ctx context.Context, clientID Snowflake, c
 // FetchCurrentAuthorization returns current authorization information for the given user Bearer access token.
 //
 // Reference: https://discord.com/developers/docs/topics/oauth2#get-current-authorization-information
-func (r *requester) FetchCurrentAuthorization(ctx context.Context, accessToken string) (CurrentAuthorizationInformation, error) {
+func (r *requester) FetchCurrentAuthorization(
+	ctx context.Context,
+	accessToken string,
+) (CurrentAuthorizationInformation, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: http.MethodGet,
 		URL:    "/oauth2/@me",

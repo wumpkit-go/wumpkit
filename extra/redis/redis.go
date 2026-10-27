@@ -309,7 +309,12 @@ func (r *RedisCacheManager) ctxOrFallback(ctx context.Context) context.Context {
 	return context.Background()
 }
 
-func (r *RedisCacheManager) setJSON(ctx context.Context, key string, flag wumpkit.CacheFlags, val any) error {
+func (r *RedisCacheManager) setJSON(
+	ctx context.Context,
+	key string,
+	flag wumpkit.CacheFlags,
+	val any,
+) error {
 	ctx = r.ctxOrFallback(ctx)
 	data, err := json.Marshal(val)
 	if err != nil {
@@ -319,7 +324,12 @@ func (r *RedisCacheManager) setJSON(ctx context.Context, key string, flag wumpki
 	return r.client.Set(ctx, key, data, ttl).Err()
 }
 
-func (r *RedisCacheManager) getJSON(ctx context.Context, key string, flag wumpkit.CacheFlags, dest any) bool {
+func (r *RedisCacheManager) getJSON(
+	ctx context.Context,
+	key string,
+	flag wumpkit.CacheFlags,
+	dest any,
+) bool {
 	ctx = r.ctxOrFallback(ctx)
 	ttl := r.getTTL(flag)
 	var data []byte
@@ -354,25 +364,37 @@ func (r *RedisCacheManager) delKeys(ctx context.Context, keys ...string) bool {
  *   Single Entity Lookups
  *****************************/
 
-func (r *RedisCacheManager) GetUser(ctx context.Context, userID wumpkit.Snowflake) (wumpkit.User, bool) {
+func (r *RedisCacheManager) GetUser(
+	ctx context.Context,
+	userID wumpkit.Snowflake,
+) (wumpkit.User, bool) {
 	var user wumpkit.User
 	ok := r.getJSON(ctx, r.userKey(userID), wumpkit.CacheFlagUsers, &user)
 	return user, ok
 }
 
-func (r *RedisCacheManager) GetGuild(ctx context.Context, guildID wumpkit.Snowflake) (wumpkit.Guild, bool) {
+func (r *RedisCacheManager) GetGuild(
+	ctx context.Context,
+	guildID wumpkit.Snowflake,
+) (wumpkit.Guild, bool) {
 	var guild wumpkit.Guild
 	ok := r.getJSON(ctx, r.guildKey(guildID), wumpkit.CacheFlagGuilds, &guild)
 	return guild, ok
 }
 
-func (r *RedisCacheManager) GetMember(ctx context.Context, guildID, userID wumpkit.Snowflake) (wumpkit.Member, bool) {
+func (r *RedisCacheManager) GetMember(
+	ctx context.Context,
+	guildID, userID wumpkit.Snowflake,
+) (wumpkit.Member, bool) {
 	var member wumpkit.Member
 	ok := r.getJSON(ctx, r.memberKey(guildID, userID), wumpkit.CacheFlagMembers, &member)
 	return member, ok
 }
 
-func (r *RedisCacheManager) GetChannel(ctx context.Context, channelID wumpkit.Snowflake) (wumpkit.Channel, bool) {
+func (r *RedisCacheManager) GetChannel(
+	ctx context.Context,
+	channelID wumpkit.Snowflake,
+) (wumpkit.Channel, bool) {
 	ttl := r.getTTL(wumpkit.CacheFlagChannels)
 	var data []byte
 	var err error
@@ -391,25 +413,37 @@ func (r *RedisCacheManager) GetChannel(ctx context.Context, channelID wumpkit.Sn
 	return ch, true
 }
 
-func (r *RedisCacheManager) GetMessage(ctx context.Context, messageID wumpkit.Snowflake) (wumpkit.Message, bool) {
+func (r *RedisCacheManager) GetMessage(
+	ctx context.Context,
+	messageID wumpkit.Snowflake,
+) (wumpkit.Message, bool) {
 	var msg wumpkit.Message
 	ok := r.getJSON(ctx, r.messageKey(messageID), wumpkit.CacheFlagMessages, &msg)
 	return msg, ok
 }
 
-func (r *RedisCacheManager) GetVoiceState(ctx context.Context, guildID, userID wumpkit.Snowflake) (wumpkit.VoiceState, bool) {
+func (r *RedisCacheManager) GetVoiceState(
+	ctx context.Context,
+	guildID, userID wumpkit.Snowflake,
+) (wumpkit.VoiceState, bool) {
 	var vs wumpkit.VoiceState
 	ok := r.getJSON(ctx, r.voiceStateKey(guildID, userID), wumpkit.CacheFlagVoiceStates, &vs)
 	return vs, ok
 }
 
-func (r *RedisCacheManager) GetRole(ctx context.Context, roleID wumpkit.Snowflake) (wumpkit.Role, bool) {
+func (r *RedisCacheManager) GetRole(
+	ctx context.Context,
+	roleID wumpkit.Snowflake,
+) (wumpkit.Role, bool) {
 	var role wumpkit.Role
 	ok := r.getJSON(ctx, r.roleKey(roleID), wumpkit.CacheFlagRoles, &role)
 	return role, ok
 }
 
-func (r *RedisCacheManager) GetRoles(ctx context.Context, rolesIDs ...wumpkit.Snowflake) map[wumpkit.Snowflake]wumpkit.Role {
+func (r *RedisCacheManager) GetRoles(
+	ctx context.Context,
+	rolesIDs ...wumpkit.Snowflake,
+) map[wumpkit.Snowflake]wumpkit.Role {
 	ctx = r.ctxOrFallback(ctx)
 	out := make(map[wumpkit.Snowflake]wumpkit.Role, len(rolesIDs))
 	if len(rolesIDs) == 0 {
@@ -450,31 +484,51 @@ func (r *RedisCacheManager) GetRoles(ctx context.Context, rolesIDs ...wumpkit.Sn
 	return out
 }
 
-func (r *RedisCacheManager) GetEmoji(ctx context.Context, emojiID wumpkit.Snowflake) (wumpkit.Emoji, bool) {
+func (r *RedisCacheManager) GetEmoji(
+	ctx context.Context,
+	emojiID wumpkit.Snowflake,
+) (wumpkit.Emoji, bool) {
 	var emoji wumpkit.Emoji
 	ok := r.getJSON(ctx, r.emojiKey(emojiID), wumpkit.CacheFlagEmojis, &emoji)
 	return emoji, ok
 }
 
-func (r *RedisCacheManager) GetSticker(ctx context.Context, stickerID wumpkit.Snowflake) (wumpkit.Sticker, bool) {
+func (r *RedisCacheManager) GetSticker(
+	ctx context.Context,
+	stickerID wumpkit.Snowflake,
+) (wumpkit.Sticker, bool) {
 	var sticker wumpkit.Sticker
 	ok := r.getJSON(ctx, r.stickerKey(stickerID), wumpkit.CacheFlagStickers, &sticker)
 	return sticker, ok
 }
 
-func (r *RedisCacheManager) GetStageInstance(ctx context.Context, channelID wumpkit.Snowflake) (wumpkit.StageInstance, bool) {
+func (r *RedisCacheManager) GetStageInstance(
+	ctx context.Context,
+	channelID wumpkit.Snowflake,
+) (wumpkit.StageInstance, bool) {
 	var si wumpkit.StageInstance
 	ok := r.getJSON(ctx, r.stageInstanceKey(channelID), wumpkit.CacheFlagStageInstances, &si)
 	return si, ok
 }
 
-func (r *RedisCacheManager) GetGuildScheduledEvent(ctx context.Context, eventID wumpkit.Snowflake) (wumpkit.GuildScheduledEvent, bool) {
+func (r *RedisCacheManager) GetGuildScheduledEvent(
+	ctx context.Context,
+	eventID wumpkit.Snowflake,
+) (wumpkit.GuildScheduledEvent, bool) {
 	var event wumpkit.GuildScheduledEvent
-	ok := r.getJSON(ctx, r.scheduledEventKey(eventID), wumpkit.CacheFlagGuildScheduledEvents, &event)
+	ok := r.getJSON(
+		ctx,
+		r.scheduledEventKey(eventID),
+		wumpkit.CacheFlagGuildScheduledEvents,
+		&event,
+	)
 	return event, ok
 }
 
-func (r *RedisCacheManager) GetAutoModerationRule(ctx context.Context, ruleID wumpkit.Snowflake) (wumpkit.AutoModerationRule, bool) {
+func (r *RedisCacheManager) GetAutoModerationRule(
+	ctx context.Context,
+	ruleID wumpkit.Snowflake,
+) (wumpkit.AutoModerationRule, bool) {
 	var rule wumpkit.AutoModerationRule
 	ok := r.getJSON(ctx, r.autoModRuleKey(ruleID), wumpkit.CacheFlagAutoModerationRules, &rule)
 	return rule, ok
@@ -484,7 +538,10 @@ func (r *RedisCacheManager) GetAutoModerationRule(ctx context.Context, ruleID wu
  *   Group / Relational Lookups
  *****************************/
 
-func (r *RedisCacheManager) GetGuildChannels(ctx context.Context, guildID wumpkit.Snowflake) (map[wumpkit.Snowflake]wumpkit.GuildChannel, bool) {
+func (r *RedisCacheManager) GetGuildChannels(
+	ctx context.Context,
+	guildID wumpkit.Snowflake,
+) (map[wumpkit.Snowflake]wumpkit.GuildChannel, bool) {
 	ctx = r.ctxOrFallback(ctx)
 	ids, err := r.client.SMembers(ctx, r.guildChannelsSetKey(guildID)).Result()
 	if err != nil || len(ids) == 0 {
@@ -523,7 +580,10 @@ func (r *RedisCacheManager) GetGuildChannels(ctx context.Context, guildID wumpki
 	return out, true
 }
 
-func (r *RedisCacheManager) GetGuildMembers(ctx context.Context, guildID wumpkit.Snowflake) (map[wumpkit.Snowflake]wumpkit.Member, bool) {
+func (r *RedisCacheManager) GetGuildMembers(
+	ctx context.Context,
+	guildID wumpkit.Snowflake,
+) (map[wumpkit.Snowflake]wumpkit.Member, bool) {
 	ctx = r.ctxOrFallback(ctx)
 	ids, err := r.client.SMembers(ctx, r.guildMembersSetKey(guildID)).Result()
 	if err != nil || len(ids) == 0 {
@@ -560,7 +620,10 @@ func (r *RedisCacheManager) GetGuildMembers(ctx context.Context, guildID wumpkit
 	return out, true
 }
 
-func (r *RedisCacheManager) GetGuildVoiceStates(ctx context.Context, guildID wumpkit.Snowflake) (map[wumpkit.Snowflake]wumpkit.VoiceState, bool) {
+func (r *RedisCacheManager) GetGuildVoiceStates(
+	ctx context.Context,
+	guildID wumpkit.Snowflake,
+) (map[wumpkit.Snowflake]wumpkit.VoiceState, bool) {
 	ctx = r.ctxOrFallback(ctx)
 	ids, err := r.client.SMembers(ctx, r.guildVoiceStatesSetKey(guildID)).Result()
 	if err != nil || len(ids) == 0 {
@@ -597,7 +660,10 @@ func (r *RedisCacheManager) GetGuildVoiceStates(ctx context.Context, guildID wum
 	return out, true
 }
 
-func (r *RedisCacheManager) GetGuildRoles(ctx context.Context, guildID wumpkit.Snowflake) (map[wumpkit.Snowflake]wumpkit.Role, bool) {
+func (r *RedisCacheManager) GetGuildRoles(
+	ctx context.Context,
+	guildID wumpkit.Snowflake,
+) (map[wumpkit.Snowflake]wumpkit.Role, bool) {
 	ctx = r.ctxOrFallback(ctx)
 	ids, err := r.client.SMembers(ctx, r.guildRolesSetKey(guildID)).Result()
 	if err != nil || len(ids) == 0 {
@@ -634,7 +700,10 @@ func (r *RedisCacheManager) GetGuildRoles(ctx context.Context, guildID wumpkit.S
 	return out, true
 }
 
-func (r *RedisCacheManager) GetGuildEmojis(ctx context.Context, guildID wumpkit.Snowflake) (map[wumpkit.Snowflake]wumpkit.Emoji, bool) {
+func (r *RedisCacheManager) GetGuildEmojis(
+	ctx context.Context,
+	guildID wumpkit.Snowflake,
+) (map[wumpkit.Snowflake]wumpkit.Emoji, bool) {
 	ctx = r.ctxOrFallback(ctx)
 	ids, err := r.client.SMembers(ctx, r.guildEmojisSetKey(guildID)).Result()
 	if err != nil || len(ids) == 0 {
@@ -671,7 +740,10 @@ func (r *RedisCacheManager) GetGuildEmojis(ctx context.Context, guildID wumpkit.
 	return out, true
 }
 
-func (r *RedisCacheManager) GetGuildStickers(ctx context.Context, guildID wumpkit.Snowflake) (map[wumpkit.Snowflake]wumpkit.Sticker, bool) {
+func (r *RedisCacheManager) GetGuildStickers(
+	ctx context.Context,
+	guildID wumpkit.Snowflake,
+) (map[wumpkit.Snowflake]wumpkit.Sticker, bool) {
 	ctx = r.ctxOrFallback(ctx)
 	ids, err := r.client.SMembers(ctx, r.guildStickersSetKey(guildID)).Result()
 	if err != nil || len(ids) == 0 {
@@ -708,7 +780,10 @@ func (r *RedisCacheManager) GetGuildStickers(ctx context.Context, guildID wumpki
 	return out, true
 }
 
-func (r *RedisCacheManager) GetVoiceChannelMembers(ctx context.Context, channelID wumpkit.Snowflake) (map[wumpkit.Snowflake]wumpkit.Member, bool) {
+func (r *RedisCacheManager) GetVoiceChannelMembers(
+	ctx context.Context,
+	channelID wumpkit.Snowflake,
+) (map[wumpkit.Snowflake]wumpkit.Member, bool) {
 	ctx = r.ctxOrFallback(ctx)
 	ids, err := r.client.SMembers(ctx, r.channelVoiceStatesSetKey(channelID)).Result()
 	if err != nil || len(ids) == 0 {
@@ -726,7 +801,8 @@ func (r *RedisCacheManager) GetVoiceChannelMembers(ctx context.Context, channelI
 		pattern := r.prefix + "voicestate:*:" + idStr
 		keys, err := r.client.Keys(ctx, pattern).Result()
 		if err == nil && len(keys) > 0 {
-			if r.getJSON(ctx, keys[0], wumpkit.CacheFlagVoiceStates, &vs) && vs.ChannelID == channelID {
+			if r.getJSON(ctx, keys[0], wumpkit.CacheFlagVoiceStates, &vs) &&
+				vs.ChannelID == channelID {
 				if m, ok := r.GetMember(ctx, vs.GuildID, wumpkit.Snowflake(uid)); ok {
 					out[m.ID] = m
 				}
@@ -763,7 +839,10 @@ func (r *RedisCacheManager) HasMessage(ctx context.Context, messageID wumpkit.Sn
 	return r.hasKey(ctx, r.messageKey(messageID))
 }
 
-func (r *RedisCacheManager) HasVoiceState(ctx context.Context, guildID, userID wumpkit.Snowflake) bool {
+func (r *RedisCacheManager) HasVoiceState(
+	ctx context.Context,
+	guildID, userID wumpkit.Snowflake,
+) bool {
 	return r.hasKey(ctx, r.voiceStateKey(guildID, userID))
 }
 
@@ -788,15 +867,24 @@ func (r *RedisCacheManager) HasSticker(ctx context.Context, stickerID wumpkit.Sn
 	return r.hasKey(ctx, r.stickerKey(stickerID))
 }
 
-func (r *RedisCacheManager) HasStageInstance(ctx context.Context, channelID wumpkit.Snowflake) bool {
+func (r *RedisCacheManager) HasStageInstance(
+	ctx context.Context,
+	channelID wumpkit.Snowflake,
+) bool {
 	return r.hasKey(ctx, r.stageInstanceKey(channelID))
 }
 
-func (r *RedisCacheManager) HasGuildScheduledEvent(ctx context.Context, eventID wumpkit.Snowflake) bool {
+func (r *RedisCacheManager) HasGuildScheduledEvent(
+	ctx context.Context,
+	eventID wumpkit.Snowflake,
+) bool {
 	return r.hasKey(ctx, r.scheduledEventKey(eventID))
 }
 
-func (r *RedisCacheManager) HasAutoModerationRule(ctx context.Context, ruleID wumpkit.Snowflake) bool {
+func (r *RedisCacheManager) HasAutoModerationRule(
+	ctx context.Context,
+	ruleID wumpkit.Snowflake,
+) bool {
 	return r.hasKey(ctx, r.autoModRuleKey(ruleID))
 }
 
@@ -1029,14 +1117,20 @@ func (r *RedisCacheManager) AddStageInstance(ctx context.Context, stage wumpkit.
 	_ = r.setJSON(ctx, r.stageInstanceKey(stage.ChannelID), wumpkit.CacheFlagStageInstances, stage)
 }
 
-func (r *RedisCacheManager) AddGuildScheduledEvent(ctx context.Context, event wumpkit.GuildScheduledEvent) {
+func (r *RedisCacheManager) AddGuildScheduledEvent(
+	ctx context.Context,
+	event wumpkit.GuildScheduledEvent,
+) {
 	if !r.CacheFlags().Has(wumpkit.CacheFlagGuildScheduledEvents) {
 		return
 	}
 	_ = r.setJSON(ctx, r.scheduledEventKey(event.ID), wumpkit.CacheFlagGuildScheduledEvents, event)
 }
 
-func (r *RedisCacheManager) AddAutoModerationRule(ctx context.Context, rule wumpkit.AutoModerationRule) {
+func (r *RedisCacheManager) AddAutoModerationRule(
+	ctx context.Context,
+	rule wumpkit.AutoModerationRule,
+) {
 	if !r.CacheFlags().Has(wumpkit.CacheFlagAutoModerationRules) {
 		return
 	}
@@ -1087,7 +1181,10 @@ func (r *RedisCacheManager) DelMessage(ctx context.Context, messageID wumpkit.Sn
 	return r.delKeys(ctx, r.messageKey(messageID))
 }
 
-func (r *RedisCacheManager) DelVoiceState(ctx context.Context, guildID, userID wumpkit.Snowflake) bool {
+func (r *RedisCacheManager) DelVoiceState(
+	ctx context.Context,
+	guildID, userID wumpkit.Snowflake,
+) bool {
 	ctx = r.ctxOrFallback(ctx)
 	if vs, ok := r.GetVoiceState(ctx, guildID, userID); ok && vs.ChannelID != 0 {
 		r.client.SRem(ctx, r.channelVoiceStatesSetKey(vs.ChannelID), userID.String())
@@ -1145,7 +1242,10 @@ func (r *RedisCacheManager) DelEmoji(ctx context.Context, guildID, emojiID wumpk
 	return ok && delCmd.Val() > 0
 }
 
-func (r *RedisCacheManager) DelSticker(ctx context.Context, guildID, stickerID wumpkit.Snowflake) bool {
+func (r *RedisCacheManager) DelSticker(
+	ctx context.Context,
+	guildID, stickerID wumpkit.Snowflake,
+) bool {
 	ctx = r.ctxOrFallback(ctx)
 	pipe := r.client.Pipeline()
 	pipe.Del(ctx, r.stickerKey(stickerID))
@@ -1158,15 +1258,24 @@ func (r *RedisCacheManager) DelSticker(ctx context.Context, guildID, stickerID w
 	return ok && delCmd.Val() > 0
 }
 
-func (r *RedisCacheManager) DelStageInstance(ctx context.Context, channelID wumpkit.Snowflake) bool {
+func (r *RedisCacheManager) DelStageInstance(
+	ctx context.Context,
+	channelID wumpkit.Snowflake,
+) bool {
 	return r.delKeys(ctx, r.stageInstanceKey(channelID))
 }
 
-func (r *RedisCacheManager) DelGuildScheduledEvent(ctx context.Context, eventID wumpkit.Snowflake) bool {
+func (r *RedisCacheManager) DelGuildScheduledEvent(
+	ctx context.Context,
+	eventID wumpkit.Snowflake,
+) bool {
 	return r.delKeys(ctx, r.scheduledEventKey(eventID))
 }
 
-func (r *RedisCacheManager) DelAutoModerationRule(ctx context.Context, guildID, ruleID wumpkit.Snowflake) bool {
+func (r *RedisCacheManager) DelAutoModerationRule(
+	ctx context.Context,
+	guildID, ruleID wumpkit.Snowflake,
+) bool {
 	return r.delKeys(ctx, r.autoModRuleKey(ruleID))
 }
 
@@ -1212,7 +1321,10 @@ func (r *RedisCacheManager) DelGuildRoles(ctx context.Context, guildID wumpkit.S
 	return r.delKeys(ctx, keys...)
 }
 
-func (r *RedisCacheManager) DelGuildVoiceStates(ctx context.Context, guildID wumpkit.Snowflake) bool {
+func (r *RedisCacheManager) DelGuildVoiceStates(
+	ctx context.Context,
+	guildID wumpkit.Snowflake,
+) bool {
 	ctx = r.ctxOrFallback(ctx)
 	ids, err := r.client.SMembers(ctx, r.guildVoiceStatesSetKey(guildID)).Result()
 	if err != nil {

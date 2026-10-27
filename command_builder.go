@@ -76,7 +76,9 @@ func (b *SlashCommandBuilder) SetNSFW(nsfw bool) *SlashCommandBuilder {
 }
 
 // SetIntegrationTypes sets the installation contexts where the command is available.
-func (b *SlashCommandBuilder) SetIntegrationTypes(types ...ApplicationIntegrationType) *SlashCommandBuilder {
+func (b *SlashCommandBuilder) SetIntegrationTypes(
+	types ...ApplicationIntegrationType,
+) *SlashCommandBuilder {
 	b.cmd.IntegrationTypes = types
 	return b
 }
@@ -88,7 +90,11 @@ func (b *SlashCommandBuilder) SetContexts(contexts ...InteractionContextType) *S
 }
 
 // AddStringOption adds a string option parameter.
-func (b *SlashCommandBuilder) AddStringOption(name, description string, required bool, choices ...ApplicationCommandOptionChoiceString) *SlashCommandBuilder {
+func (b *SlashCommandBuilder) AddStringOption(
+	name, description string,
+	required bool,
+	choices ...ApplicationCommandOptionChoiceString,
+) *SlashCommandBuilder {
 	b.cmd.Options = append(b.cmd.Options, &ApplicationCommandOptionString{
 		OptionBase: OptionBase{
 			Type:        ApplicationCommandOptionTypeString,
@@ -106,7 +112,11 @@ func (b *SlashCommandBuilder) AddStringOption(name, description string, required
 }
 
 // AddIntegerOption adds an integer option parameter.
-func (b *SlashCommandBuilder) AddIntegerOption(name, description string, required bool, choices ...ApplicationCommandOptionChoiceInteger) *SlashCommandBuilder {
+func (b *SlashCommandBuilder) AddIntegerOption(
+	name, description string,
+	required bool,
+	choices ...ApplicationCommandOptionChoiceInteger,
+) *SlashCommandBuilder {
 	b.cmd.Options = append(b.cmd.Options, &ApplicationCommandOptionInteger{
 		OptionBase: OptionBase{
 			Type:        ApplicationCommandOptionTypeInteger,
@@ -124,7 +134,11 @@ func (b *SlashCommandBuilder) AddIntegerOption(name, description string, require
 }
 
 // AddFloatOption adds a float (number) option parameter.
-func (b *SlashCommandBuilder) AddFloatOption(name, description string, required bool, choices ...ApplicationCommandOptionChoiceFloat) *SlashCommandBuilder {
+func (b *SlashCommandBuilder) AddFloatOption(
+	name, description string,
+	required bool,
+	choices ...ApplicationCommandOptionChoiceFloat,
+) *SlashCommandBuilder {
 	b.cmd.Options = append(b.cmd.Options, &ApplicationCommandOptionFloat{
 		OptionBase: OptionBase{
 			Type:        ApplicationCommandOptionTypeFloat,
@@ -142,7 +156,10 @@ func (b *SlashCommandBuilder) AddFloatOption(name, description string, required 
 }
 
 // AddBooleanOption adds a boolean (true/false) option parameter.
-func (b *SlashCommandBuilder) AddBooleanOption(name, description string, required bool) *SlashCommandBuilder {
+func (b *SlashCommandBuilder) AddBooleanOption(
+	name, description string,
+	required bool,
+) *SlashCommandBuilder {
 	b.cmd.Options = append(b.cmd.Options, &ApplicationCommandOptionBool{
 		OptionBase: OptionBase{
 			Type:        ApplicationCommandOptionTypeBool,
@@ -157,7 +174,10 @@ func (b *SlashCommandBuilder) AddBooleanOption(name, description string, require
 }
 
 // AddUserOption adds a user option parameter.
-func (b *SlashCommandBuilder) AddUserOption(name, description string, required bool) *SlashCommandBuilder {
+func (b *SlashCommandBuilder) AddUserOption(
+	name, description string,
+	required bool,
+) *SlashCommandBuilder {
 	b.cmd.Options = append(b.cmd.Options, &ApplicationCommandOptionUser{
 		OptionBase: OptionBase{
 			Type:        ApplicationCommandOptionTypeUser,
@@ -172,7 +192,11 @@ func (b *SlashCommandBuilder) AddUserOption(name, description string, required b
 }
 
 // AddChannelOption adds a channel option parameter with optional channel type restrictions.
-func (b *SlashCommandBuilder) AddChannelOption(name, description string, required bool, channelTypes ...ChannelType) *SlashCommandBuilder {
+func (b *SlashCommandBuilder) AddChannelOption(
+	name, description string,
+	required bool,
+	channelTypes ...ChannelType,
+) *SlashCommandBuilder {
 	b.cmd.Options = append(b.cmd.Options, &ApplicationCommandOptionChannel{
 		OptionBase: OptionBase{
 			Type:        ApplicationCommandOptionTypeChannel,
@@ -190,7 +214,10 @@ func (b *SlashCommandBuilder) AddChannelOption(name, description string, require
 }
 
 // AddRoleOption adds a role option parameter.
-func (b *SlashCommandBuilder) AddRoleOption(name, description string, required bool) *SlashCommandBuilder {
+func (b *SlashCommandBuilder) AddRoleOption(
+	name, description string,
+	required bool,
+) *SlashCommandBuilder {
 	b.cmd.Options = append(b.cmd.Options, &ApplicationCommandOptionRole{
 		OptionBase: OptionBase{
 			Type:        ApplicationCommandOptionTypeRole,
@@ -205,7 +232,10 @@ func (b *SlashCommandBuilder) AddRoleOption(name, description string, required b
 }
 
 // AddMentionableOption adds a mentionable (user or role) option parameter.
-func (b *SlashCommandBuilder) AddMentionableOption(name, description string, required bool) *SlashCommandBuilder {
+func (b *SlashCommandBuilder) AddMentionableOption(
+	name, description string,
+	required bool,
+) *SlashCommandBuilder {
 	b.cmd.Options = append(b.cmd.Options, &ApplicationCommandOptionMentionable{
 		OptionBase: OptionBase{
 			Type:        ApplicationCommandOptionTypeMentionable,
@@ -220,7 +250,10 @@ func (b *SlashCommandBuilder) AddMentionableOption(name, description string, req
 }
 
 // AddAttachmentOption adds an attachment (file upload) option parameter.
-func (b *SlashCommandBuilder) AddAttachmentOption(name, description string, required bool) *SlashCommandBuilder {
+func (b *SlashCommandBuilder) AddAttachmentOption(
+	name, description string,
+	required bool,
+) *SlashCommandBuilder {
 	b.cmd.Options = append(b.cmd.Options, &ApplicationCommandOptionAttachment{
 		OptionBase: OptionBase{
 			Type:        ApplicationCommandOptionTypeAttachment,
@@ -280,7 +313,9 @@ func (b *UserCommandBuilder) SetDefaultMemberPermissions(perms Permissions) *Use
 }
 
 // SetIntegrationTypes sets the installation contexts where the command is available.
-func (b *UserCommandBuilder) SetIntegrationTypes(types ...ApplicationIntegrationType) *UserCommandBuilder {
+func (b *UserCommandBuilder) SetIntegrationTypes(
+	types ...ApplicationIntegrationType,
+) *UserCommandBuilder {
 	b.cmd.IntegrationTypes = types
 	return b
 }
@@ -325,19 +360,25 @@ func (b *MessageCommandBuilder) SetName(name string) *MessageCommandBuilder {
 }
 
 // SetDefaultMemberPermissions sets the required permissions for members to run this command.
-func (b *MessageCommandBuilder) SetDefaultMemberPermissions(perms Permissions) *MessageCommandBuilder {
+func (b *MessageCommandBuilder) SetDefaultMemberPermissions(
+	perms Permissions,
+) *MessageCommandBuilder {
 	b.cmd.DefaultMemberPermissions = perms
 	return b
 }
 
 // SetIntegrationTypes sets the installation contexts where the command is available.
-func (b *MessageCommandBuilder) SetIntegrationTypes(types ...ApplicationIntegrationType) *MessageCommandBuilder {
+func (b *MessageCommandBuilder) SetIntegrationTypes(
+	types ...ApplicationIntegrationType,
+) *MessageCommandBuilder {
 	b.cmd.IntegrationTypes = types
 	return b
 }
 
 // SetContexts sets the interaction contexts where the command can be used.
-func (b *MessageCommandBuilder) SetContexts(contexts ...InteractionContextType) *MessageCommandBuilder {
+func (b *MessageCommandBuilder) SetContexts(
+	contexts ...InteractionContextType,
+) *MessageCommandBuilder {
 	b.cmd.Contexts = contexts
 	return b
 }

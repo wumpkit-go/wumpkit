@@ -77,7 +77,11 @@ func ParseHeaders(headers http.Header, statusCode int) HeaderInfo {
 
 	var resetDuration time.Duration
 	if resetAfterStr != "" {
-		if resetSeconds, err := strconv.ParseFloat(resetAfterStr, 64); err == nil && resetSeconds > 0 {
+		if resetSeconds, err := strconv.ParseFloat(
+			resetAfterStr,
+			64,
+		); err == nil &&
+			resetSeconds > 0 {
 			resetDuration = time.Duration(resetSeconds * float64(time.Second))
 		}
 	}
@@ -96,7 +100,8 @@ func ParseHeaders(headers http.Header, statusCode int) HeaderInfo {
 		}
 	}
 
-	hasHeaders := limit != -1 || remaining != -1 || resetDuration > 0 || isGlobal || bucketHash != ""
+	hasHeaders := limit != -1 || remaining != -1 || resetDuration > 0 || isGlobal ||
+		bucketHash != ""
 
 	return HeaderInfo{
 		Limit:      limit,

@@ -220,7 +220,9 @@ func TestShard_ZstdDecompression(t *testing.T) {
 		_ = s.Shutdown()
 	}()
 
-	original := []byte(`{"op":0,"s":1,"t":"READY","d":{"session_id":"abc","resume_gateway_url":"wss://resume.discord.gg"}}`)
+	original := []byte(
+		`{"op":0,"s":1,"t":"READY","d":{"session_id":"abc","resume_gateway_url":"wss://resume.discord.gg"}}`,
+	)
 
 	var compressedBuf bytes.Buffer
 	enc, err := zstd.NewWriter(&compressedBuf)

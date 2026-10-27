@@ -725,7 +725,9 @@ const (
 )
 
 // Is returns true if this ApplicationRoleConnectionMetadataType matches the provided one.
-func (v ApplicationRoleConnectionMetadataType) Is(other ApplicationRoleConnectionMetadataType) bool {
+func (v ApplicationRoleConnectionMetadataType) Is(
+	other ApplicationRoleConnectionMetadataType,
+) bool {
 	return v == other
 }
 

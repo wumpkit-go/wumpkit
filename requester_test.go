@@ -100,7 +100,11 @@ func TestRequester_RetryableStatus_ExceedsRetries(t *testing.T) {
 
 	require.Error(t, err)
 	assert.Equal(t, int32(3), attempts.Load(), "initial attempt (1) + 2 retries = 3 total attempts")
-	assert.True(t, errors.Is(err, ErrMaxRetriesExceeded), "must return sentinel ErrMaxRetriesExceeded")
+	assert.True(
+		t,
+		errors.Is(err, ErrMaxRetriesExceeded),
+		"must return sentinel ErrMaxRetriesExceeded",
+	)
 }
 
 func TestRequester_RateLimit_RetriesAndSucceeds(t *testing.T) {

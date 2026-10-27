@@ -33,13 +33,19 @@ type FetchGuildOptions struct {
 // FetchGuild retrieves a guild by its ID.
 //
 // Reference: https://discord.com/developers/docs/resources/guild#get-guild
-func (r *requester) FetchGuild(ctx context.Context, guildID Snowflake, opts ...FetchGuildOptions) (RestGuild, error) {
+func (r *requester) FetchGuild(
+	ctx context.Context,
+	guildID Snowflake,
+	opts ...FetchGuildOptions,
+) (RestGuild, error) {
 	var first FetchGuildOptions
 	if len(opts) > 0 {
 		first = opts[0]
 	}
 
-	endpoint := "/guilds/" + guildID.String() + "?with_counts=" + strconv.FormatBool(first.WithCounts)
+	endpoint := "/guilds/" + guildID.String() + "?with_counts=" + strconv.FormatBool(
+		first.WithCounts,
+	)
 
 	body, err := r.DoRequest(ctx, Request{Method: "GET", URL: endpoint})
 	if err != nil {
@@ -63,7 +69,10 @@ func (r *requester) FetchGuild(ctx context.Context, guildID Snowflake, opts ...F
 // FetchGuildPreview retrieves a guild preview by its ID.
 //
 // Reference: https://discord.com/developers/docs/resources/guild#get-guild-preview
-func (r *requester) FetchGuildPreview(ctx context.Context, guildID Snowflake) (GuildPreview, error) {
+func (r *requester) FetchGuildPreview(
+	ctx context.Context,
+	guildID Snowflake,
+) (GuildPreview, error) {
 	endpoint := "/guilds/" + guildID.String() + "/preview"
 
 	body, err := r.DoRequest(ctx, Request{Method: "GET", URL: endpoint})
@@ -135,7 +144,11 @@ type ModifyGuildOptions struct {
 //   - Attempting to add or remove the GuildFeatureCommunity guild feature requires the PermissionAdministrator permission
 //
 // Reference: https://discord.com/developers/docs/resources/guild#modify-guild
-func (r *requester) ModifyGuild(ctx context.Context, guildID Snowflake, opts ModifyGuildOptions) (Guild, error) {
+func (r *requester) ModifyGuild(
+	ctx context.Context,
+	guildID Snowflake,
+	opts ModifyGuildOptions,
+) (Guild, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "PATCH",
@@ -161,7 +174,10 @@ func (r *requester) ModifyGuild(ctx context.Context, guildID Snowflake, opts Mod
 //   - Does not include threads.
 //
 // Reference: https://discord.com/developers/docs/resources/guild#get-guild-channels
-func (r *requester) FetchGuildChannels(ctx context.Context, guildID Snowflake) ([]GuildChannel, error) {
+func (r *requester) FetchGuildChannels(
+	ctx context.Context,
+	guildID Snowflake,
+) ([]GuildChannel, error) {
 	endpoint := "/guilds/" + guildID.String() + "/channels"
 
 	body, err := r.DoRequest(ctx, Request{Method: "GET", URL: endpoint})
@@ -332,7 +348,11 @@ type CreateChannelOptions struct {
 // Requires the PermissionManageChannels permission.
 //
 // Reference: https://discord.com/developers/docs/resources/guild#create-guild-channel
-func (r *requester) CreateChannel(ctx context.Context, guildID Snowflake, opts CreateChannelOptions) (GuildChannel, error) {
+func (r *requester) CreateChannel(
+	ctx context.Context,
+	guildID Snowflake,
+	opts CreateChannelOptions,
+) (GuildChannel, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "POST",
@@ -392,7 +412,11 @@ type ModifyChannelPositionOptions struct {
 // Requires the PermissionManageChannels permission.
 //
 // Reference: https://discord.com/developers/docs/resources/guild#modify-guild-channel-positions
-func (r *requester) ModifyChannelPositions(ctx context.Context, guildID Snowflake, opts ModifyChannelPositionOptions) error {
+func (r *requester) ModifyChannelPositions(
+	ctx context.Context,
+	guildID Snowflake,
+	opts ModifyChannelPositionOptions,
+) error {
 	reqBody, _ := json.Marshal(opts.Channels)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "PATCH",
@@ -423,7 +447,10 @@ type ActiveThreadsResponse struct {
 // ListActiveGuildThreads returns all active threads in the guild.
 //
 // Reference: https://discord.com/developers/docs/resources/guild#list-active-guild-threads
-func (r *requester) ListActiveGuildThreads(ctx context.Context, guildID Snowflake) (ActiveThreadsResponse, error) {
+func (r *requester) ListActiveGuildThreads(
+	ctx context.Context,
+	guildID Snowflake,
+) (ActiveThreadsResponse, error) {
 	endpoint := "/guilds/" + guildID.String() + "/threads/active"
 
 	body, err := r.DoRequest(ctx, Request{Method: "GET", URL: endpoint})
@@ -446,7 +473,10 @@ func (r *requester) ListActiveGuildThreads(ctx context.Context, guildID Snowflak
 }
 
 // FetchMember retrieves a guild member object for the specified user.
-func (r *requester) FetchMember(ctx context.Context, guildID, userID Snowflake) (FullMember, error) {
+func (r *requester) FetchMember(
+	ctx context.Context,
+	guildID, userID Snowflake,
+) (FullMember, error) {
 	endpoint := "/guilds/" + guildID.String() + "/members/" + userID.String()
 
 	body, err := r.DoRequest(ctx, Request{Method: "GET", URL: endpoint})
@@ -492,7 +522,11 @@ type ListMembersOptions struct {
 //
 //	Note:
 //	 - This endpoint is restricted according to whether the GUILD_MEMBERS Privileged Intent is enabled for your application.
-func (r *requester) ListMembers(ctx context.Context, guildID Snowflake, opts ...ListMembersOptions) ([]FullMember, error) {
+func (r *requester) ListMembers(
+	ctx context.Context,
+	guildID Snowflake,
+	opts ...ListMembersOptions,
+) ([]FullMember, error) {
 	var first ListMembersOptions
 	if len(opts) > 0 {
 		first = opts[0]
@@ -550,7 +584,11 @@ type SearchMembersOptions struct {
 }
 
 // SearchMembers returns a list of guild member objects whose username or nickname starts with a provided string.
-func (r *requester) SearchMembers(ctx context.Context, guildID Snowflake, opts SearchMembersOptions) ([]FullMember, error) {
+func (r *requester) SearchMembers(
+	ctx context.Context,
+	guildID Snowflake,
+	opts SearchMembersOptions,
+) ([]FullMember, error) {
 	endpoint := "/guilds/" + guildID.String() + "/members/search"
 
 	params := url.Values{}
@@ -628,7 +666,11 @@ type AddMemberOptions struct {
 //	   before they become full members that can talk.
 //
 // Reference: https://discord.com/developers/docs/resources/guild#add-guild-member
-func (r *requester) AddGuildMember(ctx context.Context, guildID, userID Snowflake, opts AddMemberOptions) (FullMember, error) {
+func (r *requester) AddGuildMember(
+	ctx context.Context,
+	guildID, userID Snowflake,
+	opts AddMemberOptions,
+) (FullMember, error) {
 	reqBody, _ := json.Marshal(opts)
 	endpoint := "/guilds/" + guildID.String() + "/members/" + userID.String()
 
@@ -715,7 +757,11 @@ type ModifyMemberOptions struct {
 }
 
 // ModifyMember updates a member's properties in a guild.
-func (r *requester) ModifyMember(ctx context.Context, guildID, userID Snowflake, opts ModifyMemberOptions) (FullMember, error) {
+func (r *requester) ModifyMember(
+	ctx context.Context,
+	guildID, userID Snowflake,
+	opts ModifyMemberOptions,
+) (FullMember, error) {
 	reqBody, _ := json.Marshal(opts)
 	endpoint := "/guilds/" + guildID.String() + "/members/" + userID.String()
 
@@ -774,7 +820,11 @@ type ModifyCurrentMemberOptions struct {
 }
 
 // ModifyCurrentMember updates your bot's member properties in a guild.
-func (r *requester) ModifyCurrentMember(ctx context.Context, guildID Snowflake, opts ModifyCurrentMemberOptions) (FullMember, error) {
+func (r *requester) ModifyCurrentMember(
+	ctx context.Context,
+	guildID Snowflake,
+	opts ModifyCurrentMemberOptions,
+) (FullMember, error) {
 	reqBody, _ := json.Marshal(opts)
 	endpoint := "/guilds/" + guildID.String() + "/members/@me"
 
@@ -815,7 +865,11 @@ type AddMemberRoleOptions struct {
 // AddMemberRole assigns a role to a member in a guild.
 //
 // Requires the PermissionManageRoles permission.
-func (r *requester) AddMemberRole(ctx context.Context, guildID, userID, roleID Snowflake, opts AddMemberRoleOptions) error {
+func (r *requester) AddMemberRole(
+	ctx context.Context,
+	guildID, userID, roleID Snowflake,
+	opts AddMemberRoleOptions,
+) error {
 	endpoint := "/guilds/" + guildID.String() + "/members/" + userID.String() + "/roles/" + roleID.String()
 	body, err := r.DoRequest(ctx, Request{
 		Method: "PUT",
@@ -838,7 +892,11 @@ type RemoveMemberRoleOptions struct {
 // RemoveMemberRole unassigns a role from a member in a guild.
 //
 // Requires the PermissionManageRoles permission.
-func (r *requester) RemoveMemberRole(ctx context.Context, guildID, userID, roleID Snowflake, opts RemoveMemberRoleOptions) error {
+func (r *requester) RemoveMemberRole(
+	ctx context.Context,
+	guildID, userID, roleID Snowflake,
+	opts RemoveMemberRoleOptions,
+) error {
 	endpoint := "/guilds/" + guildID.String() + "/members/" + userID.String() + "/roles/" + roleID.String()
 	body, err := r.DoRequest(ctx, Request{Method: "DELETE", URL: endpoint, Reason: opts.Reason})
 	if err != nil {
@@ -857,7 +915,11 @@ type KickMemberOptions struct {
 // KickMember kicks a member from a guild.
 //
 // Requires the PermissionKickMembers permission.
-func (r *requester) KickMember(ctx context.Context, guildID, userID Snowflake, opts KickMemberOptions) error {
+func (r *requester) KickMember(
+	ctx context.Context,
+	guildID, userID Snowflake,
+	opts KickMemberOptions,
+) error {
 	endpoint := "/guilds/" + guildID.String() + "/members/" + userID.String()
 	body, err := r.DoRequest(ctx, Request{Method: "DELETE", URL: endpoint, Reason: opts.Reason})
 	if err != nil {
@@ -890,7 +952,11 @@ type FetchGuildBansOptions struct {
 //	   If both before and after are provided, only before is respected.
 //
 // Requires the PermissionBanMembers permission.
-func (r *requester) FetchGuildBans(ctx context.Context, guildID Snowflake, opts ...FetchGuildBansOptions) ([]Ban, error) {
+func (r *requester) FetchGuildBans(
+	ctx context.Context,
+	guildID Snowflake,
+	opts ...FetchGuildBansOptions,
+) ([]Ban, error) {
 	var first FetchGuildBansOptions
 	if len(opts) > 0 {
 		first = opts[0]
@@ -972,7 +1038,11 @@ type BanMemberOptions struct {
 // BanMember ban's a guild member.
 //
 // Requires the PermissionBanMembers permission.
-func (r *requester) BanMember(ctx context.Context, guildID, userID Snowflake, opts BanMemberOptions) error {
+func (r *requester) BanMember(
+	ctx context.Context,
+	guildID, userID Snowflake,
+	opts BanMemberOptions,
+) error {
 	reqBody, _ := json.Marshal(opts)
 	endpoint := "/guilds/" + guildID.String() + "/bans/" + userID.String()
 	body, err := r.DoRequest(ctx, Request{
@@ -997,7 +1067,11 @@ type UnbanMemberOptions struct {
 // UnbanMember removes the ban for a user.
 //
 // Requires the PermissionBanMembers permission.
-func (r *requester) UnbanMember(ctx context.Context, guildID, userID Snowflake, opts UnbanMemberOptions) error {
+func (r *requester) UnbanMember(
+	ctx context.Context,
+	guildID, userID Snowflake,
+	opts UnbanMemberOptions,
+) error {
 	endpoint := "/guilds/" + guildID.String() + "/bans/" + userID.String()
 	body, err := r.DoRequest(ctx, Request{Method: "DELETE", URL: endpoint, Reason: opts.Reason})
 	if err != nil {
@@ -1035,7 +1109,11 @@ type BulkBanResponse struct {
 // BulkBanMembers bans up to 200 users from a guild.
 //
 // Reference: https://discord.com/developers/docs/resources/guild#bulk-guild-ban
-func (r *requester) BulkBanMembers(ctx context.Context, guildID Snowflake, opts BulkBanMembersOptions) (BulkBanResponse, error) {
+func (r *requester) BulkBanMembers(
+	ctx context.Context,
+	guildID Snowflake,
+	opts BulkBanMembersOptions,
+) (BulkBanResponse, error) {
 	if len(opts.UserIDs) > 200 {
 		panic("BulkBanMembers: UserIDs exceeds Discord limit of 200 users")
 	}
@@ -1120,7 +1198,10 @@ func (r *requester) FetchRole(ctx context.Context, guildID, roleID Snowflake) (R
 //
 //	Note:
 //	 - Does not include the @everyone role.
-func (r *requester) FetchRolesMemberCount(ctx context.Context, guildID Snowflake) (map[Snowflake]int, error) {
+func (r *requester) FetchRolesMemberCount(
+	ctx context.Context,
+	guildID Snowflake,
+) (map[Snowflake]int, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "GET",
 		URL:    "/guilds/" + guildID.String() + "/roles/member-counts",
@@ -1175,7 +1256,11 @@ type CreateRoleOptions struct {
 // CreateRole creates a new role for the guild.
 //
 // Requires the PermissionManageRoles permission.
-func (r *requester) CreateRole(ctx context.Context, guildID Snowflake, opts CreateRoleOptions) (Role, error) {
+func (r *requester) CreateRole(
+	ctx context.Context,
+	guildID Snowflake,
+	opts CreateRoleOptions,
+) (Role, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "POST",
@@ -1220,7 +1305,11 @@ type ModifyRolePositionsOptions struct {
 // ModifyRolePositions modifies the positions of a set of roles.
 //
 // Requires the PermissionManageRoles permission.
-func (r *requester) ModifyRolePositions(ctx context.Context, guildID Snowflake, opts ModifyRolePositionsOptions) ([]Role, error) {
+func (r *requester) ModifyRolePositions(
+	ctx context.Context,
+	guildID Snowflake,
+	opts ModifyRolePositionsOptions,
+) ([]Role, error) {
 	reqBody, _ := json.Marshal(opts.Roles)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "PATCH",
@@ -1276,7 +1365,11 @@ type ModifyRoleOptions struct {
 // ModifyRole updates a member's properties in a guild.
 //
 // Requires the PermissionManageRoles permission.
-func (r *requester) ModifyRole(ctx context.Context, guildID, roleID Snowflake, opts ModifyRoleOptions) (Role, error) {
+func (r *requester) ModifyRole(
+	ctx context.Context,
+	guildID, roleID Snowflake,
+	opts ModifyRoleOptions,
+) (Role, error) {
 	reqBody, _ := json.Marshal(opts)
 	endpoint := "/guilds/" + guildID.String() + "/roles/" + roleID.String()
 
@@ -1314,7 +1407,11 @@ type DeleteRoleOptions struct {
 // DeleteRole delete's a guild role.
 //
 // Requires the PermissionManageRoles permission.
-func (r *requester) DeleteRole(ctx context.Context, guildID, roleID Snowflake, opts DeleteRoleOptions) error {
+func (r *requester) DeleteRole(
+	ctx context.Context,
+	guildID, roleID Snowflake,
+	opts DeleteRoleOptions,
+) error {
 	endpoint := "/guilds/" + guildID.String() + "/roles/" + roleID.String()
 	body, err := r.DoRequest(ctx, Request{Method: "DELETE", URL: endpoint, Reason: opts.Reason})
 	if err != nil {
@@ -1344,7 +1441,11 @@ type PruneCount struct {
 // of members that would be removed in a prune operation.
 //
 // Requires the PermissionManageGuild and PermissionKickMembers permission.
-func (r *requester) FetchGuildPruneCount(ctx context.Context, guildID Snowflake, opts ...FetchGuildPruneCountOptions) (PruneCount, error) {
+func (r *requester) FetchGuildPruneCount(
+	ctx context.Context,
+	guildID Snowflake,
+	opts ...FetchGuildPruneCountOptions,
+) (PruneCount, error) {
 	var first FetchGuildPruneCountOptions
 	if len(opts) > 0 {
 		first = opts[0]
@@ -1409,7 +1510,11 @@ type BeginGuildPruneOptions struct {
 // BeginGuildPrune Begin a prune operation.
 //
 // Requires the PermissionManageGuild and PermissionKickMembers permission.
-func (r *requester) BeginGuildPrune(ctx context.Context, guildID Snowflake, opts BeginGuildPruneOptions) (PruneCount, error) {
+func (r *requester) BeginGuildPrune(
+	ctx context.Context,
+	guildID Snowflake,
+	opts BeginGuildPruneOptions,
+) (PruneCount, error) {
 	reqBody, _ := json.Marshal(opts)
 	endpoint := "/guilds/" + guildID.String() + "/prune"
 	body, err := r.DoRequest(ctx, Request{
@@ -1438,7 +1543,10 @@ func (r *requester) BeginGuildPrune(ctx context.Context, guildID Snowflake, opts
 
 // FetchGuildVoiceRegions returns a list of voice region objects for the guild.
 // Unlike the similar /voice route, this returns VIP servers when the guild is VIP-enabled.
-func (r *requester) FetchGuildVoiceRegions(ctx context.Context, guildID Snowflake) ([]VoiceRegion, error) {
+func (r *requester) FetchGuildVoiceRegions(
+	ctx context.Context,
+	guildID Snowflake,
+) ([]VoiceRegion, error) {
 	endpoint := "/guilds/" + guildID.String() + "/regions"
 
 	body, err := r.DoRequest(ctx, Request{Method: "GET", URL: endpoint})
@@ -1464,7 +1572,10 @@ func (r *requester) FetchGuildVoiceRegions(ctx context.Context, guildID Snowflak
 // Unlike the similar /voice route, this returns VIP servers when the guild is VIP-enabled.
 //
 // Requires the PermissionManageGuild and PermissionKickMembers permission.
-func (r *requester) FetchGuildInvites(ctx context.Context, guildID Snowflake) ([]FullInvite, error) {
+func (r *requester) FetchGuildInvites(
+	ctx context.Context,
+	guildID Snowflake,
+) ([]FullInvite, error) {
 	endpoint := "/guilds/" + guildID.String() + "/invites"
 
 	body, err := r.DoRequest(ctx, Request{Method: "GET", URL: endpoint})
@@ -1492,7 +1603,10 @@ func (r *requester) FetchGuildInvites(ctx context.Context, guildID Snowflake) ([
 //   - This endpoint returns a maximum of 50 integrations. If a guild has more integrations, they cannot be accessed.
 //
 // Requires the PermissionManageGuild permission.
-func (r *requester) FetchGuildIntegrations(ctx context.Context, guildID Snowflake) ([]Integration, error) {
+func (r *requester) FetchGuildIntegrations(
+	ctx context.Context,
+	guildID Snowflake,
+) ([]Integration, error) {
 	endpoint := "/guilds/" + guildID.String() + "/integrations"
 
 	body, err := r.DoRequest(ctx, Request{Method: "GET", URL: endpoint})
@@ -1524,7 +1638,11 @@ type DeleteGuildIntegrationOptions struct {
 // Deletes any associated webhooks and kicks the associated bot if there is one.
 //
 // Requires the PermissionManageGuild permission.
-func (r *requester) DeleteGuildIntegration(ctx context.Context, guildID, integrationID Snowflake, opts DeleteGuildIntegrationOptions) error {
+func (r *requester) DeleteGuildIntegration(
+	ctx context.Context,
+	guildID, integrationID Snowflake,
+	opts DeleteGuildIntegrationOptions,
+) error {
 	endpoint := "/guilds/" + guildID.String() + "/integrations/" + integrationID.String()
 	body, err := r.DoRequest(ctx, Request{Method: "DELETE", URL: endpoint, Reason: opts.Reason})
 	if err != nil {
@@ -1537,7 +1655,10 @@ func (r *requester) DeleteGuildIntegration(ctx context.Context, guildID, integra
 // FetchGuildWidgetSettings returns a guild widget settings object.
 //
 // Requires the PermissionManageGuild permission.
-func (r *requester) FetchGuildWidgetSettings(ctx context.Context, guildID Snowflake) (GuildWidgetSettings, error) {
+func (r *requester) FetchGuildWidgetSettings(
+	ctx context.Context,
+	guildID Snowflake,
+) (GuildWidgetSettings, error) {
 	endpoint := "/guilds/" + guildID.String() + "/widget"
 
 	body, err := r.DoRequest(ctx, Request{Method: "GET", URL: endpoint})
@@ -1569,7 +1690,11 @@ type ModifyGuildWidgetOptions struct {
 }
 
 // ModifyGuildWidget modifies a guild widget settings object for the guild.
-func (r *requester) ModifyGuildWidget(ctx context.Context, guildID Snowflake, opts ModifyGuildWidgetOptions) (GuildWidgetSettings, error) {
+func (r *requester) ModifyGuildWidget(
+	ctx context.Context,
+	guildID Snowflake,
+	opts ModifyGuildWidgetOptions,
+) (GuildWidgetSettings, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "PATCH",
@@ -1632,7 +1757,10 @@ type PartialInvite struct {
 // FetchGuildVanityURL returns a partial invite object for guilds with the feature enabled.
 //
 // Requires the PermissionManageGuild permission.
-func (r *requester) FetchGuildVanityURL(ctx context.Context, guildID Snowflake) (PartialInvite, error) {
+func (r *requester) FetchGuildVanityURL(
+	ctx context.Context,
+	guildID Snowflake,
+) (PartialInvite, error) {
 	endpoint := "/guilds/" + guildID.String() + "/vanity-url"
 
 	body, err := r.DoRequest(ctx, Request{Method: "GET", URL: endpoint})
@@ -1682,7 +1810,11 @@ type FetchGuildWidgetImageOptions struct {
 }
 
 // FetchGuildWidgetImage returns a URL for a PNG image widget for the guild.
-func (r *requester) FetchGuildWidgetImage(ctx context.Context, guildID Snowflake, opts ...FetchGuildWidgetImageOptions) string {
+func (r *requester) FetchGuildWidgetImage(
+	ctx context.Context,
+	guildID Snowflake,
+	opts ...FetchGuildWidgetImageOptions,
+) string {
 	url := "https://discord.com/api/v10/guilds/" + guildID.String() + "/widget.png"
 	if len(opts) > 0 && opts[0].Style != "" {
 		url += "?style=" + string(opts[0].Style)
@@ -1693,7 +1825,10 @@ func (r *requester) FetchGuildWidgetImage(ctx context.Context, guildID Snowflake
 // FetchGuildWelcomeScreen returns the Welcome Screen object for the guild.
 //
 // Requires the PermissionManageGuild permission.
-func (r *requester) FetchGuildWelcomeScreen(ctx context.Context, guildID Snowflake) (GuildWelcomeScreen, error) {
+func (r *requester) FetchGuildWelcomeScreen(
+	ctx context.Context,
+	guildID Snowflake,
+) (GuildWelcomeScreen, error) {
 	endpoint := "/guilds/" + guildID.String() + "/welcome-screen"
 
 	body, err := r.DoRequest(ctx, Request{Method: "GET", URL: endpoint})
@@ -1735,7 +1870,11 @@ type ModifyGuildWelcomeScreenOptions struct {
 // ModifyGuildWelcomeScreen modifies the guild's Welcome Screen.
 //
 // Requires the PermissionManageGuild permission.
-func (r *requester) ModifyGuildWelcomeScreen(ctx context.Context, guildID Snowflake, opts ModifyGuildWelcomeScreenOptions) (GuildWelcomeScreen, error) {
+func (r *requester) ModifyGuildWelcomeScreen(
+	ctx context.Context,
+	guildID Snowflake,
+	opts ModifyGuildWelcomeScreenOptions,
+) (GuildWelcomeScreen, error) {
 	reqBody, _ := json.Marshal(opts)
 	endpoint := "/guilds/" + guildID.String() + "/welcome-screen"
 	body, err := r.DoRequest(ctx, Request{
@@ -1765,7 +1904,10 @@ func (r *requester) ModifyGuildWelcomeScreen(ctx context.Context, guildID Snowfl
 // FetchGuildOnboarding returns the Onboarding object for the guild.
 //
 // Requires the PermissionManageGuild and PermissionManageRoles permissions.
-func (r *requester) FetchGuildOnboarding(ctx context.Context, guildID Snowflake) (GuildOnboarding, error) {
+func (r *requester) FetchGuildOnboarding(
+	ctx context.Context,
+	guildID Snowflake,
+) (GuildOnboarding, error) {
 	endpoint := "/guilds/" + guildID.String() + "/onboarding"
 
 	body, err := r.DoRequest(ctx, Request{Method: "GET", URL: endpoint})
@@ -1815,7 +1957,11 @@ type ModifyGuildOnboardingOptions struct {
 //     The mode field modifies what is considered when enforcing these constraints.
 //
 // Requires the PermissionManageGuild and PermissionManageRoles permissions.
-func (r *requester) ModifyGuildOnboarding(ctx context.Context, guildID Snowflake, opts ModifyGuildOnboardingOptions) (GuildOnboarding, error) {
+func (r *requester) ModifyGuildOnboarding(
+	ctx context.Context,
+	guildID Snowflake,
+	opts ModifyGuildOnboardingOptions,
+) (GuildOnboarding, error) {
 	reqBody, _ := json.Marshal(opts)
 	endpoint := "/guilds/" + guildID.String() + "/onboarding"
 	body, err := r.DoRequest(ctx, Request{
@@ -1863,7 +2009,11 @@ type ModifyGuildIncidentActionsOptions struct {
 // ModifyGuildIncidentActions modifies the incident actions of the guild.
 //
 // Requires the PermissionManageGuild permission.
-func (r *requester) ModifyGuildIncidentActions(ctx context.Context, guildID Snowflake, opts ModifyGuildIncidentActionsOptions) (GuildIncidentsData, error) {
+func (r *requester) ModifyGuildIncidentActions(
+	ctx context.Context,
+	guildID Snowflake,
+	opts ModifyGuildIncidentActionsOptions,
+) (GuildIncidentsData, error) {
 	reqBody, _ := json.Marshal(opts)
 	endpoint := "/guilds/" + guildID.String() + "/incident-actions"
 	body, err := r.DoRequest(ctx, Request{
@@ -1905,7 +2055,11 @@ type ModifyCurrentUserVoiceStateOptions struct {
 // ModifyCurrentUserVoiceState updates the current user's voice state in a guild.
 //
 // Reference: https://discord.com/developers/docs/resources/guild#modify-current-user-voice-state
-func (r *requester) ModifyCurrentUserVoiceState(ctx context.Context, guildID Snowflake, opts ModifyCurrentUserVoiceStateOptions) error {
+func (r *requester) ModifyCurrentUserVoiceState(
+	ctx context.Context,
+	guildID Snowflake,
+	opts ModifyCurrentUserVoiceStateOptions,
+) error {
 	payload, err := json.Marshal(opts)
 	if err != nil {
 		return err
@@ -1935,7 +2089,11 @@ type ModifyUserVoiceStateOptions struct {
 // ModifyUserVoiceState updates another user's voice state in a guild.
 //
 // Reference: https://discord.com/developers/docs/resources/guild#modify-user-voice-state
-func (r *requester) ModifyUserVoiceState(ctx context.Context, guildID, userID Snowflake, opts ModifyUserVoiceStateOptions) error {
+func (r *requester) ModifyUserVoiceState(
+	ctx context.Context,
+	guildID, userID Snowflake,
+	opts ModifyUserVoiceStateOptions,
+) error {
 	payload, err := json.Marshal(opts)
 	if err != nil {
 		return err

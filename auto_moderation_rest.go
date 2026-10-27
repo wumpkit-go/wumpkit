@@ -78,7 +78,10 @@ type ModifyAutoModerationRuleOptions struct {
 // ListAutoModerationRules retrieves a list of all rules currently configured for the guild.
 //
 // Requires the MANAGE_GUILD permission.
-func (r *requester) ListAutoModerationRules(ctx context.Context, guildID Snowflake) ([]AutoModerationRule, error) {
+func (r *requester) ListAutoModerationRules(
+	ctx context.Context,
+	guildID Snowflake,
+) ([]AutoModerationRule, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "GET",
 		URL:    "/guilds/" + guildID.String() + "/auto-moderation/rules",
@@ -98,7 +101,10 @@ func (r *requester) ListAutoModerationRules(ctx context.Context, guildID Snowfla
 // FetchAutoModerationRule retrieves a single Auto Moderation rule.
 //
 // Requires the MANAGE_GUILD permission.
-func (r *requester) FetchAutoModerationRule(ctx context.Context, guildID, ruleID Snowflake) (AutoModerationRule, error) {
+func (r *requester) FetchAutoModerationRule(
+	ctx context.Context,
+	guildID, ruleID Snowflake,
+) (AutoModerationRule, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "GET",
 		URL:    "/guilds/" + guildID.String() + "/auto-moderation/rules/" + ruleID.String(),
@@ -118,7 +124,11 @@ func (r *requester) FetchAutoModerationRule(ctx context.Context, guildID, ruleID
 // CreateAutoModerationRule creates a new Auto Moderation rule.
 //
 // Requires the MANAGE_GUILD permission.
-func (r *requester) CreateAutoModerationRule(ctx context.Context, guildID Snowflake, opts CreateAutoModerationRuleOptions) (AutoModerationRule, error) {
+func (r *requester) CreateAutoModerationRule(
+	ctx context.Context,
+	guildID Snowflake,
+	opts CreateAutoModerationRuleOptions,
+) (AutoModerationRule, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "POST",
@@ -141,7 +151,11 @@ func (r *requester) CreateAutoModerationRule(ctx context.Context, guildID Snowfl
 // ModifyAutoModerationRule modifies an existing Auto Moderation rule.
 //
 // Requires the MANAGE_GUILD permission.
-func (r *requester) ModifyAutoModerationRule(ctx context.Context, guildID, ruleID Snowflake, opts ModifyAutoModerationRuleOptions) (AutoModerationRule, error) {
+func (r *requester) ModifyAutoModerationRule(
+	ctx context.Context,
+	guildID, ruleID Snowflake,
+	opts ModifyAutoModerationRuleOptions,
+) (AutoModerationRule, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "PATCH",
@@ -164,7 +178,11 @@ func (r *requester) ModifyAutoModerationRule(ctx context.Context, guildID, ruleI
 // DeleteAutoModerationRule deletes an Auto Moderation rule.
 //
 // Requires the MANAGE_GUILD permission.
-func (r *requester) DeleteAutoModerationRule(ctx context.Context, guildID, ruleID Snowflake, reason string) error {
+func (r *requester) DeleteAutoModerationRule(
+	ctx context.Context,
+	guildID, ruleID Snowflake,
+	reason string,
+) error {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "DELETE",
 		URL:    "/guilds/" + guildID.String() + "/auto-moderation/rules/" + ruleID.String(),

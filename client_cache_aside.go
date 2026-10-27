@@ -173,7 +173,11 @@ func (c *Client) StageInstance(ctx context.Context, channelID Snowflake) (StageI
 
 // GuildScheduledEvent returns the GuildScheduledEvent from cache if present; otherwise fetches it from the Discord API,
 // populates the cache with the response, and returns it.
-func (c *Client) GuildScheduledEvent(ctx context.Context, guildID, eventID Snowflake, withUserCount ...bool) (GuildScheduledEvent, error) {
+func (c *Client) GuildScheduledEvent(
+	ctx context.Context,
+	guildID, eventID Snowflake,
+	withUserCount ...bool,
+) (GuildScheduledEvent, error) {
 	if e, ok := c.GetGuildScheduledEvent(ctx, eventID); ok {
 		return e, nil
 	}
@@ -191,7 +195,10 @@ func (c *Client) GuildScheduledEvent(ctx context.Context, guildID, eventID Snowf
 
 // AutoModerationRule returns the AutoModerationRule from cache if present; otherwise fetches it from the Discord API,
 // populates the cache with the response, and returns it.
-func (c *Client) AutoModerationRule(ctx context.Context, guildID, ruleID Snowflake) (AutoModerationRule, error) {
+func (c *Client) AutoModerationRule(
+	ctx context.Context,
+	guildID, ruleID Snowflake,
+) (AutoModerationRule, error) {
 	if r, ok := c.GetAutoModerationRule(ctx, ruleID); ok {
 		return r, nil
 	}
@@ -209,7 +216,10 @@ func (c *Client) AutoModerationRule(ctx context.Context, guildID, ruleID Snowfla
 
 // GuildChannels returns all guild channels from cache if available; otherwise fetches them from the Discord API,
 // populates the cache, and returns them as a map keyed by ChannelID.
-func (c *Client) GuildChannels(ctx context.Context, guildID Snowflake) (map[Snowflake]GuildChannel, error) {
+func (c *Client) GuildChannels(
+	ctx context.Context,
+	guildID Snowflake,
+) (map[Snowflake]GuildChannel, error) {
 	if chs, ok := c.GetGuildChannels(ctx, guildID); ok {
 		return chs, nil
 	}
@@ -263,7 +273,10 @@ func (c *Client) GuildEmojis(ctx context.Context, guildID Snowflake) (map[Snowfl
 
 // GuildStickers returns all guild stickers from cache if available; otherwise fetches them from the Discord API,
 // populates the cache, and returns them as a map keyed by StickerID.
-func (c *Client) GuildStickers(ctx context.Context, guildID Snowflake) (map[Snowflake]Sticker, error) {
+func (c *Client) GuildStickers(
+	ctx context.Context,
+	guildID Snowflake,
+) (map[Snowflake]Sticker, error) {
 	if stickers, ok := c.GetGuildStickers(ctx, guildID); ok {
 		return stickers, nil
 	}
@@ -281,7 +294,10 @@ func (c *Client) GuildStickers(ctx context.Context, guildID Snowflake) (map[Snow
 
 // GuildMembers returns guild members from cache if available; otherwise fetches them from the Discord API,
 // populates the cache, and returns them as a map keyed by UserID.
-func (c *Client) GuildMembers(ctx context.Context, guildID Snowflake) (map[Snowflake]Member, error) {
+func (c *Client) GuildMembers(
+	ctx context.Context,
+	guildID Snowflake,
+) (map[Snowflake]Member, error) {
 	if members, ok := c.GetGuildMembers(ctx, guildID); ok {
 		return members, nil
 	}

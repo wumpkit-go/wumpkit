@@ -60,7 +60,10 @@ type ModifyStageInstanceOptions struct {
 // Requires the user to be a moderator of the Stage channel.
 //
 // Reference: https://discord.com/developers/docs/resources/stage-instance#create-stage-instance
-func (r *requester) CreateStageInstance(ctx context.Context, opts CreateStageInstanceOptions) (StageInstance, error) {
+func (r *requester) CreateStageInstance(
+	ctx context.Context,
+	opts CreateStageInstanceOptions,
+) (StageInstance, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "POST",
@@ -89,7 +92,10 @@ func (r *requester) CreateStageInstance(ctx context.Context, opts CreateStageIns
 // FetchStageInstance gets the stage instance associated with the Stage channel, if it exists.
 //
 // Reference: https://discord.com/developers/docs/resources/stage-instance#get-stage-instance
-func (r *requester) FetchStageInstance(ctx context.Context, channelID Snowflake) (StageInstance, error) {
+func (r *requester) FetchStageInstance(
+	ctx context.Context,
+	channelID Snowflake,
+) (StageInstance, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "GET",
 		URL:    "/stage-instances/" + channelID.String(),
@@ -117,7 +123,11 @@ func (r *requester) FetchStageInstance(ctx context.Context, channelID Snowflake)
 // Requires the user to be a moderator of the Stage channel.
 //
 // Reference: https://discord.com/developers/docs/resources/stage-instance#modify-stage-instance
-func (r *requester) ModifyStageInstance(ctx context.Context, channelID Snowflake, opts ModifyStageInstanceOptions) (StageInstance, error) {
+func (r *requester) ModifyStageInstance(
+	ctx context.Context,
+	channelID Snowflake,
+	opts ModifyStageInstanceOptions,
+) (StageInstance, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "PATCH",
@@ -148,7 +158,11 @@ func (r *requester) ModifyStageInstance(ctx context.Context, channelID Snowflake
 // Requires the user to be a moderator of the Stage channel.
 //
 // Reference: https://discord.com/developers/docs/resources/stage-instance#delete-stage-instance
-func (r *requester) DeleteStageInstance(ctx context.Context, channelID Snowflake, reason string) error {
+func (r *requester) DeleteStageInstance(
+	ctx context.Context,
+	channelID Snowflake,
+	reason string,
+) error {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "DELETE",
 		URL:    "/stage-instances/" + channelID.String(),

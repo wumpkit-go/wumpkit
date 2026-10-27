@@ -151,7 +151,12 @@ type TypeMismatchError struct {
 
 func (e *TypeMismatchError) Error() string {
 	if e.Cause != nil {
-		return fmt.Sprintf("wumpkit: type mismatch on option %q (expected %s): %v", e.Option, e.Expected, e.Cause)
+		return fmt.Sprintf(
+			"wumpkit: type mismatch on option %q (expected %s): %v",
+			e.Option,
+			e.Expected,
+			e.Cause,
+		)
 	}
 	return fmt.Sprintf("wumpkit: type mismatch on option %q (expected %s)", e.Option, e.Expected)
 }
@@ -270,7 +275,10 @@ func (d *ChatInputCommandInteractionData) Subcommand() (string, bool) {
 	return "", false
 }
 
-func findChatInputInteractionCommandOption(options []ChatInputInteractionCommandOption, name string) *ChatInputInteractionCommandOption {
+func findChatInputInteractionCommandOption(
+	options []ChatInputInteractionCommandOption,
+	name string,
+) *ChatInputInteractionCommandOption {
 	for i := range options {
 		if options[i].Name == name {
 			return &options[i]

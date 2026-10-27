@@ -108,7 +108,10 @@ func (r *requester) ListGuildEmojis(ctx context.Context, guildID Snowflake) ([]E
 // or if the bot created the emoji and has the PermissionCreateGuildExpressions permission.
 //
 // Reference: https://discord.com/developers/docs/resources/emoji#get-guild-emoji
-func (r *requester) FetchGuildEmoji(ctx context.Context, guildID, emojiID Snowflake) (Emoji, error) {
+func (r *requester) FetchGuildEmoji(
+	ctx context.Context,
+	guildID, emojiID Snowflake,
+) (Emoji, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "GET",
 		URL:    "/guilds/" + guildID.String() + "/emojis/" + emojiID.String(),
@@ -139,7 +142,11 @@ func (r *requester) FetchGuildEmoji(ctx context.Context, guildID, emojiID Snowfl
 // Attempting to upload an emoji larger than this limit will fail with an error.
 //
 // Reference: https://discord.com/developers/docs/resources/emoji#create-guild-emoji
-func (r *requester) CreateGuildEmoji(ctx context.Context, guildID Snowflake, opts CreateGuildEmojiOptions) (Emoji, error) {
+func (r *requester) CreateGuildEmoji(
+	ctx context.Context,
+	guildID Snowflake,
+	opts CreateGuildEmojiOptions,
+) (Emoji, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "POST",
@@ -171,7 +178,11 @@ func (r *requester) CreateGuildEmoji(ctx context.Context, guildID Snowflake, opt
 // For other emojis, requires the PermissionManageGuildExpressions permission.
 //
 // Reference: https://discord.com/developers/docs/resources/emoji#modify-guild-emoji
-func (r *requester) ModifyGuildEmoji(ctx context.Context, guildID, emojiID Snowflake, opts ModifyGuildEmojiOptions) (Emoji, error) {
+func (r *requester) ModifyGuildEmoji(
+	ctx context.Context,
+	guildID, emojiID Snowflake,
+	opts ModifyGuildEmojiOptions,
+) (Emoji, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "PATCH",
@@ -203,7 +214,11 @@ func (r *requester) ModifyGuildEmoji(ctx context.Context, guildID, emojiID Snowf
 // For other emojis, requires the PermissionManageGuildExpressions permission.
 //
 // Reference: https://discord.com/developers/docs/resources/emoji#delete-guild-emoji
-func (r *requester) DeleteGuildEmoji(ctx context.Context, guildID, emojiID Snowflake, reason string) error {
+func (r *requester) DeleteGuildEmoji(
+	ctx context.Context,
+	guildID, emojiID Snowflake,
+	reason string,
+) error {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "DELETE",
 		URL:    "/guilds/" + guildID.String() + "/emojis/" + emojiID.String(),
@@ -222,7 +237,10 @@ func (r *requester) DeleteGuildEmoji(ctx context.Context, guildID, emojiID Snowf
 // or for the bot user if uploaded using the API.
 //
 // Reference: https://discord.com/developers/docs/resources/emoji#list-application-emojis
-func (r *requester) ListApplicationEmojis(ctx context.Context, applicationID Snowflake) ([]Emoji, error) {
+func (r *requester) ListApplicationEmojis(
+	ctx context.Context,
+	applicationID Snowflake,
+) ([]Emoji, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "GET",
 		URL:    "/applications/" + applicationID.String() + "/emojis",
@@ -250,7 +268,10 @@ func (r *requester) ListApplicationEmojis(ctx context.Context, applicationID Sno
 // Includes the user field.
 //
 // Reference: https://discord.com/developers/docs/resources/emoji#get-application-emoji
-func (r *requester) FetchApplicationEmoji(ctx context.Context, applicationID, emojiID Snowflake) (Emoji, error) {
+func (r *requester) FetchApplicationEmoji(
+	ctx context.Context,
+	applicationID, emojiID Snowflake,
+) (Emoji, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "GET",
 		URL:    "/applications/" + applicationID.String() + "/emojis/" + emojiID.String(),
@@ -279,7 +300,11 @@ func (r *requester) FetchApplicationEmoji(ctx context.Context, applicationID, em
 // Attempting to upload an emoji larger than this limit will fail with an error.
 //
 // Reference: https://discord.com/developers/docs/resources/emoji#create-application-emoji
-func (r *requester) CreateApplicationEmoji(ctx context.Context, applicationID Snowflake, opts CreateApplicationEmojiOptions) (Emoji, error) {
+func (r *requester) CreateApplicationEmoji(
+	ctx context.Context,
+	applicationID Snowflake,
+	opts CreateApplicationEmojiOptions,
+) (Emoji, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "POST",
@@ -307,7 +332,11 @@ func (r *requester) CreateApplicationEmoji(ctx context.Context, applicationID Sn
 // ModifyApplicationEmoji updates an existing application emoji.
 //
 // Reference: https://discord.com/developers/docs/resources/emoji#modify-application-emoji
-func (r *requester) ModifyApplicationEmoji(ctx context.Context, applicationID, emojiID Snowflake, opts ModifyApplicationEmojiOptions) (Emoji, error) {
+func (r *requester) ModifyApplicationEmoji(
+	ctx context.Context,
+	applicationID, emojiID Snowflake,
+	opts ModifyApplicationEmojiOptions,
+) (Emoji, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "PATCH",
@@ -335,7 +364,10 @@ func (r *requester) ModifyApplicationEmoji(ctx context.Context, applicationID, e
 // DeleteApplicationEmoji deletes an application emoji.
 //
 // Reference: https://discord.com/developers/docs/resources/emoji#delete-application-emoji
-func (r *requester) DeleteApplicationEmoji(ctx context.Context, applicationID, emojiID Snowflake) error {
+func (r *requester) DeleteApplicationEmoji(
+	ctx context.Context,
+	applicationID, emojiID Snowflake,
+) error {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "DELETE",
 		URL:    "/applications/" + applicationID.String() + "/emojis/" + emojiID.String(),

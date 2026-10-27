@@ -347,7 +347,12 @@ func (r *requester) FetchChannel(ctx context.Context, channelID Snowflake) (Chan
 	return channel, nil
 }
 
-func (r *requester) modifyChannel(ctx context.Context, channelID Snowflake, reqBody []byte, reason string) (Channel, error) {
+func (r *requester) modifyChannel(
+	ctx context.Context,
+	channelID Snowflake,
+	reqBody []byte,
+	reason string,
+) (Channel, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "PATCH",
 		URL:    "/channels/" + channelID.String(),
@@ -378,7 +383,11 @@ func (r *requester) modifyChannel(ctx context.Context, channelID Snowflake, reqB
 }
 
 // ModifyGroupDMChannel updates a group DM channel's settings.
-func (r *requester) ModifyGroupDMChannel(ctx context.Context, channelID Snowflake, opts ModifyGroupDMOptions) (*GroupDMChannel, error) {
+func (r *requester) ModifyGroupDMChannel(
+	ctx context.Context,
+	channelID Snowflake,
+	opts ModifyGroupDMOptions,
+) (*GroupDMChannel, error) {
 	reqBody, _ := json.Marshal(opts)
 	channel, err := r.modifyChannel(ctx, channelID, reqBody, opts.Reason)
 	if err != nil {
@@ -393,7 +402,11 @@ func (r *requester) ModifyGroupDMChannel(ctx context.Context, channelID Snowflak
 // ModifyGuildChannel updates a guild channel's settings.
 //
 // Requires the PermissionManageChannels permission.
-func (r *requester) ModifyGuildChannel(ctx context.Context, channelID Snowflake, opts ModifyGuildChannelOptions) (GuildChannel, error) {
+func (r *requester) ModifyGuildChannel(
+	ctx context.Context,
+	channelID Snowflake,
+	opts ModifyGuildChannelOptions,
+) (GuildChannel, error) {
 	reqBody, _ := json.Marshal(opts)
 	channel, err := r.modifyChannel(ctx, channelID, reqBody, opts.Reason)
 	if err != nil {
@@ -408,7 +421,11 @@ func (r *requester) ModifyGuildChannel(ctx context.Context, channelID Snowflake,
 // ModifyGuildThread updates a guild thread channel's settings.
 //
 // Requires the PermissionManageThreads permission.
-func (r *requester) ModifyGuildThread(ctx context.Context, channelID Snowflake, opts ModifyGuildThreadOptions) (*ThreadChannel, error) {
+func (r *requester) ModifyGuildThread(
+	ctx context.Context,
+	channelID Snowflake,
+	opts ModifyGuildThreadOptions,
+) (*ThreadChannel, error) {
 	reqBody, _ := json.Marshal(opts)
 	channel, err := r.modifyChannel(ctx, channelID, reqBody, opts.Reason)
 	if err != nil {
@@ -423,7 +440,11 @@ func (r *requester) ModifyGuildThread(ctx context.Context, channelID Snowflake, 
 // DeleteChannel deletes/closes a channel.
 //
 // Requires the PermissionManageChannels permission for the guild, or PermissionManageThreads if the channel is a thread.
-func (r *requester) DeleteChannel(ctx context.Context, channelID Snowflake, opts DeleteChannelOptions) (Channel, error) {
+func (r *requester) DeleteChannel(
+	ctx context.Context,
+	channelID Snowflake,
+	opts DeleteChannelOptions,
+) (Channel, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "DELETE",
 		URL:    "/channels/" + channelID.String(),
@@ -453,7 +474,12 @@ func (r *requester) DeleteChannel(ctx context.Context, channelID Snowflake, opts
 }
 
 // EditChannelPermissions edits the channel permission overwrites for a user or role in a channel.
-func (r *requester) EditChannelPermissions(ctx context.Context, channelID Snowflake, overwriteID Snowflake, opts EditChannelPermissionsOptions) error {
+func (r *requester) EditChannelPermissions(
+	ctx context.Context,
+	channelID Snowflake,
+	overwriteID Snowflake,
+	opts EditChannelPermissionsOptions,
+) error {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "PUT",
@@ -471,7 +497,10 @@ func (r *requester) EditChannelPermissions(ctx context.Context, channelID Snowfl
 // FetchChannelInvites returns a list of invite objects for the channel.
 //
 // Requires the PermissionManageChannels permission.
-func (r *requester) FetchChannelInvites(ctx context.Context, channelID Snowflake) ([]FullInvite, error) {
+func (r *requester) FetchChannelInvites(
+	ctx context.Context,
+	channelID Snowflake,
+) ([]FullInvite, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "GET",
 		URL:    "/channels/" + channelID.String() + "/invites",
@@ -497,7 +526,11 @@ func (r *requester) FetchChannelInvites(ctx context.Context, channelID Snowflake
 // CreateChannelInvite creates a new invite object for the channel.
 //
 // Requires the PermissionCreateInstantInvite permission.
-func (r *requester) CreateChannelInvite(ctx context.Context, channelID Snowflake, opts CreateChannelInviteOptions) (Invite, error) {
+func (r *requester) CreateChannelInvite(
+	ctx context.Context,
+	channelID Snowflake,
+	opts CreateChannelInviteOptions,
+) (Invite, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "POST",
@@ -526,7 +559,12 @@ func (r *requester) CreateChannelInvite(ctx context.Context, channelID Snowflake
 // DeleteChannelPermission deletes a channel permission overwrite for a user or role in a channel.
 //
 // Requires the PermissionManageRoles permission.
-func (r *requester) DeleteChannelPermission(ctx context.Context, channelID Snowflake, overwriteID Snowflake, opts DeleteChannelPermissionOptions) error {
+func (r *requester) DeleteChannelPermission(
+	ctx context.Context,
+	channelID Snowflake,
+	overwriteID Snowflake,
+	opts DeleteChannelPermissionOptions,
+) error {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "DELETE",
 		URL:    "/channels/" + channelID.String() + "/permissions/" + overwriteID.String(),
@@ -542,7 +580,11 @@ func (r *requester) DeleteChannelPermission(ctx context.Context, channelID Snowf
 // FollowAnnouncementChannel follows an Announcement Channel to send messages to a target channel.
 //
 // Requires the PermissionManageWebhooks permission in the target channel.
-func (r *requester) FollowAnnouncementChannel(ctx context.Context, channelID Snowflake, opts FollowAnnouncementChannelOptions) (FollowedChannel, error) {
+func (r *requester) FollowAnnouncementChannel(
+	ctx context.Context,
+	channelID Snowflake,
+	opts FollowAnnouncementChannelOptions,
+) (FollowedChannel, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "POST",
@@ -582,7 +624,12 @@ func (r *requester) TriggerTypingIndicator(ctx context.Context, channelID Snowfl
 }
 
 // GroupDMAddRecipient adds a recipient to a Group DM using their access token.
-func (r *requester) GroupDMAddRecipient(ctx context.Context, channelID Snowflake, userID Snowflake, opts GroupDMAddRecipientOptions) error {
+func (r *requester) GroupDMAddRecipient(
+	ctx context.Context,
+	channelID Snowflake,
+	userID Snowflake,
+	opts GroupDMAddRecipientOptions,
+) error {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "PUT",
@@ -597,7 +644,11 @@ func (r *requester) GroupDMAddRecipient(ctx context.Context, channelID Snowflake
 }
 
 // GroupDMRemoveRecipient removes a recipient from a Group DM.
-func (r *requester) GroupDMRemoveRecipient(ctx context.Context, channelID Snowflake, userID Snowflake) error {
+func (r *requester) GroupDMRemoveRecipient(
+	ctx context.Context,
+	channelID Snowflake,
+	userID Snowflake,
+) error {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "DELETE",
 		URL:    "/channels/" + channelID.String() + "/recipients/" + userID.String(),
@@ -610,7 +661,12 @@ func (r *requester) GroupDMRemoveRecipient(ctx context.Context, channelID Snowfl
 }
 
 // StartThreadFromMessage creates a new thread from an existing message.
-func (r *requester) StartThreadFromMessage(ctx context.Context, channelID Snowflake, messageID Snowflake, opts StartThreadFromMessageOptions) (GuildChannel, error) {
+func (r *requester) StartThreadFromMessage(
+	ctx context.Context,
+	channelID Snowflake,
+	messageID Snowflake,
+	opts StartThreadFromMessageOptions,
+) (GuildChannel, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "POST",
@@ -645,7 +701,11 @@ func (r *requester) StartThreadFromMessage(ctx context.Context, channelID Snowfl
 }
 
 // StartThreadWithoutMessage creates a new thread.
-func (r *requester) StartThreadWithoutMessage(ctx context.Context, channelID Snowflake, opts StartThreadWithoutMessageOptions) (GuildChannel, error) {
+func (r *requester) StartThreadWithoutMessage(
+	ctx context.Context,
+	channelID Snowflake,
+	opts StartThreadWithoutMessageOptions,
+) (GuildChannel, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "POST",
@@ -693,7 +753,11 @@ func (r *requester) JoinThread(ctx context.Context, channelID Snowflake) error {
 }
 
 // AddThreadMember adds a member to a thread.
-func (r *requester) AddThreadMember(ctx context.Context, channelID Snowflake, userID Snowflake) error {
+func (r *requester) AddThreadMember(
+	ctx context.Context,
+	channelID Snowflake,
+	userID Snowflake,
+) error {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "PUT",
 		URL:    "/channels/" + channelID.String() + "/thread-members/" + userID.String(),
@@ -721,7 +785,11 @@ func (r *requester) LeaveThread(ctx context.Context, channelID Snowflake) error 
 // RemoveThreadMember removes a member from a thread.
 //
 // Requires the PermissionManageThreads permission, or the creator of the thread if it is a 'PrivateThread'.
-func (r *requester) RemoveThreadMember(ctx context.Context, channelID Snowflake, userID Snowflake) error {
+func (r *requester) RemoveThreadMember(
+	ctx context.Context,
+	channelID Snowflake,
+	userID Snowflake,
+) error {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "DELETE",
 		URL:    "/channels/" + channelID.String() + "/thread-members/" + userID.String(),
@@ -734,13 +802,20 @@ func (r *requester) RemoveThreadMember(ctx context.Context, channelID Snowflake,
 }
 
 // FetchThreadMember retrieves a thread member.
-func (r *requester) FetchThreadMember(ctx context.Context, channelID Snowflake, userID Snowflake, opts ...FetchThreadMemberOptions) (ThreadMember, error) {
+func (r *requester) FetchThreadMember(
+	ctx context.Context,
+	channelID Snowflake,
+	userID Snowflake,
+	opts ...FetchThreadMemberOptions,
+) (ThreadMember, error) {
 	var withMember bool
 	if len(opts) > 0 {
 		withMember = opts[0].WithMember
 	}
 
-	endpoint := "/channels/" + channelID.String() + "/thread-members/" + userID.String() + "?with_member=" + strconv.FormatBool(withMember)
+	endpoint := "/channels/" + channelID.String() + "/thread-members/" + userID.String() + "?with_member=" + strconv.FormatBool(
+		withMember,
+	)
 	body, err := r.DoRequest(ctx, Request{Method: "GET", URL: endpoint})
 	if err != nil {
 		return ThreadMember{}, err
@@ -761,7 +836,11 @@ func (r *requester) FetchThreadMember(ctx context.Context, channelID Snowflake, 
 }
 
 // ListThreadMembers retrieves a list of thread members.
-func (r *requester) ListThreadMembers(ctx context.Context, channelID Snowflake, opts ...ListThreadMembersOptions) ([]ThreadMember, error) {
+func (r *requester) ListThreadMembers(
+	ctx context.Context,
+	channelID Snowflake,
+	opts ...ListThreadMembersOptions,
+) ([]ThreadMember, error) {
 	var first ListThreadMembersOptions
 	if len(opts) > 0 {
 		first = opts[0]
@@ -798,7 +877,12 @@ func (r *requester) ListThreadMembers(ctx context.Context, channelID Snowflake, 
 	return members, nil
 }
 
-func (r *requester) listArchivedThreads(ctx context.Context, channelID Snowflake, subEndPoint string, params url.Values) (ListArchivedThreadsResponse, error) {
+func (r *requester) listArchivedThreads(
+	ctx context.Context,
+	channelID Snowflake,
+	subEndPoint string,
+	params url.Values,
+) (ListArchivedThreadsResponse, error) {
 	endpoint := "/channels/" + channelID.String() + subEndPoint
 	if len(params) > 0 {
 		endpoint += "?" + params.Encode()
@@ -824,7 +908,11 @@ func (r *requester) listArchivedThreads(ctx context.Context, channelID Snowflake
 }
 
 // ListPublicArchivedThreads retrieves a list of public archived threads.
-func (r *requester) ListPublicArchivedThreads(ctx context.Context, channelID Snowflake, opts ...ListArchivedThreadsOptions) (ListArchivedThreadsResponse, error) {
+func (r *requester) ListPublicArchivedThreads(
+	ctx context.Context,
+	channelID Snowflake,
+	opts ...ListArchivedThreadsOptions,
+) (ListArchivedThreadsResponse, error) {
 	var first ListArchivedThreadsOptions
 	if len(opts) > 0 {
 		first = opts[0]
@@ -841,7 +929,11 @@ func (r *requester) ListPublicArchivedThreads(ctx context.Context, channelID Sno
 }
 
 // ListPrivateArchivedThreads retrieves a list of private archived threads.
-func (r *requester) ListPrivateArchivedThreads(ctx context.Context, channelID Snowflake, opts ...ListArchivedThreadsOptions) (ListArchivedThreadsResponse, error) {
+func (r *requester) ListPrivateArchivedThreads(
+	ctx context.Context,
+	channelID Snowflake,
+	opts ...ListArchivedThreadsOptions,
+) (ListArchivedThreadsResponse, error) {
 	var first ListArchivedThreadsOptions
 	if len(opts) > 0 {
 		first = opts[0]
@@ -858,7 +950,11 @@ func (r *requester) ListPrivateArchivedThreads(ctx context.Context, channelID Sn
 }
 
 // ListJoinedPrivateArchivedThreads retrieves a list of private archived threads that the current user has joined.
-func (r *requester) ListJoinedPrivateArchivedThreads(ctx context.Context, channelID Snowflake, opts ...ListJoinedPrivateArchivedThreadsOptions) (ListArchivedThreadsResponse, error) {
+func (r *requester) ListJoinedPrivateArchivedThreads(
+	ctx context.Context,
+	channelID Snowflake,
+	opts ...ListJoinedPrivateArchivedThreadsOptions,
+) (ListArchivedThreadsResponse, error) {
 	var first ListJoinedPrivateArchivedThreadsOptions
 	if len(opts) > 0 {
 		first = opts[0]

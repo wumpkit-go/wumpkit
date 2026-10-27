@@ -94,7 +94,15 @@ func TestDispatcher_FIFOSequentialOrder(t *testing.T) {
 	})
 
 	for i := range totalEvents {
-		msgJSON := `{"id":"` + string(rune('0'+i%10)) + `","channel_id":"1","content":"msg` + string(rune('0'+i/100)) + string(rune('0'+(i/10)%10)) + string(rune('0'+i%10)) + `"}`
+		msgJSON := `{"id":"` + string(
+			rune('0'+i%10),
+		) + `","channel_id":"1","content":"msg` + string(
+			rune('0'+i/100),
+		) + string(
+			rune('0'+(i/10)%10),
+		) + string(
+			rune('0'+i%10),
+		) + `"}`
 		d.Dispatch(0, "MESSAGE_CREATE", []byte(msgJSON))
 	}
 

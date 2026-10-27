@@ -110,7 +110,11 @@ func (r *requester) ListSKUs(ctx context.Context, applicationID Snowflake) ([]SK
 // ListEntitlements returns all entitlements for a given app, active and expired.
 //
 // Reference: https://discord.com/developers/docs/resources/entitlement#list-entitlements
-func (r *requester) ListEntitlements(ctx context.Context, applicationID Snowflake, opts ...ListEntitlementsOptions) ([]Entitlement, error) {
+func (r *requester) ListEntitlements(
+	ctx context.Context,
+	applicationID Snowflake,
+	opts ...ListEntitlementsOptions,
+) ([]Entitlement, error) {
 	var first ListEntitlementsOptions
 	if len(opts) > 0 {
 		first = opts[0]
@@ -179,7 +183,10 @@ func (r *requester) ListEntitlements(ctx context.Context, applicationID Snowflak
 // FetchEntitlement returns an entitlement for a given app.
 //
 // Reference: https://discord.com/developers/docs/resources/entitlement#get-entitlement
-func (r *requester) FetchEntitlement(ctx context.Context, applicationID, entitlementID Snowflake) (Entitlement, error) {
+func (r *requester) FetchEntitlement(
+	ctx context.Context,
+	applicationID, entitlementID Snowflake,
+) (Entitlement, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "GET",
 		URL:    "/applications/" + applicationID.String() + "/entitlements/" + entitlementID.String(),
@@ -205,7 +212,10 @@ func (r *requester) FetchEntitlement(ctx context.Context, applicationID, entitle
 // ConsumeEntitlement marks a given entitlement for the user as consumed.
 //
 // Reference: https://discord.com/developers/docs/resources/entitlement#consume-an-entitlement
-func (r *requester) ConsumeEntitlement(ctx context.Context, applicationID, entitlementID Snowflake) error {
+func (r *requester) ConsumeEntitlement(
+	ctx context.Context,
+	applicationID, entitlementID Snowflake,
+) error {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "POST",
 		URL:    "/applications/" + applicationID.String() + "/entitlements/" + entitlementID.String() + "/consume",
@@ -220,7 +230,11 @@ func (r *requester) ConsumeEntitlement(ctx context.Context, applicationID, entit
 // CreateTestEntitlement creates a test entitlement to a given SKU for a given guild or user.
 //
 // Reference: https://discord.com/developers/docs/resources/entitlement#create-test-entitlement
-func (r *requester) CreateTestEntitlement(ctx context.Context, applicationID Snowflake, opts CreateTestEntitlementOptions) (Entitlement, error) {
+func (r *requester) CreateTestEntitlement(
+	ctx context.Context,
+	applicationID Snowflake,
+	opts CreateTestEntitlementOptions,
+) (Entitlement, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "POST",
@@ -248,7 +262,10 @@ func (r *requester) CreateTestEntitlement(ctx context.Context, applicationID Sno
 // DeleteTestEntitlement deletes a currently-active test entitlement.
 //
 // Reference: https://discord.com/developers/docs/resources/entitlement#delete-test-entitlement
-func (r *requester) DeleteTestEntitlement(ctx context.Context, applicationID, entitlementID Snowflake) error {
+func (r *requester) DeleteTestEntitlement(
+	ctx context.Context,
+	applicationID, entitlementID Snowflake,
+) error {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "DELETE",
 		URL:    "/applications/" + applicationID.String() + "/entitlements/" + entitlementID.String(),
@@ -263,7 +280,11 @@ func (r *requester) DeleteTestEntitlement(ctx context.Context, applicationID, en
 // ListSKUSubscriptions returns all subscriptions containing the SKU.
 //
 // Reference: https://discord.com/developers/docs/resources/subscription#list-sku-subscriptions
-func (r *requester) ListSKUSubscriptions(ctx context.Context, skuID Snowflake, opts ...ListSKUSubscriptionsOptions) ([]Subscription, error) {
+func (r *requester) ListSKUSubscriptions(
+	ctx context.Context,
+	skuID Snowflake,
+	opts ...ListSKUSubscriptionsOptions,
+) ([]Subscription, error) {
 	var first ListSKUSubscriptionsOptions
 	if len(opts) > 0 {
 		first = opts[0]
@@ -313,7 +334,10 @@ func (r *requester) ListSKUSubscriptions(ctx context.Context, skuID Snowflake, o
 // FetchSKUSubscription gets a subscription by its ID.
 //
 // Reference: https://discord.com/developers/docs/resources/subscription#get-sku-subscription
-func (r *requester) FetchSKUSubscription(ctx context.Context, skuID, subscriptionID Snowflake) (Subscription, error) {
+func (r *requester) FetchSKUSubscription(
+	ctx context.Context,
+	skuID, subscriptionID Snowflake,
+) (Subscription, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "GET",
 		URL:    "/skus/" + skuID.String() + "/subscriptions/" + subscriptionID.String(),

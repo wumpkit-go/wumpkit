@@ -139,7 +139,10 @@ func (r *requester) ListGuildStickers(ctx context.Context, guildID Snowflake) ([
 // FetchGuildSticker returns a sticker object for the given guild and sticker IDs.
 //
 // Reference: https://discord.com/developers/docs/resources/sticker#get-guild-sticker
-func (r *requester) FetchGuildSticker(ctx context.Context, guildID, stickerID Snowflake) (Sticker, error) {
+func (r *requester) FetchGuildSticker(
+	ctx context.Context,
+	guildID, stickerID Snowflake,
+) (Sticker, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "GET",
 		URL:    "/guilds/" + guildID.String() + "/stickers/" + stickerID.String(),
@@ -168,7 +171,11 @@ func (r *requester) FetchGuildSticker(ctx context.Context, guildID, stickerID Sn
 // Requires the PermissionCreateGuildExpressions permission.
 //
 // Reference: https://discord.com/developers/docs/resources/sticker#create-guild-sticker
-func (r *requester) CreateGuildSticker(ctx context.Context, guildID Snowflake, opts CreateGuildStickerOptions) (Sticker, error) {
+func (r *requester) CreateGuildSticker(
+	ctx context.Context,
+	guildID Snowflake,
+	opts CreateGuildStickerOptions,
+) (Sticker, error) {
 	extra := map[string]string{
 		"name": opts.Name,
 		"tags": opts.Tags,
@@ -208,7 +215,11 @@ func (r *requester) CreateGuildSticker(ctx context.Context, guildID Snowflake, o
 // Requires the PermissionManageGuildExpressions permission.
 //
 // Reference: https://discord.com/developers/docs/resources/sticker#modify-guild-sticker
-func (r *requester) ModifyGuildSticker(ctx context.Context, guildID, stickerID Snowflake, opts ModifyGuildStickerOptions) (Sticker, error) {
+func (r *requester) ModifyGuildSticker(
+	ctx context.Context,
+	guildID, stickerID Snowflake,
+	opts ModifyGuildStickerOptions,
+) (Sticker, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "PATCH",
@@ -240,7 +251,11 @@ func (r *requester) ModifyGuildSticker(ctx context.Context, guildID, stickerID S
 // Requires the PermissionManageGuildExpressions permission.
 //
 // Reference: https://discord.com/developers/docs/resources/sticker#delete-guild-sticker
-func (r *requester) DeleteGuildSticker(ctx context.Context, guildID, stickerID Snowflake, reason string) error {
+func (r *requester) DeleteGuildSticker(
+	ctx context.Context,
+	guildID, stickerID Snowflake,
+	reason string,
+) error {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "DELETE",
 		URL:    "/guilds/" + guildID.String() + "/stickers/" + stickerID.String(),

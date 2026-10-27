@@ -113,7 +113,11 @@ func GenerateOAuth2AuthorizeURL(opts OAuth2AuthorizeURLOptions) string {
 
 // GenerateBotInviteURL generates a standard bot invite URL with permissions and scopes.
 // By default, it requests the 'bot' and 'applications.commands' scopes if none are provided.
-func GenerateBotInviteURL(clientID Snowflake, permissions Permissions, scopes ...OAuth2Scope) string {
+func GenerateBotInviteURL(
+	clientID Snowflake,
+	permissions Permissions,
+	scopes ...OAuth2Scope,
+) string {
 	if len(scopes) == 0 {
 		scopes = []OAuth2Scope{OAuth2ScopeBot, OAuth2ScopeApplicationsCommands}
 	}

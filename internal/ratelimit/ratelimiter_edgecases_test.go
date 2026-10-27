@@ -34,13 +34,37 @@ func TestEdgeCases_RouteNormalizationExhaustive(t *testing.T) {
 	}{
 		// 1. guild Major
 		{"/api/v10/guilds/103039963636301824", "GET", "/guilds/103039963636301824"},
-		{"/api/v9/guilds/103039963636301824/channels", "GET", "/guilds/103039963636301824/channels"},
-		{"/api/v10/guilds/999999999999999999/channels", "GET", "/guilds/999999999999999999/channels"},
+		{
+			"/api/v9/guilds/103039963636301824/channels",
+			"GET",
+			"/guilds/103039963636301824/channels",
+		},
+		{
+			"/api/v10/guilds/999999999999999999/channels",
+			"GET",
+			"/guilds/999999999999999999/channels",
+		},
 		{"/api/v10/guilds/103039963636301824/roles", "GET", "/guilds/103039963636301824/roles"},
-		{"/api/v10/guilds/103039963636301824/roles/103039963636301825", "PATCH", "/guilds/103039963636301824/roles/!"},
-		{"/api/v10/guilds/103039963636301824/members/103039963636301825", "GET", "/guilds/103039963636301824/members/!"},
-		{"/api/v10/guilds/103039963636301824/bans/103039963636301825", "GET", "/guilds/103039963636301824/bans/!"},
-		{"/api/v10/guilds/103039963636301824/emojis/103039963636301825", "GET", "/guilds/103039963636301824/emojis/!"},
+		{
+			"/api/v10/guilds/103039963636301824/roles/103039963636301825",
+			"PATCH",
+			"/guilds/103039963636301824/roles/!",
+		},
+		{
+			"/api/v10/guilds/103039963636301824/members/103039963636301825",
+			"GET",
+			"/guilds/103039963636301824/members/!",
+		},
+		{
+			"/api/v10/guilds/103039963636301824/bans/103039963636301825",
+			"GET",
+			"/guilds/103039963636301824/bans/!",
+		},
+		{
+			"/api/v10/guilds/103039963636301824/emojis/103039963636301825",
+			"GET",
+			"/guilds/103039963636301824/emojis/!",
+		},
 		{"/api/v10/guilds/templates/103039963636301824", "GET", "/guilds/templates/!"},
 
 		// 2. channel Major (numParts == 2, preserves channel_id as major parameter)
@@ -50,49 +74,153 @@ func TestEdgeCases_RouteNormalizationExhaustive(t *testing.T) {
 
 		// 3. channel Sub-resources
 		{"/api/v10/channels/203039963636301824/pins", "GET", "/channels/203039963636301824/pins"},
-		{"/api/v10/channels/203039963636301824/messages", "GET", "/channels/203039963636301824/messages"},
-		{"/api/v10/channels/203039963636301824/messages", "POST", "/channels/203039963636301824/messages"},
-		{"/api/v10/channels/203039963636301824/messages/bulk-delete", "POST", "/channels/203039963636301824/messages/bulk-delete"},
-		{"/api/v10/channels/203039963636301824/permissions/103039963636301825", "PUT", "/channels/203039963636301824/permissions/!"},
-		{"/api/v10/channels/203039963636301824/invites", "GET", "/channels/203039963636301824/invites"},
-		{"/api/v10/channels/203039963636301824/threads", "POST", "/channels/203039963636301824/threads"},
+		{
+			"/api/v10/channels/203039963636301824/messages",
+			"GET",
+			"/channels/203039963636301824/messages",
+		},
+		{
+			"/api/v10/channels/203039963636301824/messages",
+			"POST",
+			"/channels/203039963636301824/messages",
+		},
+		{
+			"/api/v10/channels/203039963636301824/messages/bulk-delete",
+			"POST",
+			"/channels/203039963636301824/messages/bulk-delete",
+		},
+		{
+			"/api/v10/channels/203039963636301824/permissions/103039963636301825",
+			"PUT",
+			"/channels/203039963636301824/permissions/!",
+		},
+		{
+			"/api/v10/channels/203039963636301824/invites",
+			"GET",
+			"/channels/203039963636301824/invites",
+		},
+		{
+			"/api/v10/channels/203039963636301824/threads",
+			"POST",
+			"/channels/203039963636301824/threads",
+		},
 
 		// 4. message Deletion Age Rules
-		{"/api/v10/channels/203039963636301824/messages/" + old15d, "DELETE", "/channels/203039963636301824/messages/!14dmsg"},
-		{"/api/v10/channels/203039963636301824/messages/" + new5s, "DELETE", "/channels/203039963636301824/messages/!10smsg"},
-		{"/api/v10/channels/203039963636301824/messages/" + mid2d, "DELETE", "/channels/203039963636301824/messages/!"},
-		{"/api/v10/channels/203039963636301824/messages/" + old15d, "GET", "/channels/203039963636301824/messages/!"},
-		{"/api/v10/channels/203039963636301824/messages/" + old15d, "PATCH", "/channels/203039963636301824/messages/!"},
+		{
+			"/api/v10/channels/203039963636301824/messages/" + old15d,
+			"DELETE",
+			"/channels/203039963636301824/messages/!14dmsg",
+		},
+		{
+			"/api/v10/channels/203039963636301824/messages/" + new5s,
+			"DELETE",
+			"/channels/203039963636301824/messages/!10smsg",
+		},
+		{
+			"/api/v10/channels/203039963636301824/messages/" + mid2d,
+			"DELETE",
+			"/channels/203039963636301824/messages/!",
+		},
+		{
+			"/api/v10/channels/203039963636301824/messages/" + old15d,
+			"GET",
+			"/channels/203039963636301824/messages/!",
+		},
+		{
+			"/api/v10/channels/203039963636301824/messages/" + old15d,
+			"PATCH",
+			"/channels/203039963636301824/messages/!",
+		},
 
 		// 5. reactions
-		{"/api/v10/channels/203039963636301824/messages/" + old15d + "/reactions/%F0%9F%98%8B", "GET", "/channels/203039963636301824/messages/!/reactions/!/!"},
-		{"/api/v10/channels/203039963636301824/messages/" + old15d + "/reactions/customEmoji:103039963636301825", "GET", "/channels/203039963636301824/messages/!/reactions/!/!"},
-		{"/api/v10/channels/203039963636301824/messages/" + old15d + "/reactions/%F0%9F%98%8B/@me", "PUT", "/channels/203039963636301824/messages/!/reactions/!modify"},
-		{"/api/v10/channels/203039963636301824/messages/" + old15d + "/reactions/%F0%9F%98%8B/@me", "DELETE", "/channels/203039963636301824/messages/!/reactions/!modify"},
-		{"/api/v10/channels/203039963636301824/messages/" + old15d + "/reactions/%F0%9F%98%8B/103039963636301825", "DELETE", "/channels/203039963636301824/messages/!/reactions/!modify"},
-		{"/api/v10/channels/203039963636301824/messages/" + old15d + "/reactions", "DELETE", "/channels/203039963636301824/messages/!/reactions/!modify"},
+		{
+			"/api/v10/channels/203039963636301824/messages/" + old15d + "/reactions/%F0%9F%98%8B",
+			"GET",
+			"/channels/203039963636301824/messages/!/reactions/!/!",
+		},
+		{
+			"/api/v10/channels/203039963636301824/messages/" + old15d + "/reactions/customEmoji:103039963636301825",
+			"GET",
+			"/channels/203039963636301824/messages/!/reactions/!/!",
+		},
+		{
+			"/api/v10/channels/203039963636301824/messages/" + old15d + "/reactions/%F0%9F%98%8B/@me",
+			"PUT",
+			"/channels/203039963636301824/messages/!/reactions/!modify",
+		},
+		{
+			"/api/v10/channels/203039963636301824/messages/" + old15d + "/reactions/%F0%9F%98%8B/@me",
+			"DELETE",
+			"/channels/203039963636301824/messages/!/reactions/!modify",
+		},
+		{
+			"/api/v10/channels/203039963636301824/messages/" + old15d + "/reactions/%F0%9F%98%8B/103039963636301825",
+			"DELETE",
+			"/channels/203039963636301824/messages/!/reactions/!modify",
+		},
+		{
+			"/api/v10/channels/203039963636301824/messages/" + old15d + "/reactions",
+			"DELETE",
+			"/channels/203039963636301824/messages/!/reactions/!modify",
+		},
 
 		// 6. webhooks & Followup Messages
 		{"/api/v10/webhooks/203039963636301824", "GET", "/webhooks/203039963636301824"},
-		{"/api/v10/webhooks/203039963636301824/VSOzAqY1OZFF5WJVtbIzFtmjGupk-84Hn0A_ZzToF_CHsPIeCk0Q9Uok_mjxR0dNtApI", "POST", "/webhooks/203039963636301824/!"},
-		{"/api/v10/webhooks/203039963636301824/aW50ZXJhY3Rpb246MTEwMzA0OTQyMDkzMDU2ODMyMjpOZUllWHdNU2J4RXBFMHVYRjBpU0pHMDdEb3BhM3ZlYklBODlMUmtlUXlRbzlpZzYyTnpLU0dqdWlyVlBvZnBSUlJHbUJHYlJ0N29MbE9KQUJVTFk4bTR4UzFtZEpEeXJyY0hBUERmTEhKVE9wRkNzU1FFWUkwTnlpWFY2WHdrRg/messages/@original", "POST", "/webhooks/203039963636301824/1103049420930568322/messages/@original"},
+		{
+			"/api/v10/webhooks/203039963636301824/VSOzAqY1OZFF5WJVtbIzFtmjGupk-84Hn0A_ZzToF_CHsPIeCk0Q9Uok_mjxR0dNtApI",
+			"POST",
+			"/webhooks/203039963636301824/!",
+		},
+		{
+			"/api/v10/webhooks/203039963636301824/aW50ZXJhY3Rpb246MTEwMzA0OTQyMDkzMDU2ODMyMjpOZUllWHdNU2J4RXBFMHVYRjBpU0pHMDdEb3BhM3ZlYklBODlMUmtlUXlRbzlpZzYyTnpLU0dqdWlyVlBvZnBSUlJHbUJHYlJ0N29MbE9KQUJVTFk4bTR4UzFtZEpEeXJyY0hBUERmTEhKVE9wRkNzU1FFWUkwTnlpWFY2WHdrRg/messages/@original",
+			"POST",
+			"/webhooks/203039963636301824/1103049420930568322/messages/@original",
+		},
 
 		// 7. invites
 		{"/api/v10/invites/discord-developers", "GET", "/invites/!"},
 		{"/api/v10/invites/103039963636301824", "GET", "/invites/!"},
 
 		// 8. interactions
-		{"/api/v10/interactions/203039963636301824/aW50ZXJhY3Rpb246ODg3NTU5MDA01AY4NTUxNDU0OnZwS3QycDhvREk2aVF3U1BqN2prcXBkRmNqNlp4VEhGRjZvSVlXSGh4WG4yb3l6Z3B6NTBPNVc3OHphV05OULLMOHBMa2RTZmVKd3lzVDA2b2h3OTUxaFJ4QlN0dkxXallPcmhnSHNJb0tSV0M5ZzY1NkN4VGRvemFOSHY4b05c/callback", "POST", "/interactions/203039963636301824/!/callback"},
+		{
+			"/api/v10/interactions/203039963636301824/aW50ZXJhY3Rpb246ODg3NTU5MDA01AY4NTUxNDU0OnZwS3QycDhvREk2aVF3U1BqN2prcXBkRmNqNlp4VEhGRjZvSVlXSGh4WG4yb3l6Z3B6NTBPNVc3OHphV05OULLMOHBMa2RTZmVKd3lzVDA2b2h3OTUxaFJ4QlN0dkxXallPcmhnSHNJb0tSV0M5ZzY1NkN4VGRvemFOSHY4b05c/callback",
+			"POST",
+			"/interactions/203039963636301824/!/callback",
+		},
 
 		// 9. application Commands
-		{"/api/v10/applications/103039963636301824/commands", "GET", "/applications/103039963636301824/commands"},
-		{"/api/v10/applications/103039963636301824/commands/103039963636301825", "DELETE", "/applications/103039963636301824/commands/!"},
-		{"/api/v10/applications/103039963636301824/guilds/103039963636301825/commands", "GET", "/applications/103039963636301824/guilds/!/commands"},
-		{"/api/v10/applications/103039963636301824/guilds/103039963636301825/commands/103039963636301826", "GET", "/applications/103039963636301824/guilds/!/commands/!"},
+		{
+			"/api/v10/applications/103039963636301824/commands",
+			"GET",
+			"/applications/103039963636301824/commands",
+		},
+		{
+			"/api/v10/applications/103039963636301824/commands/103039963636301825",
+			"DELETE",
+			"/applications/103039963636301824/commands/!",
+		},
+		{
+			"/api/v10/applications/103039963636301824/guilds/103039963636301825/commands",
+			"GET",
+			"/applications/103039963636301824/guilds/!/commands",
+		},
+		{
+			"/api/v10/applications/103039963636301824/guilds/103039963636301825/commands/103039963636301826",
+			"GET",
+			"/applications/103039963636301824/guilds/!/commands/!",
+		},
 
 		// 10. query Parameters & Unversioned
-		{"/api/v10/channels/203039963636301824/messages?limit=50&around=103039963636301825", "GET", "/channels/203039963636301824/messages"},
-		{"/channels/203039963636301824/messages?limit=50", "GET", "/channels/203039963636301824/messages"},
+		{
+			"/api/v10/channels/203039963636301824/messages?limit=50&around=103039963636301825",
+			"GET",
+			"/channels/203039963636301824/messages",
+		},
+		{
+			"/channels/203039963636301824/messages?limit=50",
+			"GET",
+			"/channels/203039963636301824/messages",
+		},
 	}
 
 	for _, tt := range tests {
@@ -301,7 +429,12 @@ func TestEdgeCases_InteractionRoutesBypassGlobalRateLimit(t *testing.T) {
 	elapsed := time.Since(start)
 
 	// must complete instantly (not blocked by 5s global lock)
-	assert.Less(t, elapsed, 50*time.Millisecond, "interaction route should bypass global rate limit")
+	assert.Less(
+		t,
+		elapsed,
+		50*time.Millisecond,
+		"interaction route should bypass global rate limit",
+	)
 }
 
 func TestEdgeCases_InteractionWebhookFollowupBypassesGlobalRateLimit(t *testing.T) {
@@ -325,7 +458,12 @@ func TestEdgeCases_InteractionWebhookFollowupBypassesGlobalRateLimit(t *testing.
 	require.NoError(t, err)
 	elapsed := time.Since(start)
 
-	assert.Less(t, elapsed, 50*time.Millisecond, "webhook interaction followup should bypass global rate limit")
+	assert.Less(
+		t,
+		elapsed,
+		50*time.Millisecond,
+		"webhook interaction followup should bypass global rate limit",
+	)
 }
 
 func TestEdgeCases_SharedScope429DoesNotZeroRemaining(t *testing.T) {
@@ -354,7 +492,12 @@ func TestEdgeCases_SharedScope429DoesNotZeroRemaining(t *testing.T) {
 
 	// should wait only ~100ms (Retry-After) not the full 64.57s
 	// since remaining was set to 9, the request should proceed after the bucket resets
-	assert.Less(t, elapsed, 200*time.Millisecond, "shared scope 429 should not block for the per-route reset duration")
+	assert.Less(
+		t,
+		elapsed,
+		200*time.Millisecond,
+		"shared scope 429 should not block for the per-route reset duration",
+	)
 }
 
 func TestEdgeCases_MemoryStoreCleanup(t *testing.T) {
@@ -419,5 +562,10 @@ func TestEdgeCases_ReserveResetRaceCondition(t *testing.T) {
 	// the 6th reserve should also succeed because ResetAt was cleared after expiry reset,
 	// so remaining stays at 0 but there's no ResetAt to wait for
 	wait = store.Reserve("race-bucket")
-	assert.Equal(t, time.Duration(0), wait, "reserve after full consumption with cleared ResetAt should succeed")
+	assert.Equal(
+		t,
+		time.Duration(0),
+		wait,
+		"reserve after full consumption with cleared ResetAt should succeed",
+	)
 }

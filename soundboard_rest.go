@@ -83,7 +83,11 @@ type ModifyGuildSoundboardSoundOptions struct {
 // Requires the PermissionSpeak and PermissionUseSoundboard permissions.
 //
 // Reference: https://discord.com/developers/docs/resources/soundboard#send-soundboard-sound
-func (r *requester) SendSoundboardSound(ctx context.Context, channelID Snowflake, opts SendSoundboardSoundOptions) error {
+func (r *requester) SendSoundboardSound(
+	ctx context.Context,
+	channelID Snowflake,
+	opts SendSoundboardSoundOptions,
+) error {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "POST",
@@ -126,7 +130,10 @@ func (r *requester) ListDefaultSoundboardSounds(ctx context.Context) ([]SoundBoa
 // ListGuildSoundboardSounds returns a list of the guild's soundboard sounds.
 //
 // Reference: https://discord.com/developers/docs/resources/soundboard#list-guild-soundboard-sounds
-func (r *requester) ListGuildSoundboardSounds(ctx context.Context, guildID Snowflake) ([]SoundBoardSound, error) {
+func (r *requester) ListGuildSoundboardSounds(
+	ctx context.Context,
+	guildID Snowflake,
+) ([]SoundBoardSound, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "GET",
 		URL:    "/guilds/" + guildID.String() + "/soundboard-sounds",
@@ -155,7 +162,10 @@ func (r *requester) ListGuildSoundboardSounds(ctx context.Context, guildID Snowf
 // FetchGuildSoundboardSound returns a soundboard sound object for the given sound ID.
 //
 // Reference: https://discord.com/developers/docs/resources/soundboard#get-guild-soundboard-sound
-func (r *requester) FetchGuildSoundboardSound(ctx context.Context, guildID, soundID Snowflake) (SoundBoardSound, error) {
+func (r *requester) FetchGuildSoundboardSound(
+	ctx context.Context,
+	guildID, soundID Snowflake,
+) (SoundBoardSound, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "GET",
 		URL:    "/guilds/" + guildID.String() + "/soundboard-sounds/" + soundID.String(),
@@ -184,7 +194,11 @@ func (r *requester) FetchGuildSoundboardSound(ctx context.Context, guildID, soun
 // Requires the PermissionCreateGuildExpressions permission.
 //
 // Reference: https://discord.com/developers/docs/resources/soundboard#create-guild-soundboard-sound
-func (r *requester) CreateGuildSoundboardSound(ctx context.Context, guildID Snowflake, opts CreateGuildSoundboardSoundOptions) (SoundBoardSound, error) {
+func (r *requester) CreateGuildSoundboardSound(
+	ctx context.Context,
+	guildID Snowflake,
+	opts CreateGuildSoundboardSoundOptions,
+) (SoundBoardSound, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "POST",
@@ -216,7 +230,11 @@ func (r *requester) CreateGuildSoundboardSound(ctx context.Context, guildID Snow
 // Requires the PermissionManageGuildExpressions permission.
 //
 // Reference: https://discord.com/developers/docs/resources/soundboard#modify-guild-soundboard-sound
-func (r *requester) ModifyGuildSoundboardSound(ctx context.Context, guildID, soundID Snowflake, opts ModifyGuildSoundboardSoundOptions) (SoundBoardSound, error) {
+func (r *requester) ModifyGuildSoundboardSound(
+	ctx context.Context,
+	guildID, soundID Snowflake,
+	opts ModifyGuildSoundboardSoundOptions,
+) (SoundBoardSound, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "PATCH",
@@ -248,7 +266,11 @@ func (r *requester) ModifyGuildSoundboardSound(ctx context.Context, guildID, sou
 // Requires the PermissionManageGuildExpressions permission.
 //
 // Reference: https://discord.com/developers/docs/resources/soundboard#delete-guild-soundboard-sound
-func (r *requester) DeleteGuildSoundboardSound(ctx context.Context, guildID, soundID Snowflake, reason string) error {
+func (r *requester) DeleteGuildSoundboardSound(
+	ctx context.Context,
+	guildID, soundID Snowflake,
+	reason string,
+) error {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "DELETE",
 		URL:    "/guilds/" + guildID.String() + "/soundboard-sounds/" + soundID.String(),

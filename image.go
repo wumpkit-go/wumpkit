@@ -62,7 +62,11 @@ func isAnimatedHash(hash string) bool {
 }
 
 // buildImageURL constructs a URL for Discord assets with fallback logic.
-func buildImageURL(baseURL, path, hash string, config ImageConfig, allowedFormats [5]ImageFormat) string {
+func buildImageURL(
+	baseURL, path, hash string,
+	config ImageConfig,
+	allowedFormats [5]ImageFormat,
+) string {
 	allowed := slices.Contains(allowedFormats[:], config.Format)
 	animatedHash := isAnimatedHash(hash)
 
@@ -92,7 +96,13 @@ func buildImageURL(baseURL, path, hash string, config ImageConfig, allowedFormat
 
 func EmojiURL(emojiID Snowflake, format ImageFormat, size ImageSize) string {
 	config := ImageConfig{Format: format, Size: size}
-	allowedFormats := [5]ImageFormat{ImageFormatPNG, ImageFormatGIF, ImageFormatWebP, ImageFormatJPEG, ImageFormatAVIF}
+	allowedFormats := [5]ImageFormat{
+		ImageFormatPNG,
+		ImageFormatGIF,
+		ImageFormatWebP,
+		ImageFormatJPEG,
+		ImageFormatAVIF,
+	}
 	path := "emojis/" + emojiID.String()
 	return buildImageURL(ImageBaseURL, path, "", config, allowedFormats)
 }
@@ -103,40 +113,70 @@ func EmojiURL(emojiID Snowflake, format ImageFormat, size ImageSize) string {
 
 func GuildIconURL(guildID Snowflake, iconHash string, format ImageFormat, size ImageSize) string {
 	config := ImageConfig{Format: format, Size: size}
-	allowedFormats := [5]ImageFormat{ImageFormatPNG, ImageFormatGIF, ImageFormatWebP, ImageFormatJPEG}
+	allowedFormats := [5]ImageFormat{
+		ImageFormatPNG,
+		ImageFormatGIF,
+		ImageFormatWebP,
+		ImageFormatJPEG,
+	}
 	path := "icons/" + guildID.String() + "/" + iconHash
 	return buildImageURL(ImageBaseURL, path, iconHash, config, allowedFormats)
 }
 
-func GuildSplashURL(guildID Snowflake, splashHash string, format ImageFormat, size ImageSize) string {
+func GuildSplashURL(
+	guildID Snowflake,
+	splashHash string,
+	format ImageFormat,
+	size ImageSize,
+) string {
 	config := ImageConfig{Format: format, Size: size}
 	allowedFormats := [5]ImageFormat{ImageFormatPNG, ImageFormatWebP, ImageFormatJPEG}
 	path := "splashes/" + guildID.String() + "/" + splashHash
 	return buildImageURL(ImageBaseURL, path, splashHash, config, allowedFormats)
 }
 
-func GuildDiscoverySplashURL(guildID Snowflake, discoverySplashHash string, format ImageFormat, size ImageSize) string {
+func GuildDiscoverySplashURL(
+	guildID Snowflake,
+	discoverySplashHash string,
+	format ImageFormat,
+	size ImageSize,
+) string {
 	config := ImageConfig{Format: format, Size: size}
 	allowedFormats := [5]ImageFormat{ImageFormatPNG, ImageFormatWebP, ImageFormatJPEG}
 	path := "discovery-splashes/" + guildID.String() + "/" + discoverySplashHash
 	return buildImageURL(ImageBaseURL, path, discoverySplashHash, config, allowedFormats)
 }
 
-func GuildBannerURL(guildID Snowflake, bannerHash string, format ImageFormat, size ImageSize) string {
+func GuildBannerURL(
+	guildID Snowflake,
+	bannerHash string,
+	format ImageFormat,
+	size ImageSize,
+) string {
 	config := ImageConfig{Format: format, Size: size}
 	allowedFormats := [5]ImageFormat{ImageFormatPNG, ImageFormatGIF, ImageFormatWebP}
 	path := "banners/" + guildID.String() + "/" + bannerHash
 	return buildImageURL(ImageBaseURL, path, bannerHash, config, allowedFormats)
 }
 
-func GuildTagBadgeURL(guildID Snowflake, badgeHash string, format ImageFormat, size ImageSize) string {
+func GuildTagBadgeURL(
+	guildID Snowflake,
+	badgeHash string,
+	format ImageFormat,
+	size ImageSize,
+) string {
 	config := ImageConfig{Format: format, Size: size}
 	allowedFormats := [5]ImageFormat{ImageFormatPNG, ImageFormatWebP, ImageFormatJPEG}
 	path := "guild-tag-badges/" + guildID.String() + "/" + badgeHash
 	return buildImageURL(ImageBaseURL, path, badgeHash, config, allowedFormats)
 }
 
-func GuildScheduledEventCoverURL(eventID Snowflake, coverHash string, format ImageFormat, size ImageSize) string {
+func GuildScheduledEventCoverURL(
+	eventID Snowflake,
+	coverHash string,
+	format ImageFormat,
+	size ImageSize,
+) string {
 	config := ImageConfig{Format: format, Size: size}
 	allowedFormats := [5]ImageFormat{ImageFormatPNG, ImageFormatWebP, ImageFormatJPEG}
 	path := "guild-events/" + eventID.String() + "/" + coverHash
@@ -156,14 +196,24 @@ func DefaultUserAvatarURL(index int) string {
 
 func UserAvatarURL(userID Snowflake, avatarHash string, format ImageFormat, size ImageSize) string {
 	config := ImageConfig{Format: format, Size: size}
-	allowedFormats := [5]ImageFormat{ImageFormatPNG, ImageFormatGIF, ImageFormatWebP, ImageFormatJPEG}
+	allowedFormats := [5]ImageFormat{
+		ImageFormatPNG,
+		ImageFormatGIF,
+		ImageFormatWebP,
+		ImageFormatJPEG,
+	}
 	path := "avatars/" + userID.String() + "/" + avatarHash
 	return buildImageURL(ImageBaseURL, path, avatarHash, config, allowedFormats)
 }
 
 func UserBannerURL(userID Snowflake, bannerHash string, format ImageFormat, size ImageSize) string {
 	config := ImageConfig{Format: format, Size: size}
-	allowedFormats := [5]ImageFormat{ImageFormatPNG, ImageFormatGIF, ImageFormatWebP, ImageFormatJPEG}
+	allowedFormats := [5]ImageFormat{
+		ImageFormatPNG,
+		ImageFormatGIF,
+		ImageFormatWebP,
+		ImageFormatJPEG,
+	}
 	path := "banners/" + userID.String() + "/" + bannerHash
 	return buildImageURL(ImageBaseURL, path, bannerHash, config, allowedFormats)
 }
@@ -172,14 +222,24 @@ func UserBannerURL(userID Snowflake, bannerHash string, format ImageFormat, size
  *      Application    *
  ***********************/
 
-func ApplicationIconURL(appID Snowflake, iconHash string, format ImageFormat, size ImageSize) string {
+func ApplicationIconURL(
+	appID Snowflake,
+	iconHash string,
+	format ImageFormat,
+	size ImageSize,
+) string {
 	config := ImageConfig{Format: format, Size: size}
 	allowedFormats := [5]ImageFormat{ImageFormatPNG, ImageFormatWebP, ImageFormatJPEG}
 	path := "app-icons/" + appID.String() + "/" + iconHash
 	return buildImageURL(ImageBaseURL, path, iconHash, config, allowedFormats)
 }
 
-func ApplicationCoverURL(appID Snowflake, coverHash string, format ImageFormat, size ImageSize) string {
+func ApplicationCoverURL(
+	appID Snowflake,
+	coverHash string,
+	format ImageFormat,
+	size ImageSize,
+) string {
 	config := ImageConfig{Format: format, Size: size}
 	allowedFormats := [5]ImageFormat{ImageFormatPNG, ImageFormatWebP, ImageFormatJPEG}
 	path := "app-icons/" + appID.String() + "/" + coverHash
@@ -193,7 +253,12 @@ func ApplicationAssetURL(appID, assetID Snowflake, format ImageFormat, size Imag
 	return buildImageURL(ImageBaseURL, path, "", config, allowedFormats)
 }
 
-func AchievementIconURL(appID, achID Snowflake, iconHash string, format ImageFormat, size ImageSize) string {
+func AchievementIconURL(
+	appID, achID Snowflake,
+	iconHash string,
+	format ImageFormat,
+	size ImageSize,
+) string {
 	config := ImageConfig{Format: format, Size: size}
 	allowedFormats := [5]ImageFormat{ImageFormatPNG, ImageFormatWebP, ImageFormatJPEG}
 	path := "app-assets/" + appID.String() + "/achievements/" + achID.String() + "/icons/" + iconHash
@@ -222,7 +287,11 @@ func StickerURL(stickerID Snowflake, format ImageFormat) string {
 	return buildImageURL(base, path, "", config, allowedFormats)
 }
 
-func StickerPackBannerURL(stickerPackBannerAssetID Snowflake, format ImageFormat, size ImageSize) string {
+func StickerPackBannerURL(
+	stickerPackBannerAssetID Snowflake,
+	format ImageFormat,
+	size ImageSize,
+) string {
 	config := ImageConfig{Format: format, Size: size}
 	allowedFormats := [5]ImageFormat{ImageFormatPNG, ImageFormatWebP, ImageFormatJPEG}
 	path := "app-assets/710982414301790216/store/" + stickerPackBannerAssetID.String()
@@ -233,16 +302,36 @@ func StickerPackBannerURL(stickerPackBannerAssetID Snowflake, format ImageFormat
  *     Guild Member    *
  ***********************/
 
-func GuildMemberAvatarURL(guildID, userID Snowflake, avatarHash string, format ImageFormat, size ImageSize) string {
+func GuildMemberAvatarURL(
+	guildID, userID Snowflake,
+	avatarHash string,
+	format ImageFormat,
+	size ImageSize,
+) string {
 	config := ImageConfig{Format: format, Size: size}
-	allowedFormats := [5]ImageFormat{ImageFormatPNG, ImageFormatGIF, ImageFormatWebP, ImageFormatJPEG}
+	allowedFormats := [5]ImageFormat{
+		ImageFormatPNG,
+		ImageFormatGIF,
+		ImageFormatWebP,
+		ImageFormatJPEG,
+	}
 	path := "guilds/" + guildID.String() + "/users/" + userID.String() + "/avatars/" + avatarHash
 	return buildImageURL(ImageBaseURL, path, avatarHash, config, allowedFormats)
 }
 
-func GuildMemberBannerURL(guildID, userID Snowflake, bannerHash string, format ImageFormat, size ImageSize) string {
+func GuildMemberBannerURL(
+	guildID, userID Snowflake,
+	bannerHash string,
+	format ImageFormat,
+	size ImageSize,
+) string {
 	config := ImageConfig{Format: format, Size: size}
-	allowedFormats := [5]ImageFormat{ImageFormatPNG, ImageFormatGIF, ImageFormatWebP, ImageFormatJPEG}
+	allowedFormats := [5]ImageFormat{
+		ImageFormatPNG,
+		ImageFormatGIF,
+		ImageFormatWebP,
+		ImageFormatJPEG,
+	}
 	path := "guilds/" + guildID.String() + "/users/" + userID.String() + "/banners/" + bannerHash
 	return buildImageURL(ImageBaseURL, path, bannerHash, config, allowedFormats)
 }

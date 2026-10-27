@@ -65,7 +65,12 @@ type DiscordRestError struct {
 
 func (e *DiscordRestError) Error() string {
 	if e.Code != 0 {
-		return fmt.Sprintf("discord rest error: status %d, code %d: %s", e.StatusCode, e.Code, e.Message)
+		return fmt.Sprintf(
+			"discord rest error: status %d, code %d: %s",
+			e.StatusCode,
+			e.Code,
+			e.Message,
+		)
 	}
 	if len(e.Raw) > 0 {
 		return fmt.Sprintf("discord rest error: status %d: %s", e.StatusCode, string(e.Raw))
@@ -390,7 +395,11 @@ func (r *requester) DoRequest(ctx context.Context, req Request) (io.ReadCloser, 
 		if resp.StatusCode == http.StatusTooManyRequests {
 			sleepDuration := 500 * time.Millisecond
 			if retryAfterHeader := resp.Header.Get(headerRetryAfter); retryAfterHeader != "" {
-				if s, parseErr := strconv.ParseFloat(retryAfterHeader, 64); parseErr == nil && s > 0 {
+				if s, parseErr := strconv.ParseFloat(
+					retryAfterHeader,
+					64,
+				); parseErr == nil &&
+					s > 0 {
 					sleepDuration = time.Duration(s * float64(time.Second))
 				}
 			} else {
@@ -400,8 +409,14 @@ func (r *requester) DoRequest(ctx context.Context, req Request) (io.ReadCloser, 
 					RetryAfter float64 `json:"retry_after"`
 					Global     bool    `json:"global"`
 				}
-				if err := json.Unmarshal(bodyBytes, &rateLimitPayload); err == nil && rateLimitPayload.RetryAfter > 0 {
-					sleepDuration = time.Duration(rateLimitPayload.RetryAfter * float64(time.Second))
+				if err := json.Unmarshal(
+					bodyBytes,
+					&rateLimitPayload,
+				); err == nil &&
+					rateLimitPayload.RetryAfter > 0 {
+					sleepDuration = time.Duration(
+						rateLimitPayload.RetryAfter * float64(time.Second),
+					)
 				}
 			}
 			// add 10-50ms random jitter to avoid thundering herd on rate limit expiration
@@ -439,16 +454,31 @@ func (r *requester) DoRequest(ctx context.Context, req Request) (io.ReadCloser, 
 	}
 
 	if lastErr != nil {
-		return nil, fmt.Errorf("%w for %s %s: %w", ErrMaxRetriesExceeded, req.Method, req.URL, lastErr)
+		return nil, fmt.Errorf(
+			"%w for %s %s: %w",
+			ErrMaxRetriesExceeded,
+			req.Method,
+			req.URL,
+			lastErr,
+		)
 	}
 	if lastStatus != 0 {
-		return nil, fmt.Errorf("%w for %s %s: %w", ErrMaxRetriesExceeded, req.Method, req.URL, newDiscordRestError(lastStatus, lastBody))
+		return nil, fmt.Errorf(
+			"%w for %s %s: %w",
+			ErrMaxRetriesExceeded,
+			req.Method,
+			req.URL,
+			newDiscordRestError(lastStatus, lastBody),
+		)
 	}
 	return nil, fmt.Errorf("%w for %s %s", ErrMaxRetriesExceeded, req.Method, req.URL)
 }
 
 // DoMultipartRequest executes a multipart/form-data HTTP request with JSON payload and file attachments.
-func (r *requester) DoMultipartRequest(ctx context.Context, req MultipartRequest) (io.ReadCloser, error) {
+func (r *requester) DoMultipartRequest(
+	ctx context.Context,
+	req MultipartRequest,
+) (io.ReadCloser, error) {
 	buf := bufferPool.Get().(*bytes.Buffer)
 	buf.Reset()
 	defer func() {
@@ -484,7 +514,10 @@ func (r *requester) DoMultipartRequest(ctx context.Context, req MultipartRequest
 	for i, file := range req.Files {
 		fieldName := fmt.Sprintf("files[%d]", i)
 		h := make(textproto.MIMEHeader)
-		h.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%s"; filename="%s"`, fieldName, file.Name))
+		h.Set(
+			"Content-Disposition",
+			fmt.Sprintf(`form-data; name="%s"; filename="%s"`, fieldName, file.Name),
+		)
 		contentType := file.ContentType
 		if contentType == "" {
 			contentType = "application/octet-stream"
@@ -536,7 +569,11 @@ func requestJSON[T any](ctx context.Context, r *requester, req Request) (T, erro
 }
 
 // requestMultipartJSON sends a multipart request, unmarshals the JSON response into T, and returns (T, error).
-func requestMultipartJSON[T any](ctx context.Context, r *requester, req MultipartRequest) (T, error) {
+func requestMultipartJSON[T any](
+	ctx context.Context,
+	r *requester,
+	req MultipartRequest,
+) (T, error) {
 	var zero T
 	body, err := r.DoMultipartRequest(ctx, req)
 	if err != nil {

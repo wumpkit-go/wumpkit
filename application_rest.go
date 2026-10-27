@@ -91,7 +91,10 @@ func (r *requester) FetchCurrentApplication(ctx context.Context) (Application, e
 // EditCurrentApplication edits properties of the app associated with the requesting bot user.
 //
 // Reference: https://discord.com/developers/docs/resources/application#edit-current-application
-func (r *requester) EditCurrentApplication(ctx context.Context, opts EditCurrentApplicationOptions) (Application, error) {
+func (r *requester) EditCurrentApplication(
+	ctx context.Context,
+	opts EditCurrentApplicationOptions,
+) (Application, error) {
 	reqBody, _ := json.Marshal(opts)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "PATCH",
@@ -119,7 +122,11 @@ func (r *requester) EditCurrentApplication(ctx context.Context, opts EditCurrent
 // FetchApplicationActivityInstance returns a serialized activity instance, if it exists.
 //
 // Reference: https://discord.com/developers/docs/resources/application#get-application-activity-instance
-func (r *requester) FetchApplicationActivityInstance(ctx context.Context, applicationID Snowflake, instanceID string) (ApplicationActivityInstance, error) {
+func (r *requester) FetchApplicationActivityInstance(
+	ctx context.Context,
+	applicationID Snowflake,
+	instanceID string,
+) (ApplicationActivityInstance, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "GET",
 		URL:    "/applications/" + applicationID.String() + "/activity-instances/" + instanceID,
@@ -145,7 +152,10 @@ func (r *requester) FetchApplicationActivityInstance(ctx context.Context, applic
 // FetchApplicationRoleConnectionMetadata returns a list of application role connection metadata objects.
 //
 // Reference: https://discord.com/developers/docs/resources/application-role-connection-metadata#get-application-role-connection-metadata-records
-func (r *requester) FetchApplicationRoleConnectionMetadata(ctx context.Context, applicationID Snowflake) ([]ApplicationRoleConnectionMetadata, error) {
+func (r *requester) FetchApplicationRoleConnectionMetadata(
+	ctx context.Context,
+	applicationID Snowflake,
+) ([]ApplicationRoleConnectionMetadata, error) {
 	body, err := r.DoRequest(ctx, Request{
 		Method: "GET",
 		URL:    "/applications/" + applicationID.String() + "/role-connections/metadata",
@@ -171,7 +181,11 @@ func (r *requester) FetchApplicationRoleConnectionMetadata(ctx context.Context, 
 // UpdateApplicationRoleConnectionMetadata updates and returns a list of role connection metadata objects (max 5).
 //
 // Reference: https://discord.com/developers/docs/resources/application-role-connection-metadata#update-application-role-connection-metadata-records
-func (r *requester) UpdateApplicationRoleConnectionMetadata(ctx context.Context, applicationID Snowflake, records []ApplicationRoleConnectionMetadata) ([]ApplicationRoleConnectionMetadata, error) {
+func (r *requester) UpdateApplicationRoleConnectionMetadata(
+	ctx context.Context,
+	applicationID Snowflake,
+	records []ApplicationRoleConnectionMetadata,
+) ([]ApplicationRoleConnectionMetadata, error) {
 	reqBody, _ := json.Marshal(records)
 	body, err := r.DoRequest(ctx, Request{
 		Method: "PUT",

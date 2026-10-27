@@ -329,29 +329,55 @@ func NewInMemoryCacheManager(flags CacheFlags, config CacheConfig) *InMemoryCach
 		config.MaxMessagesPerChannel = 100
 	}
 	return &InMemoryCacheManager{
-		flags:                      flags,
-		config:                     config,
-		users:                      shardedmap.New[Snowflake, User](config.UsersShardCount),
-		guilds:                     shardedmap.New[Snowflake, Guild](config.GuildsShardCount),
-		members:                    shardedmap.New[SnowflakePairKey, Member](config.MembersShardCount),
-		channels:                   shardedmap.New[Snowflake, Channel](config.ChannelsShardCount),
-		messages:                   shardedmap.New[Snowflake, Message](config.MessagesShardCount),
-		voiceStates:                shardedmap.New[SnowflakePairKey, VoiceState](config.VoiceStatesShardCount),
-		roles:                      shardedmap.New[Snowflake, Role](config.RolesShardCount),
-		emojis:                     shardedmap.New[Snowflake, Emoji](config.EmojisShardCount),
-		stickers:                   shardedmap.New[Snowflake, Sticker](config.StickersShardCount),
-		stageInstances:             shardedmap.New[Snowflake, StageInstance](config.StageInstancesShardCount),
-		scheduledEvents:            shardedmap.New[Snowflake, GuildScheduledEvent](config.ScheduledEventsShardCount),
-		autoModRules:               shardedmap.New[Snowflake, AutoModerationRule](config.AutoModRulesShardCount),
-		guildToMemberIDs:           shardedmap.New[Snowflake, map[Snowflake]struct{}](config.GuildToMemberShardCount),
-		guildToChannelIDs:          shardedmap.New[Snowflake, map[Snowflake]struct{}](config.GuildToChannelShardCount),
-		guildToVoiceStateUserIDs:   shardedmap.New[Snowflake, map[Snowflake]struct{}](config.GuildToVoiceStateShardCount),
-		guildToRoleIDs:             shardedmap.New[Snowflake, map[Snowflake]struct{}](config.GuildToRoleShardCount),
-		guildToEmojiIDs:            shardedmap.New[Snowflake, map[Snowflake]struct{}](config.GuildToEmojiShardCount),
-		guildToStickerIDs:          shardedmap.New[Snowflake, map[Snowflake]struct{}](config.GuildToStickerShardCount),
-		guildToAutoModRuleIDs:      shardedmap.New[Snowflake, map[Snowflake]struct{}](config.GuildToRoleShardCount),
-		channelToVoiceStateUserIDs: shardedmap.New[Snowflake, map[Snowflake]struct{}](config.ChannelToVoiceStateShardCount),
-		channelToMessageIDs:        shardedmap.New[Snowflake, []Snowflake](channelToMsgShards),
+		flags:  flags,
+		config: config,
+		users:  shardedmap.New[Snowflake, User](config.UsersShardCount),
+		guilds: shardedmap.New[Snowflake, Guild](config.GuildsShardCount),
+		members: shardedmap.New[SnowflakePairKey, Member](
+			config.MembersShardCount,
+		),
+		channels: shardedmap.New[Snowflake, Channel](config.ChannelsShardCount),
+		messages: shardedmap.New[Snowflake, Message](config.MessagesShardCount),
+		voiceStates: shardedmap.New[SnowflakePairKey, VoiceState](
+			config.VoiceStatesShardCount,
+		),
+		roles:    shardedmap.New[Snowflake, Role](config.RolesShardCount),
+		emojis:   shardedmap.New[Snowflake, Emoji](config.EmojisShardCount),
+		stickers: shardedmap.New[Snowflake, Sticker](config.StickersShardCount),
+		stageInstances: shardedmap.New[Snowflake, StageInstance](
+			config.StageInstancesShardCount,
+		),
+		scheduledEvents: shardedmap.New[Snowflake, GuildScheduledEvent](
+			config.ScheduledEventsShardCount,
+		),
+		autoModRules: shardedmap.New[Snowflake, AutoModerationRule](
+			config.AutoModRulesShardCount,
+		),
+		guildToMemberIDs: shardedmap.New[Snowflake, map[Snowflake]struct{}](
+			config.GuildToMemberShardCount,
+		),
+		guildToChannelIDs: shardedmap.New[Snowflake, map[Snowflake]struct{}](
+			config.GuildToChannelShardCount,
+		),
+		guildToVoiceStateUserIDs: shardedmap.New[Snowflake, map[Snowflake]struct{}](
+			config.GuildToVoiceStateShardCount,
+		),
+		guildToRoleIDs: shardedmap.New[Snowflake, map[Snowflake]struct{}](
+			config.GuildToRoleShardCount,
+		),
+		guildToEmojiIDs: shardedmap.New[Snowflake, map[Snowflake]struct{}](
+			config.GuildToEmojiShardCount,
+		),
+		guildToStickerIDs: shardedmap.New[Snowflake, map[Snowflake]struct{}](
+			config.GuildToStickerShardCount,
+		),
+		guildToAutoModRuleIDs: shardedmap.New[Snowflake, map[Snowflake]struct{}](
+			config.GuildToRoleShardCount,
+		),
+		channelToVoiceStateUserIDs: shardedmap.New[Snowflake, map[Snowflake]struct{}](
+			config.ChannelToVoiceStateShardCount,
+		),
+		channelToMessageIDs: shardedmap.New[Snowflake, []Snowflake](channelToMsgShards),
 	}
 }
 
@@ -374,19 +400,31 @@ func (c *InMemoryCacheManager) GetGuild(ctx context.Context, guildID Snowflake) 
 	return c.guilds.Get(guildID)
 }
 
-func (c *InMemoryCacheManager) GetMember(ctx context.Context, guildID, userID Snowflake) (Member, bool) {
+func (c *InMemoryCacheManager) GetMember(
+	ctx context.Context,
+	guildID, userID Snowflake,
+) (Member, bool) {
 	return c.members.Get(SnowflakePairKey{A: guildID, B: userID})
 }
 
-func (c *InMemoryCacheManager) GetChannel(ctx context.Context, channelID Snowflake) (Channel, bool) {
+func (c *InMemoryCacheManager) GetChannel(
+	ctx context.Context,
+	channelID Snowflake,
+) (Channel, bool) {
 	return c.channels.Get(channelID)
 }
 
-func (c *InMemoryCacheManager) GetMessage(ctx context.Context, messageID Snowflake) (Message, bool) {
+func (c *InMemoryCacheManager) GetMessage(
+	ctx context.Context,
+	messageID Snowflake,
+) (Message, bool) {
 	return c.messages.Get(messageID)
 }
 
-func (c *InMemoryCacheManager) GetVoiceState(ctx context.Context, guildID, userID Snowflake) (VoiceState, bool) {
+func (c *InMemoryCacheManager) GetVoiceState(
+	ctx context.Context,
+	guildID, userID Snowflake,
+) (VoiceState, bool) {
 	return c.voiceStates.Get(SnowflakePairKey{A: guildID, B: userID})
 }
 
@@ -394,7 +432,10 @@ func (c *InMemoryCacheManager) GetRole(ctx context.Context, roleID Snowflake) (R
 	return c.roles.Get(roleID)
 }
 
-func (c *InMemoryCacheManager) GetRoles(ctx context.Context, rolesIDs ...Snowflake) map[Snowflake]Role {
+func (c *InMemoryCacheManager) GetRoles(
+	ctx context.Context,
+	rolesIDs ...Snowflake,
+) map[Snowflake]Role {
 	res := make(map[Snowflake]Role, len(rolesIDs))
 	for _, id := range rolesIDs {
 		if role, ok := c.roles.Get(id); ok {
@@ -408,23 +449,38 @@ func (c *InMemoryCacheManager) GetEmoji(ctx context.Context, emojiID Snowflake) 
 	return c.emojis.Get(emojiID)
 }
 
-func (c *InMemoryCacheManager) GetSticker(ctx context.Context, stickerID Snowflake) (Sticker, bool) {
+func (c *InMemoryCacheManager) GetSticker(
+	ctx context.Context,
+	stickerID Snowflake,
+) (Sticker, bool) {
 	return c.stickers.Get(stickerID)
 }
 
-func (c *InMemoryCacheManager) GetStageInstance(ctx context.Context, channelID Snowflake) (StageInstance, bool) {
+func (c *InMemoryCacheManager) GetStageInstance(
+	ctx context.Context,
+	channelID Snowflake,
+) (StageInstance, bool) {
 	return c.stageInstances.Get(channelID)
 }
 
-func (c *InMemoryCacheManager) GetGuildScheduledEvent(ctx context.Context, eventID Snowflake) (GuildScheduledEvent, bool) {
+func (c *InMemoryCacheManager) GetGuildScheduledEvent(
+	ctx context.Context,
+	eventID Snowflake,
+) (GuildScheduledEvent, bool) {
 	return c.scheduledEvents.Get(eventID)
 }
 
-func (c *InMemoryCacheManager) GetAutoModerationRule(ctx context.Context, ruleID Snowflake) (AutoModerationRule, bool) {
+func (c *InMemoryCacheManager) GetAutoModerationRule(
+	ctx context.Context,
+	ruleID Snowflake,
+) (AutoModerationRule, bool) {
 	return c.autoModRules.Get(ruleID)
 }
 
-func (c *InMemoryCacheManager) GetGuildChannels(ctx context.Context, guildID Snowflake) (map[Snowflake]GuildChannel, bool) {
+func (c *InMemoryCacheManager) GetGuildChannels(
+	ctx context.Context,
+	guildID Snowflake,
+) (map[Snowflake]GuildChannel, bool) {
 	set, ok := c.guildToChannelIDs.Get(guildID)
 	if !ok {
 		return nil, false
@@ -440,7 +496,10 @@ func (c *InMemoryCacheManager) GetGuildChannels(ctx context.Context, guildID Sno
 	return res, true
 }
 
-func (c *InMemoryCacheManager) GetGuildMembers(ctx context.Context, guildID Snowflake) (map[Snowflake]Member, bool) {
+func (c *InMemoryCacheManager) GetGuildMembers(
+	ctx context.Context,
+	guildID Snowflake,
+) (map[Snowflake]Member, bool) {
 	set, ok := c.guildToMemberIDs.Get(guildID)
 	if !ok {
 		return nil, false
@@ -455,7 +514,10 @@ func (c *InMemoryCacheManager) GetGuildMembers(ctx context.Context, guildID Snow
 	return res, true
 }
 
-func (c *InMemoryCacheManager) GetGuildVoiceStates(ctx context.Context, guildID Snowflake) (map[Snowflake]VoiceState, bool) {
+func (c *InMemoryCacheManager) GetGuildVoiceStates(
+	ctx context.Context,
+	guildID Snowflake,
+) (map[Snowflake]VoiceState, bool) {
 	set, ok := c.guildToVoiceStateUserIDs.Get(guildID)
 	if !ok {
 		return nil, false
@@ -470,7 +532,10 @@ func (c *InMemoryCacheManager) GetGuildVoiceStates(ctx context.Context, guildID 
 	return res, true
 }
 
-func (c *InMemoryCacheManager) GetGuildRoles(ctx context.Context, guildID Snowflake) (map[Snowflake]Role, bool) {
+func (c *InMemoryCacheManager) GetGuildRoles(
+	ctx context.Context,
+	guildID Snowflake,
+) (map[Snowflake]Role, bool) {
 	set, ok := c.guildToRoleIDs.Get(guildID)
 	if !ok {
 		return nil, false
@@ -484,7 +549,10 @@ func (c *InMemoryCacheManager) GetGuildRoles(ctx context.Context, guildID Snowfl
 	return res, true
 }
 
-func (c *InMemoryCacheManager) GetGuildEmojis(ctx context.Context, guildID Snowflake) (map[Snowflake]Emoji, bool) {
+func (c *InMemoryCacheManager) GetGuildEmojis(
+	ctx context.Context,
+	guildID Snowflake,
+) (map[Snowflake]Emoji, bool) {
 	set, ok := c.guildToEmojiIDs.Get(guildID)
 	if !ok {
 		return nil, false
@@ -498,7 +566,10 @@ func (c *InMemoryCacheManager) GetGuildEmojis(ctx context.Context, guildID Snowf
 	return res, true
 }
 
-func (c *InMemoryCacheManager) GetGuildStickers(ctx context.Context, guildID Snowflake) (map[Snowflake]Sticker, bool) {
+func (c *InMemoryCacheManager) GetGuildStickers(
+	ctx context.Context,
+	guildID Snowflake,
+) (map[Snowflake]Sticker, bool) {
 	set, ok := c.guildToStickerIDs.Get(guildID)
 	if !ok {
 		return nil, false
@@ -512,7 +583,10 @@ func (c *InMemoryCacheManager) GetGuildStickers(ctx context.Context, guildID Sno
 	return res, true
 }
 
-func (c *InMemoryCacheManager) GetVoiceChannelMembers(ctx context.Context, channelID Snowflake) (map[Snowflake]Member, bool) {
+func (c *InMemoryCacheManager) GetVoiceChannelMembers(
+	ctx context.Context,
+	channelID Snowflake,
+) (map[Snowflake]Member, bool) {
 	ch, ok := c.GetChannel(ctx, channelID)
 	if !ok {
 		return nil, false
@@ -557,7 +631,8 @@ func (c *InMemoryCacheManager) HasMessage(ctx context.Context, messageID Snowfla
 }
 
 func (c *InMemoryCacheManager) HasVoiceState(ctx context.Context, guildID, userID Snowflake) bool {
-	return c.flags.Has(CacheFlagVoiceStates) && c.voiceStates.Has(SnowflakePairKey{A: guildID, B: userID})
+	return c.flags.Has(CacheFlagVoiceStates) &&
+		c.voiceStates.Has(SnowflakePairKey{A: guildID, B: userID})
 }
 
 func (c *InMemoryCacheManager) HasRole(ctx context.Context, roleID Snowflake) bool {
@@ -596,15 +671,20 @@ func (c *InMemoryCacheManager) HasAutoModerationRule(ctx context.Context, ruleID
 	return c.flags.Has(CacheFlagAutoModerationRules) && c.autoModRules.Has(ruleID)
 }
 
-func (c *InMemoryCacheManager) CountUsers(ctx context.Context) int       { return c.users.Len() }
-func (c *InMemoryCacheManager) CountGuilds(ctx context.Context) int      { return c.guilds.Len() }
-func (c *InMemoryCacheManager) CountMembers(ctx context.Context) int     { return c.members.Len() }
-func (c *InMemoryCacheManager) CountChannels(ctx context.Context) int    { return c.channels.Len() }
-func (c *InMemoryCacheManager) CountMessages(ctx context.Context) int    { return c.messages.Len() }
-func (c *InMemoryCacheManager) CountVoiceStates(ctx context.Context) int { return c.voiceStates.Len() }
-func (c *InMemoryCacheManager) CountRoles(ctx context.Context) int       { return c.roles.Len() }
-func (c *InMemoryCacheManager) CountEmojis(ctx context.Context) int      { return c.emojis.Len() }
-func (c *InMemoryCacheManager) CountStickers(ctx context.Context) int    { return c.stickers.Len() }
+func (c *InMemoryCacheManager) CountUsers(ctx context.Context) int    { return c.users.Len() }
+func (c *InMemoryCacheManager) CountGuilds(ctx context.Context) int   { return c.guilds.Len() }
+func (c *InMemoryCacheManager) CountMembers(ctx context.Context) int  { return c.members.Len() }
+func (c *InMemoryCacheManager) CountChannels(ctx context.Context) int { return c.channels.Len() }
+func (c *InMemoryCacheManager) CountMessages(ctx context.Context) int { return c.messages.Len() }
+
+func (c *InMemoryCacheManager) CountVoiceStates(
+	ctx context.Context,
+) int {
+	return c.voiceStates.Len()
+}
+func (c *InMemoryCacheManager) CountRoles(ctx context.Context) int    { return c.roles.Len() }
+func (c *InMemoryCacheManager) CountEmojis(ctx context.Context) int   { return c.emojis.Len() }
+func (c *InMemoryCacheManager) CountStickers(ctx context.Context) int { return c.stickers.Len() }
 func (c *InMemoryCacheManager) CountStageInstances(ctx context.Context) int {
 	return c.stageInstances.Len()
 }
@@ -679,13 +759,16 @@ func (c *InMemoryCacheManager) AddMember(ctx context.Context, member Member) {
 	guildID := member.GuildID
 	key := SnowflakePairKey{A: guildID, B: userID}
 	c.members.Set(key, member)
-	c.guildToMemberIDs.Compute(guildID, func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
-		if !exists || set == nil {
-			set = make(map[Snowflake]struct{})
-		}
-		set[userID] = struct{}{}
-		return set
-	})
+	c.guildToMemberIDs.Compute(
+		guildID,
+		func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
+			if !exists || set == nil {
+				set = make(map[Snowflake]struct{})
+			}
+			set[userID] = struct{}{}
+			return set
+		},
+	)
 }
 
 func (c *InMemoryCacheManager) AddChannel(ctx context.Context, channel Channel) {
@@ -696,13 +779,16 @@ func (c *InMemoryCacheManager) AddChannel(ctx context.Context, channel Channel) 
 	c.channels.Set(channelID, channel)
 	if guildChannel, ok := channel.(GuildChannel); ok {
 		guildID := guildChannel.GetGuildID()
-		c.guildToChannelIDs.Compute(guildID, func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
-			if !exists || set == nil {
-				set = make(map[Snowflake]struct{})
-			}
-			set[channelID] = struct{}{}
-			return set
-		})
+		c.guildToChannelIDs.Compute(
+			guildID,
+			func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
+				if !exists || set == nil {
+					set = make(map[Snowflake]struct{})
+				}
+				set[channelID] = struct{}{}
+				return set
+			},
+		)
 	}
 }
 
@@ -752,48 +838,60 @@ func (c *InMemoryCacheManager) AddVoiceState(ctx context.Context, voiceState Voi
 
 	if voiceState.ChannelID == 0 {
 		c.voiceStates.Delete(key)
-		res := c.guildToVoiceStateUserIDs.Compute(guildID, func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
-			if exists && set != nil {
-				delete(set, userID)
-				return set
-			}
-			return nil
-		})
+		res := c.guildToVoiceStateUserIDs.Compute(
+			guildID,
+			func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
+				if exists && set != nil {
+					delete(set, userID)
+					return set
+				}
+				return nil
+			},
+		)
 		if len(res) == 0 {
 			c.guildToVoiceStateUserIDs.Delete(guildID)
 		}
 	} else {
 		c.voiceStates.Set(key, voiceState)
-		c.guildToVoiceStateUserIDs.Compute(guildID, func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
-			if !exists || set == nil {
-				set = make(map[Snowflake]struct{})
-			}
-			set[userID] = struct{}{}
-			return set
-		})
+		c.guildToVoiceStateUserIDs.Compute(
+			guildID,
+			func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
+				if !exists || set == nil {
+					set = make(map[Snowflake]struct{})
+				}
+				set[userID] = struct{}{}
+				return set
+			},
+		)
 	}
 
 	if oldChannelID != 0 && oldChannelID != voiceState.ChannelID {
-		res := c.channelToVoiceStateUserIDs.Compute(oldChannelID, func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
-			if exists && set != nil {
-				delete(set, userID)
-				return set
-			}
-			return nil
-		})
+		res := c.channelToVoiceStateUserIDs.Compute(
+			oldChannelID,
+			func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
+				if exists && set != nil {
+					delete(set, userID)
+					return set
+				}
+				return nil
+			},
+		)
 		if len(res) == 0 {
 			c.channelToVoiceStateUserIDs.Delete(oldChannelID)
 		}
 	}
 
 	if voiceState.ChannelID != 0 {
-		c.channelToVoiceStateUserIDs.Compute(voiceState.ChannelID, func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
-			if !exists || set == nil {
-				set = make(map[Snowflake]struct{})
-			}
-			set[userID] = struct{}{}
-			return set
-		})
+		c.channelToVoiceStateUserIDs.Compute(
+			voiceState.ChannelID,
+			func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
+				if !exists || set == nil {
+					set = make(map[Snowflake]struct{})
+				}
+				set[userID] = struct{}{}
+				return set
+			},
+		)
 	}
 }
 
@@ -804,13 +902,16 @@ func (c *InMemoryCacheManager) AddRole(ctx context.Context, role Role) {
 	guildID := role.GuildID
 	roleID := role.ID
 	c.roles.Set(roleID, role)
-	c.guildToRoleIDs.Compute(guildID, func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
-		if !exists || set == nil {
-			set = make(map[Snowflake]struct{})
-		}
-		set[roleID] = struct{}{}
-		return set
-	})
+	c.guildToRoleIDs.Compute(
+		guildID,
+		func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
+			if !exists || set == nil {
+				set = make(map[Snowflake]struct{})
+			}
+			set[roleID] = struct{}{}
+			return set
+		},
+	)
 }
 
 func (c *InMemoryCacheManager) AddRoles(ctx context.Context, roles ...Role) {
@@ -823,15 +924,18 @@ func (c *InMemoryCacheManager) AddRoles(ctx context.Context, roles ...Role) {
 		c.roles.Set(role.ID, role)
 	}
 	for guildID, guildRoles := range guildToRoles {
-		c.guildToRoleIDs.Compute(guildID, func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
-			if !exists || set == nil {
-				set = make(map[Snowflake]struct{})
-			}
-			for _, role := range guildRoles {
-				set[role.ID] = struct{}{}
-			}
-			return set
-		})
+		c.guildToRoleIDs.Compute(
+			guildID,
+			func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
+				if !exists || set == nil {
+					set = make(map[Snowflake]struct{})
+				}
+				for _, role := range guildRoles {
+					set[role.ID] = struct{}{}
+				}
+				return set
+			},
+		)
 	}
 }
 
@@ -841,13 +945,16 @@ func (c *InMemoryCacheManager) AddEmoji(ctx context.Context, emoji Emoji) {
 	}
 	c.emojis.Set(emoji.ID, emoji)
 	if emoji.GuildID != 0 {
-		c.guildToEmojiIDs.Compute(emoji.GuildID, func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
-			if !exists || set == nil {
-				set = make(map[Snowflake]struct{})
-			}
-			set[emoji.ID] = struct{}{}
-			return set
-		})
+		c.guildToEmojiIDs.Compute(
+			emoji.GuildID,
+			func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
+				if !exists || set == nil {
+					set = make(map[Snowflake]struct{})
+				}
+				set[emoji.ID] = struct{}{}
+				return set
+			},
+		)
 	}
 }
 
@@ -866,13 +973,16 @@ func (c *InMemoryCacheManager) AddSticker(ctx context.Context, sticker Sticker) 
 	}
 	c.stickers.Set(sticker.ID, sticker)
 	if sticker.GuildID != 0 {
-		c.guildToStickerIDs.Compute(sticker.GuildID, func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
-			if !exists || set == nil {
-				set = make(map[Snowflake]struct{})
-			}
-			set[sticker.ID] = struct{}{}
-			return set
-		})
+		c.guildToStickerIDs.Compute(
+			sticker.GuildID,
+			func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
+				if !exists || set == nil {
+					set = make(map[Snowflake]struct{})
+				}
+				set[sticker.ID] = struct{}{}
+				return set
+			},
+		)
 	}
 }
 
@@ -892,7 +1002,10 @@ func (c *InMemoryCacheManager) AddStageInstance(ctx context.Context, stage Stage
 	c.stageInstances.Set(stage.ChannelID, stage)
 }
 
-func (c *InMemoryCacheManager) AddGuildScheduledEvent(ctx context.Context, event GuildScheduledEvent) {
+func (c *InMemoryCacheManager) AddGuildScheduledEvent(
+	ctx context.Context,
+	event GuildScheduledEvent,
+) {
 	if !c.flags.Has(CacheFlagGuildScheduledEvents) {
 		return
 	}
@@ -905,13 +1018,16 @@ func (c *InMemoryCacheManager) AddAutoModerationRule(ctx context.Context, rule A
 	}
 	c.autoModRules.Set(rule.ID, rule)
 	if rule.GuildID != 0 {
-		c.guildToAutoModRuleIDs.Compute(rule.GuildID, func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
-			if !exists || set == nil {
-				set = make(map[Snowflake]struct{})
-			}
-			set[rule.ID] = struct{}{}
-			return set
-		})
+		c.guildToAutoModRuleIDs.Compute(
+			rule.GuildID,
+			func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
+				if !exists || set == nil {
+					set = make(map[Snowflake]struct{})
+				}
+				set[rule.ID] = struct{}{}
+				return set
+			},
+		)
 	}
 }
 
@@ -937,13 +1053,16 @@ func (c *InMemoryCacheManager) DelMember(ctx context.Context, guildID, userID Sn
 	key := SnowflakePairKey{A: guildID, B: userID}
 	_, ok := c.members.Delete(key)
 	if ok {
-		res := c.guildToMemberIDs.Compute(guildID, func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
-			if exists && set != nil {
-				delete(set, userID)
-				return set
-			}
-			return nil
-		})
+		res := c.guildToMemberIDs.Compute(
+			guildID,
+			func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
+				if exists && set != nil {
+					delete(set, userID)
+					return set
+				}
+				return nil
+			},
+		)
 		if len(res) == 0 {
 			c.guildToMemberIDs.Delete(guildID)
 		}
@@ -960,13 +1079,16 @@ func (c *InMemoryCacheManager) DelChannel(ctx context.Context, channelID Snowfla
 			}
 		}
 		if guildChannel, ok := channel.(GuildChannel); ok {
-			res := c.guildToChannelIDs.Compute(guildChannel.GetGuildID(), func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
-				if exists && set != nil {
-					delete(set, channelID)
-					return set
-				}
-				return nil
-			})
+			res := c.guildToChannelIDs.Compute(
+				guildChannel.GetGuildID(),
+				func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
+					if exists && set != nil {
+						delete(set, channelID)
+						return set
+					}
+					return nil
+				},
+			)
 			if len(res) == 0 {
 				c.guildToChannelIDs.Delete(guildChannel.GetGuildID())
 			}
@@ -979,17 +1101,20 @@ func (c *InMemoryCacheManager) DelChannel(ctx context.Context, channelID Snowfla
 func (c *InMemoryCacheManager) DelMessage(ctx context.Context, messageID Snowflake) bool {
 	msg, ok := c.messages.Delete(messageID)
 	if ok && msg.ChannelID != 0 {
-		c.channelToMessageIDs.Compute(msg.ChannelID, func(list []Snowflake, exists bool) []Snowflake {
-			if !exists || len(list) == 0 {
-				return nil
-			}
-			for i, id := range list {
-				if id == messageID {
-					return append(list[:i], list[i+1:]...)
+		c.channelToMessageIDs.Compute(
+			msg.ChannelID,
+			func(list []Snowflake, exists bool) []Snowflake {
+				if !exists || len(list) == 0 {
+					return nil
 				}
-			}
-			return list
-		})
+				for i, id := range list {
+					if id == messageID {
+						return append(list[:i], list[i+1:]...)
+					}
+				}
+				return list
+			},
+		)
 	}
 	return ok
 }
@@ -998,25 +1123,31 @@ func (c *InMemoryCacheManager) DelVoiceState(ctx context.Context, guildID, userI
 	key := SnowflakePairKey{A: guildID, B: userID}
 	vs, ok := c.voiceStates.Delete(key)
 	if ok {
-		res := c.guildToVoiceStateUserIDs.Compute(guildID, func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
-			if exists && set != nil {
-				delete(set, userID)
-				return set
-			}
-			return nil
-		})
-		if len(res) == 0 {
-			c.guildToVoiceStateUserIDs.Delete(guildID)
-		}
-
-		if vs.ChannelID != 0 {
-			res := c.channelToVoiceStateUserIDs.Compute(vs.ChannelID, func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
+		res := c.guildToVoiceStateUserIDs.Compute(
+			guildID,
+			func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
 				if exists && set != nil {
 					delete(set, userID)
 					return set
 				}
 				return nil
-			})
+			},
+		)
+		if len(res) == 0 {
+			c.guildToVoiceStateUserIDs.Delete(guildID)
+		}
+
+		if vs.ChannelID != 0 {
+			res := c.channelToVoiceStateUserIDs.Compute(
+				vs.ChannelID,
+				func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
+					if exists && set != nil {
+						delete(set, userID)
+						return set
+					}
+					return nil
+				},
+			)
 			if len(res) == 0 {
 				c.channelToVoiceStateUserIDs.Delete(vs.ChannelID)
 			}
@@ -1032,13 +1163,16 @@ func (c *InMemoryCacheManager) DelGuildVoiceStates(ctx context.Context, guildID 
 			key := SnowflakePairKey{A: guildID, B: userID}
 			if vs, ok := c.voiceStates.Delete(key); ok {
 				if vs.ChannelID != 0 {
-					res := c.channelToVoiceStateUserIDs.Compute(vs.ChannelID, func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
-						if exists && set != nil {
-							delete(set, userID)
-							return set
-						}
-						return nil
-					})
+					res := c.channelToVoiceStateUserIDs.Compute(
+						vs.ChannelID,
+						func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
+							if exists && set != nil {
+								delete(set, userID)
+								return set
+							}
+							return nil
+						},
+					)
 					if len(res) == 0 {
 						c.channelToVoiceStateUserIDs.Delete(vs.ChannelID)
 					}
@@ -1052,13 +1186,16 @@ func (c *InMemoryCacheManager) DelGuildVoiceStates(ctx context.Context, guildID 
 func (c *InMemoryCacheManager) DelRole(ctx context.Context, guildID, roleID Snowflake) bool {
 	_, ok := c.roles.Delete(roleID)
 	if ok {
-		res := c.guildToRoleIDs.Compute(guildID, func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
-			if exists && set != nil {
-				delete(set, roleID)
-				return set
-			}
-			return nil
-		})
+		res := c.guildToRoleIDs.Compute(
+			guildID,
+			func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
+				if exists && set != nil {
+					delete(set, roleID)
+					return set
+				}
+				return nil
+			},
+		)
 		if len(res) == 0 {
 			c.guildToRoleIDs.Delete(guildID)
 		}
@@ -1079,13 +1216,16 @@ func (c *InMemoryCacheManager) DelRoles(ctx context.Context, roleIDs ...Snowflak
 func (c *InMemoryCacheManager) DelEmoji(ctx context.Context, guildID, emojiID Snowflake) bool {
 	_, ok := c.emojis.Delete(emojiID)
 	if ok && guildID != 0 {
-		res := c.guildToEmojiIDs.Compute(guildID, func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
-			if exists && set != nil {
-				delete(set, emojiID)
-				return set
-			}
-			return nil
-		})
+		res := c.guildToEmojiIDs.Compute(
+			guildID,
+			func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
+				if exists && set != nil {
+					delete(set, emojiID)
+					return set
+				}
+				return nil
+			},
+		)
 		if len(res) == 0 {
 			c.guildToEmojiIDs.Delete(guildID)
 		}
@@ -1096,13 +1236,16 @@ func (c *InMemoryCacheManager) DelEmoji(ctx context.Context, guildID, emojiID Sn
 func (c *InMemoryCacheManager) DelSticker(ctx context.Context, guildID, stickerID Snowflake) bool {
 	_, ok := c.stickers.Delete(stickerID)
 	if ok && guildID != 0 {
-		res := c.guildToStickerIDs.Compute(guildID, func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
-			if exists && set != nil {
-				delete(set, stickerID)
-				return set
-			}
-			return nil
-		})
+		res := c.guildToStickerIDs.Compute(
+			guildID,
+			func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
+				if exists && set != nil {
+					delete(set, stickerID)
+					return set
+				}
+				return nil
+			},
+		)
 		if len(res) == 0 {
 			c.guildToStickerIDs.Delete(guildID)
 		}
@@ -1120,16 +1263,22 @@ func (c *InMemoryCacheManager) DelGuildScheduledEvent(ctx context.Context, event
 	return ok
 }
 
-func (c *InMemoryCacheManager) DelAutoModerationRule(ctx context.Context, guildID, ruleID Snowflake) bool {
+func (c *InMemoryCacheManager) DelAutoModerationRule(
+	ctx context.Context,
+	guildID, ruleID Snowflake,
+) bool {
 	_, ok := c.autoModRules.Delete(ruleID)
 	if ok && guildID != 0 {
-		res := c.guildToAutoModRuleIDs.Compute(guildID, func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
-			if exists && set != nil {
-				delete(set, ruleID)
-				return set
-			}
-			return nil
-		})
+		res := c.guildToAutoModRuleIDs.Compute(
+			guildID,
+			func(set map[Snowflake]struct{}, exists bool) map[Snowflake]struct{} {
+				if exists && set != nil {
+					delete(set, ruleID)
+					return set
+				}
+				return nil
+			},
+		)
 		if len(res) == 0 {
 			c.guildToAutoModRuleIDs.Delete(guildID)
 		}

@@ -1098,7 +1098,13 @@ func NewEmbedBuilder() *EmbedBuilder {
 // SetTitle sets the embed title (max 256 chars).
 func (b *EmbedBuilder) SetTitle(title string) *EmbedBuilder {
 	if len(title) > EmbedTitleMaxLength {
-		panic("Embed title must be max " + strconv.Itoa(EmbedTitleMaxLength) + " characters, got " + strconv.Itoa(len(title)))
+		panic(
+			"Embed title must be max " + strconv.Itoa(
+				EmbedTitleMaxLength,
+			) + " characters, got " + strconv.Itoa(
+				len(title),
+			),
+		)
 	}
 	b.embed.Title = title
 	return b
@@ -1107,7 +1113,13 @@ func (b *EmbedBuilder) SetTitle(title string) *EmbedBuilder {
 // SetDescription sets the embed description (max 4096 chars).
 func (b *EmbedBuilder) SetDescription(desc string) *EmbedBuilder {
 	if len(desc) > EmbedDescriptionMaxLength {
-		panic("Embed description must be max " + strconv.Itoa(EmbedDescriptionMaxLength) + " characters, got " + strconv.Itoa(len(desc)))
+		panic(
+			"Embed description must be max " + strconv.Itoa(
+				EmbedDescriptionMaxLength,
+			) + " characters, got " + strconv.Itoa(
+				len(desc),
+			),
+		)
 	}
 	b.embed.Description = desc
 	return b
@@ -1134,7 +1146,13 @@ func (b *EmbedBuilder) SetColor(color Color) *EmbedBuilder {
 // SetFooter sets the embed footer text and optional icon URL.
 func (b *EmbedBuilder) SetFooter(text, iconURL string) *EmbedBuilder {
 	if len(text) > EmbedFooterTextMaxLength {
-		panic("Embed footer text must be max " + strconv.Itoa(EmbedFooterTextMaxLength) + " characters, got " + strconv.Itoa(len(text)))
+		panic(
+			"Embed footer text must be max " + strconv.Itoa(
+				EmbedFooterTextMaxLength,
+			) + " characters, got " + strconv.Itoa(
+				len(text),
+			),
+		)
 	}
 	b.embed.Footer = &EmbedFooter{
 		Text:    text,
@@ -1158,7 +1176,13 @@ func (b *EmbedBuilder) SetThumbnail(url string) *EmbedBuilder {
 // SetAuthor sets the embed author name and optional URL/icon.
 func (b *EmbedBuilder) SetAuthor(name, url, iconURL string) *EmbedBuilder {
 	if len(name) > EmbedAuthorNameMaxLength {
-		panic("Embed author name must be max " + strconv.Itoa(EmbedAuthorNameMaxLength) + " characters, got " + strconv.Itoa(len(name)))
+		panic(
+			"Embed author name must be max " + strconv.Itoa(
+				EmbedAuthorNameMaxLength,
+			) + " characters, got " + strconv.Itoa(
+				len(name),
+			),
+		)
 	}
 	b.embed.Author = &EmbedAuthor{
 		Name:    name,
@@ -1174,10 +1198,22 @@ func (b *EmbedBuilder) AddField(name, value string, inline bool) *EmbedBuilder {
 		panic("Embed can contain a maximum of " + strconv.Itoa(EmbedFieldsMaxCount) + " fields")
 	}
 	if len(name) > EmbedFieldNameMaxLength {
-		panic("Embed field name must be max " + strconv.Itoa(EmbedFieldNameMaxLength) + " characters, got " + strconv.Itoa(len(name)))
+		panic(
+			"Embed field name must be max " + strconv.Itoa(
+				EmbedFieldNameMaxLength,
+			) + " characters, got " + strconv.Itoa(
+				len(name),
+			),
+		)
 	}
 	if len(value) > EmbedFieldValueMaxLength {
-		panic("Embed field value must be max " + strconv.Itoa(EmbedFieldValueMaxLength) + " characters, got " + strconv.Itoa(len(value)))
+		panic(
+			"Embed field value must be max " + strconv.Itoa(
+				EmbedFieldValueMaxLength,
+			) + " characters, got " + strconv.Itoa(
+				len(value),
+			),
+		)
 	}
 	b.embed.Fields = append(b.embed.Fields, EmbedField{
 		Name:   name,
@@ -1203,14 +1239,36 @@ func (b *EmbedBuilder) AddBlankField(inline bool) *EmbedBuilder {
 // SetFields sets all embed fields at once.
 func (e *EmbedBuilder) SetFields(fields ...EmbedField) *EmbedBuilder {
 	if len(fields) > EmbedFieldsMaxCount {
-		panic("Embed can contain a maximum of " + strconv.Itoa(EmbedFieldsMaxCount) + " fields, got " + strconv.Itoa(len(fields)))
+		panic(
+			"Embed can contain a maximum of " + strconv.Itoa(
+				EmbedFieldsMaxCount,
+			) + " fields, got " + strconv.Itoa(
+				len(fields),
+			),
+		)
 	}
 	for i, field := range fields {
 		if len(field.Name) > EmbedFieldNameMaxLength {
-			panic("Embed field[" + strconv.Itoa(i) + "] name must be max " + strconv.Itoa(EmbedFieldNameMaxLength) + " characters, got " + strconv.Itoa(len(field.Name)))
+			panic(
+				"Embed field[" + strconv.Itoa(
+					i,
+				) + "] name must be max " + strconv.Itoa(
+					EmbedFieldNameMaxLength,
+				) + " characters, got " + strconv.Itoa(
+					len(field.Name),
+				),
+			)
 		}
 		if len(field.Value) > EmbedFieldValueMaxLength {
-			panic("Embed field[" + strconv.Itoa(i) + "] value must be max " + strconv.Itoa(EmbedFieldValueMaxLength) + " characters, got " + strconv.Itoa(len(field.Value)))
+			panic(
+				"Embed field[" + strconv.Itoa(
+					i,
+				) + "] value must be max " + strconv.Itoa(
+					EmbedFieldValueMaxLength,
+				) + " characters, got " + strconv.Itoa(
+					len(field.Value),
+				),
+			)
 		}
 	}
 	e.embed.Fields = fields

@@ -183,8 +183,14 @@ func VerifyWebhookEvent(publicKeyHex, timestamp string, body []byte, signatureHe
 }
 
 // VerifyWebhookEventWithKey verifies an incoming Discord Webhook Event request using a pre-parsed ed25519.PublicKey.
-func VerifyWebhookEventWithKey(pubKey ed25519.PublicKey, timestamp string, body []byte, signatureHex string) bool {
-	if len(pubKey) != ed25519.PublicKeySize || timestamp == "" || len(body) == 0 || signatureHex == "" {
+func VerifyWebhookEventWithKey(
+	pubKey ed25519.PublicKey,
+	timestamp string,
+	body []byte,
+	signatureHex string,
+) bool {
+	if len(pubKey) != ed25519.PublicKeySize || timestamp == "" || len(body) == 0 ||
+		signatureHex == "" {
 		return false
 	}
 	sigBytes, err := hex.DecodeString(strings.TrimSpace(signatureHex))
@@ -205,7 +211,12 @@ func VerifyInteraction(publicKeyHex, timestamp string, body []byte, signatureHex
 }
 
 // VerifyInteractionWithKey is an alias for VerifyWebhookEventWithKey.
-func VerifyInteractionWithKey(pubKey ed25519.PublicKey, timestamp string, body []byte, signatureHex string) bool {
+func VerifyInteractionWithKey(
+	pubKey ed25519.PublicKey,
+	timestamp string,
+	body []byte,
+	signatureHex string,
+) bool {
 	return VerifyWebhookEventWithKey(pubKey, timestamp, body, signatureHex)
 }
 
@@ -236,16 +247,25 @@ func (c *Client) WebhookEventsHandler() http.Handler {
 
 		// verify signature against client's public key
 		if len(c.publicKeyBytes) != ed25519.PublicKeySize && c.publicKey != "" {
-			if b, err := hex.DecodeString(c.publicKey); err == nil && len(b) == ed25519.PublicKeySize {
+			if b, err := hex.DecodeString(
+				c.publicKey,
+			); err == nil &&
+				len(b) == ed25519.PublicKeySize {
 				c.publicKeyBytes = ed25519.PublicKey(b)
 			}
 		}
 
 		if len(c.publicKeyBytes) != ed25519.PublicKeySize {
 			if c.logger != nil {
-				c.logger.Error("webhook event received but client has no valid PublicKey configured")
+				c.logger.Error(
+					"webhook event received but client has no valid PublicKey configured",
+				)
 			}
-			http.Error(w, "server configuration error: public key missing", http.StatusInternalServerError)
+			http.Error(
+				w,
+				"server configuration error: public key missing",
+				http.StatusInternalServerError,
+			)
 			return
 		}
 
@@ -261,7 +281,11 @@ func (c *Client) WebhookEventsHandler() http.Handler {
 			Type          int               `json:"type"`
 			Event         *WebhookEventBody `json:"event,omitempty"`
 		}
-		if err := json.Unmarshal(body, &webhookPayload); err == nil && webhookPayload.Version == 1 && webhookPayload.ApplicationID != 0 {
+		if err := json.Unmarshal(
+			body,
+			&webhookPayload,
+		); err == nil && webhookPayload.Version == 1 &&
+			webhookPayload.ApplicationID != 0 {
 			// discord webhook event
 			if webhookPayload.Type == int(WebhookEventTypePing) {
 				// ping for webhook events responds with 204 No Content
@@ -400,7 +424,9 @@ func WithWebhookEventsCustomServer(srv *http.Server) WebhookEventsStartOption {
 //	err := bot.StartWebhookEvents(":8080", wumpkit.WithWebhookEventsPath("/events"))
 func (c *Client) StartWebhookEvents(addr string, options ...WebhookEventsStartOption) error {
 	if !c.isWebhookEventsRunning.CompareAndSwap(false, true) {
-		return errors.New("cannot start webhook events server: webhook events server is already running on this client")
+		return errors.New(
+			"cannot start webhook events server: webhook events server is already running on this client",
+		)
 	}
 	defer c.isWebhookEventsRunning.Store(false)
 
@@ -414,7 +440,10 @@ func (c *Client) StartWebhookEvents(addr string, options ...WebhookEventsStartOp
 
 	if cfg.PublicKey != "" {
 		c.publicKey = cfg.PublicKey
-		if b, err := hex.DecodeString(cfg.PublicKey); err == nil && len(b) == ed25519.PublicKeySize {
+		if b, err := hex.DecodeString(
+			cfg.PublicKey,
+		); err == nil &&
+			len(b) == ed25519.PublicKeySize {
 			c.publicKeyBytes = ed25519.PublicKey(b)
 		}
 	}
@@ -465,7 +494,10 @@ func (c *Client) StartWebhookEvents(addr string, options ...WebhookEventsStartOp
 
 // StartWebhookEventsWithSignals starts the webhook events server and blocks until an interrupt or termination signal
 // (SIGINT, SIGTERM) is received, then gracefully shuts down the server.
-func (c *Client) StartWebhookEventsWithSignals(addr string, options ...WebhookEventsStartOption) error {
+func (c *Client) StartWebhookEventsWithSignals(
+	addr string,
+	options ...WebhookEventsStartOption,
+) error {
 	sigCtx, stop := signal.NotifyContext(c.ctx, os.Interrupt, syscall.SIGTERM)
 	defer stop()
 

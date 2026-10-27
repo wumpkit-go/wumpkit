@@ -185,7 +185,8 @@ func applyShardManagerConfig(cfg ShardManagerConfig) ShardManagerOption {
 		if cfg.GatewayURL != "" {
 			sm.gatewayURL = cfg.GatewayURL
 		}
-		if cfg.IdentifyProps.OS != "" || cfg.IdentifyProps.Browser != "" || cfg.IdentifyProps.Device != "" {
+		if cfg.IdentifyProps.OS != "" || cfg.IdentifyProps.Browser != "" ||
+			cfg.IdentifyProps.Device != "" {
 			sm.identify = cfg.IdentifyProps
 		}
 		if cfg.IdentifyLimiter != nil {
@@ -292,7 +293,12 @@ func cleanGatewayToken(token string) string {
 }
 
 // NewShardManager creates a new ShardManager with the given token, logger, dispatcher, and options.
-func NewShardManager(token string, logger Logger, dispatcher *dispatcher, options ...ShardManagerOption) *ShardManager {
+func NewShardManager(
+	token string,
+	logger Logger,
+	dispatcher *dispatcher,
+	options ...ShardManagerOption,
+) *ShardManager {
 	sm := &ShardManager{
 		token:       cleanGatewayToken(token),
 		logger:      logger,
@@ -852,7 +858,13 @@ func (s *Shard) readLoop(conn *websocket.Conn) {
 				data, err = s.decompressZlib(msg)
 			}
 			if err != nil {
-				s.logger.Error("payload decompression failed", "compression", s.compression, "error", err)
+				s.logger.Error(
+					"payload decompression failed",
+					"compression",
+					s.compression,
+					"error",
+					err,
+				)
 				s.reconnect(true)
 				return
 			}
@@ -978,7 +990,11 @@ func (s *Shard) handleDisconnectError(err error) {
 	}
 
 	if isReidentifyCloseCode(code) {
-		s.logger.Info("session invalidated by gateway, resetting session and re-identifying", "code", code)
+		s.logger.Info(
+			"session invalidated by gateway, resetting session and re-identifying",
+			"code",
+			code,
+		)
 		s.reconnect(false)
 		return
 	}
@@ -1158,7 +1174,9 @@ func (s *Shard) startHeartbeat(interval time.Duration) {
 			}
 
 			if !s.lastHeartbeatACK.Load() {
-				s.logger.Warn("heartbeat ACK not received before next interval (zombie connection), reconnecting to resume")
+				s.logger.Warn(
+					"heartbeat ACK not received before next interval (zombie connection), reconnecting to resume",
+				)
 				go s.reconnect(true)
 				return
 			}
@@ -1265,7 +1283,11 @@ func (s *Shard) UpdatePresence(presence GatewayPresenceUpdate) error {
 }
 
 // UpdateVoiceState sends an Opcode 4 Voice State Update to Discord Gateway.
-func (s *Shard) UpdateVoiceState(guildID Snowflake, channelID *Snowflake, selfMute, selfDeaf bool) error {
+func (s *Shard) UpdateVoiceState(
+	guildID Snowflake,
+	channelID *Snowflake,
+	selfMute, selfDeaf bool,
+) error {
 	payload, err := json.Marshal(map[string]any{
 		"op": gatewayOpcodeVoiceStateUpdate,
 		"d": GatewayVoiceStateUpdate{

@@ -445,27 +445,42 @@ func TestChatInputInteractionCommandOption_GettersAndTypeMismatch(t *testing.T) 
 
 	// typeMismatchError panics
 	assert.Panics(t, func() {
-		invalidStr := ChatInputInteractionCommandOption{Name: "invalid", Value: []byte(`{"not": "a string"}`)}
+		invalidStr := ChatInputInteractionCommandOption{
+			Name:  "invalid",
+			Value: []byte(`{"not": "a string"}`),
+		}
 		_ = invalidStr.String()
 	})
 
 	assert.Panics(t, func() {
-		invalidInt := ChatInputInteractionCommandOption{Name: "invalid", Value: []byte(`"not an int"`)}
+		invalidInt := ChatInputInteractionCommandOption{
+			Name:  "invalid",
+			Value: []byte(`"not an int"`),
+		}
 		_ = invalidInt.Int()
 	})
 
 	assert.Panics(t, func() {
-		invalidFloat := ChatInputInteractionCommandOption{Name: "invalid", Value: []byte(`"not a float"`)}
+		invalidFloat := ChatInputInteractionCommandOption{
+			Name:  "invalid",
+			Value: []byte(`"not a float"`),
+		}
 		_ = invalidFloat.Float()
 	})
 
 	assert.Panics(t, func() {
-		invalidBool := ChatInputInteractionCommandOption{Name: "invalid", Value: []byte(`"not a bool"`)}
+		invalidBool := ChatInputInteractionCommandOption{
+			Name:  "invalid",
+			Value: []byte(`"not a bool"`),
+		}
 		_ = invalidBool.Bool()
 	})
 
 	assert.Panics(t, func() {
-		invalidSnowflake := ChatInputInteractionCommandOption{Name: "invalid", Value: []byte(`"not-a-snowflake"`)}
+		invalidSnowflake := ChatInputInteractionCommandOption{
+			Name:  "invalid",
+			Value: []byte(`"not-a-snowflake"`),
+		}
 		_ = invalidSnowflake.Snowflake()
 	})
 

@@ -121,7 +121,8 @@ func (r *RedisShardsIdentifyRateLimiter) WaitShard(ctx context.Context, shardID 
 	bucketKey := r.bucketKey(bucket)
 
 	// execute atomic slot reservation in Redis (evaluated with server-side time)
-	res, err := identifyScript.Run(ctx, r.client, []string{bucketKey}, int(r.interval.Milliseconds())).Int64()
+	res, err := identifyScript.Run(ctx, r.client, []string{bucketKey}, int(r.interval.Milliseconds())).
+		Int64()
 	if err != nil {
 		return err
 	}

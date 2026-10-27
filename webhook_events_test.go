@@ -52,7 +52,10 @@ func TestVerifyWebhookEvent(t *testing.T) {
 	assert.True(t, wumpkit.VerifyInteraction(pubKeyHex, timestamp, body, sigHex))
 
 	// tampered body
-	assert.False(t, wumpkit.VerifyWebhookEvent(pubKeyHex, timestamp, []byte(`{"version":1,"type":1}`), sigHex))
+	assert.False(
+		t,
+		wumpkit.VerifyWebhookEvent(pubKeyHex, timestamp, []byte(`{"version":1,"type":1}`), sigHex),
+	)
 
 	// tampered timestamp
 	assert.False(t, wumpkit.VerifyWebhookEvent(pubKeyHex, "1700000001", body, sigHex))
@@ -88,11 +91,13 @@ func TestWebhookEventsHandler_PingAndEvents(t *testing.T) {
 		}
 	})
 
-	client.OnApplicationDeauthorized(func(ctx context.Context, e wumpkit.ApplicationDeauthorizedEvent) {
-		if e.User.ID == 9988776655 {
-			deauthorizedReceived.Store(true)
-		}
-	})
+	client.OnApplicationDeauthorized(
+		func(ctx context.Context, e wumpkit.ApplicationDeauthorizedEvent) {
+			if e.User.ID == 9988776655 {
+				deauthorizedReceived.Store(true)
+			}
+		},
+	)
 
 	client.OnInteractionCreate(func(ctx context.Context, e wumpkit.InteractionCreateEvent) {
 		if e.Interaction.GetID() == 123456789012345678 {
@@ -122,7 +127,10 @@ func TestWebhookEventsHandler_PingAndEvents(t *testing.T) {
 
 	// 3. invalid signature
 	req = httptest.NewRequest(http.MethodPost, "/events", bytes.NewBuffer([]byte(`{"type":0}`)))
-	req.Header.Set("X-Signature-Ed25519", "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+	req.Header.Set(
+		"X-Signature-Ed25519",
+		"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+	)
 	req.Header.Set("X-Signature-Timestamp", "1700000000")
 	rec = httptest.NewRecorder()
 	handler.ServeHTTP(rec, req)
@@ -139,7 +147,9 @@ func TestWebhookEventsHandler_PingAndEvents(t *testing.T) {
 	assert.Equal(t, http.StatusNoContent, rec.Code)
 
 	// 5. valid Webhook Event: APPLICATION_AUTHORIZED -> responds with HTTP 204 No Content & dispatches
-	authEventBody := []byte(`{"version":1,"application_id":"123","type":1,"event":{"type":"APPLICATION_AUTHORIZED","timestamp":"2024-10-18T14:42:53Z","data":{"integration_type":1,"scopes":["applications.commands"],"user":{"id":"9988776655","username":"tester"}}}}`)
+	authEventBody := []byte(
+		`{"version":1,"application_id":"123","type":1,"event":{"type":"APPLICATION_AUTHORIZED","timestamp":"2024-10-18T14:42:53Z","data":{"integration_type":1,"scopes":["applications.commands"],"user":{"id":"9988776655","username":"tester"}}}}`,
+	)
 	ts, sigHex = signRequest(authEventBody, "1700000001")
 	req = httptest.NewRequest(http.MethodPost, "/events", bytes.NewBuffer(authEventBody))
 	req.Header.Set("X-Signature-Ed25519", sigHex)
@@ -152,7 +162,9 @@ func TestWebhookEventsHandler_PingAndEvents(t *testing.T) {
 	}, 1*time.Second, 10*time.Millisecond)
 
 	// 6. valid Webhook Event: APPLICATION_DEAUTHORIZED -> responds with HTTP 204 No Content & dispatches
-	deauthEventBody := []byte(`{"version":1,"application_id":"123","type":1,"event":{"type":"APPLICATION_DEAUTHORIZED","timestamp":"2024-10-18T14:42:53Z","data":{"user":{"id":"9988776655","username":"tester"}}}}`)
+	deauthEventBody := []byte(
+		`{"version":1,"application_id":"123","type":1,"event":{"type":"APPLICATION_DEAUTHORIZED","timestamp":"2024-10-18T14:42:53Z","data":{"user":{"id":"9988776655","username":"tester"}}}}`,
+	)
 	ts, sigHex = signRequest(deauthEventBody, "1700000002")
 	req = httptest.NewRequest(http.MethodPost, "/events", bytes.NewBuffer(deauthEventBody))
 	req.Header.Set("X-Signature-Ed25519", sigHex)
@@ -176,7 +188,9 @@ func TestWebhookEventsHandler_PingAndEvents(t *testing.T) {
 	assert.JSONEq(t, `{"type":1}`, rec.Body.String())
 
 	// 8. valid HTTP Component Interaction (type 3) -> responds with HTTP 200 OK & dispatches
-	componentBody := []byte(`{"id":"123456789012345678","type":3,"data":{"custom_id":"btn_click","component_type":2},"token":"xyz","version":1}`)
+	componentBody := []byte(
+		`{"id":"123456789012345678","type":3,"data":{"custom_id":"btn_click","component_type":2},"token":"xyz","version":1}`,
+	)
 	ts, sigHex = signRequest(componentBody, "1700000004")
 	req = httptest.NewRequest(http.MethodPost, "/events", bytes.NewBuffer(componentBody))
 	req.Header.Set("X-Signature-Ed25519", sigHex)
@@ -199,8 +213,16 @@ func TestWebhookEvents_Enums(t *testing.T) {
 	assert.False(t, wumpkit.WebhookEventEntitlementCreate.IsExclusive())
 	assert.False(t, wumpkit.WebhookEventInteractionCreate.IsExclusive())
 
-	assert.True(t, wumpkit.WebhookOnlyEventApplicationAuthorized.Is(wumpkit.WebhookOnlyEventApplicationAuthorized))
-	assert.True(t, wumpkit.WebhookEventApplicationAuthorized.Is(wumpkit.WebhookEventApplicationAuthorized))
+	assert.True(
+		t,
+		wumpkit.WebhookOnlyEventApplicationAuthorized.Is(
+			wumpkit.WebhookOnlyEventApplicationAuthorized,
+		),
+	)
+	assert.True(
+		t,
+		wumpkit.WebhookEventApplicationAuthorized.Is(wumpkit.WebhookEventApplicationAuthorized),
+	)
 }
 
 func TestStartWebhookEvents_LifecycleAndConcurrency(t *testing.T) {
@@ -225,7 +247,11 @@ func TestStartWebhookEvents_LifecycleAndConcurrency(t *testing.T) {
 
 	// attempting to start duplicate Webhook Events server concurrently on the same client must fail
 	err = client.StartWebhookEvents("127.0.0.1:0")
-	assert.ErrorContains(t, err, "cannot start webhook events server: webhook events server is already running on this client")
+	assert.ErrorContains(
+		t,
+		err,
+		"cannot start webhook events server: webhook events server is already running on this client",
+	)
 
 	cancel()
 

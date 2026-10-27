@@ -122,7 +122,13 @@ func (e GatewayEvent) Is(other GatewayEvent) bool {
 
 // eventhandlersManager defines the interface for managing event handlers of a specific event type.
 type eventhandlersManager interface {
-	handleEvent(ctx context.Context, cache CacheManager, concurrent bool, shardID ShardID, buf []byte)
+	handleEvent(
+		ctx context.Context,
+		cache CacheManager,
+		concurrent bool,
+		shardID ShardID,
+		buf []byte,
+	)
 	addHandler(handler any)
 }
 
@@ -173,7 +179,12 @@ type dispatcher struct {
 	queues                map[ShardID]chan eventTask
 }
 
-func newDispatcher(ctx context.Context, cache CacheManager, logger Logger, mode HandlersExecutionMode) *dispatcher {
+func newDispatcher(
+	ctx context.Context,
+	cache CacheManager,
+	logger Logger,
+	mode HandlersExecutionMode,
+) *dispatcher {
 	d := &dispatcher{
 		ctx:                   ctx,
 		cache:                 cache,
@@ -199,7 +210,9 @@ func newDispatcher(ctx context.Context, cache CacheManager, logger Logger, mode 
 	d.handlersManagers[GatewayEventThreadDelete] = &threadDeleteHandlers{logger: logger}
 	d.handlersManagers[GatewayEventThreadListSync] = &threadListSyncHandlers{logger: logger}
 	d.handlersManagers[GatewayEventThreadMemberUpdate] = &threadMemberUpdateHandlers{logger: logger}
-	d.handlersManagers[GatewayEventThreadMembersUpdate] = &threadMembersUpdateHandlers{logger: logger}
+	d.handlersManagers[GatewayEventThreadMembersUpdate] = &threadMembersUpdateHandlers{
+		logger: logger,
+	}
 	d.handlersManagers[GatewayEventGuildMemberAdd] = &guildMemberAddHandlers{logger: logger}
 	d.handlersManagers[GatewayEventGuildMemberUpdate] = &guildMemberUpdateHandlers{logger: logger}
 	d.handlersManagers[GatewayEventGuildMemberRemove] = &guildMemberRemoveHandlers{logger: logger}
@@ -208,20 +221,44 @@ func newDispatcher(ctx context.Context, cache CacheManager, logger Logger, mode 
 	d.handlersManagers[GatewayEventGuildRoleUpdate] = &guildRoleUpdateHandlers{logger: logger}
 	d.handlersManagers[GatewayEventGuildRoleDelete] = &guildRoleDeleteHandlers{logger: logger}
 	d.handlersManagers[GatewayEventGuildEmojisUpdate] = &guildEmojisUpdateHandlers{logger: logger}
-	d.handlersManagers[GatewayEventGuildStickersUpdate] = &guildStickersUpdateHandlers{logger: logger}
-	d.handlersManagers[GatewayEventGuildIntegrationsUpdate] = &guildIntegrationsUpdateHandlers{logger: logger}
-	d.handlersManagers[GatewayEventGuildAuditLogEntryCreate] = &guildAuditLogEntryCreateHandlers{logger: logger}
+	d.handlersManagers[GatewayEventGuildStickersUpdate] = &guildStickersUpdateHandlers{
+		logger: logger,
+	}
+	d.handlersManagers[GatewayEventGuildIntegrationsUpdate] = &guildIntegrationsUpdateHandlers{
+		logger: logger,
+	}
+	d.handlersManagers[GatewayEventGuildAuditLogEntryCreate] = &guildAuditLogEntryCreateHandlers{
+		logger: logger,
+	}
 	d.handlersManagers[GatewayEventGuildBanAdd] = &guildBanAddHandlers{logger: logger}
 	d.handlersManagers[GatewayEventGuildBanRemove] = &guildBanRemoveHandlers{logger: logger}
-	d.handlersManagers[GatewayEventGuildScheduledEventCreate] = &guildScheduledEventCreateHandlers{logger: logger}
-	d.handlersManagers[GatewayEventGuildScheduledEventUpdate] = &guildScheduledEventUpdateHandlers{logger: logger}
-	d.handlersManagers[GatewayEventGuildScheduledEventDelete] = &guildScheduledEventDeleteHandlers{logger: logger}
-	d.handlersManagers[GatewayEventGuildScheduledEventUserAdd] = &guildScheduledEventUserAddHandlers{logger: logger}
-	d.handlersManagers[GatewayEventGuildScheduledEventUserRemove] = &guildScheduledEventUserRemoveHandlers{logger: logger}
-	d.handlersManagers[GatewayEventGuildSoundboardSoundCreate] = &guildSoundboardSoundCreateHandlers{logger: logger}
-	d.handlersManagers[GatewayEventGuildSoundboardSoundUpdate] = &guildSoundboardSoundUpdateHandlers{logger: logger}
-	d.handlersManagers[GatewayEventGuildSoundboardSoundDelete] = &guildSoundboardSoundDeleteHandlers{logger: logger}
-	d.handlersManagers[GatewayEventGuildSoundboardSoundsUpdate] = &guildSoundboardSoundsUpdateHandlers{logger: logger}
+	d.handlersManagers[GatewayEventGuildScheduledEventCreate] = &guildScheduledEventCreateHandlers{
+		logger: logger,
+	}
+	d.handlersManagers[GatewayEventGuildScheduledEventUpdate] = &guildScheduledEventUpdateHandlers{
+		logger: logger,
+	}
+	d.handlersManagers[GatewayEventGuildScheduledEventDelete] = &guildScheduledEventDeleteHandlers{
+		logger: logger,
+	}
+	d.handlersManagers[GatewayEventGuildScheduledEventUserAdd] = &guildScheduledEventUserAddHandlers{
+		logger: logger,
+	}
+	d.handlersManagers[GatewayEventGuildScheduledEventUserRemove] = &guildScheduledEventUserRemoveHandlers{
+		logger: logger,
+	}
+	d.handlersManagers[GatewayEventGuildSoundboardSoundCreate] = &guildSoundboardSoundCreateHandlers{
+		logger: logger,
+	}
+	d.handlersManagers[GatewayEventGuildSoundboardSoundUpdate] = &guildSoundboardSoundUpdateHandlers{
+		logger: logger,
+	}
+	d.handlersManagers[GatewayEventGuildSoundboardSoundDelete] = &guildSoundboardSoundDeleteHandlers{
+		logger: logger,
+	}
+	d.handlersManagers[GatewayEventGuildSoundboardSoundsUpdate] = &guildSoundboardSoundsUpdateHandlers{
+		logger: logger,
+	}
 	d.handlersManagers[GatewayEventSoundboardSounds] = &soundboardSoundsHandlers{logger: logger}
 	d.handlersManagers[GatewayEventIntegrationCreate] = &integrationCreateHandlers{logger: logger}
 	d.handlersManagers[GatewayEventIntegrationUpdate] = &integrationUpdateHandlers{logger: logger}
@@ -234,45 +271,87 @@ func newDispatcher(ctx context.Context, cache CacheManager, logger Logger, mode 
 	d.handlersManagers[GatewayEventMessageDelete] = &messageDeleteHandlers{logger: logger}
 	d.handlersManagers[GatewayEventMessageDeleteBulk] = &messageDeleteBulkHandlers{logger: logger}
 	d.handlersManagers[GatewayEventMessageReactionAdd] = &messageReactionAddHandlers{logger: logger}
-	d.handlersManagers[GatewayEventMessageReactionRemove] = &messageReactionRemoveHandlers{logger: logger}
-	d.handlersManagers[GatewayEventMessageReactionRemoveAll] = &messageReactionRemoveAllHandlers{logger: logger}
-	d.handlersManagers[GatewayEventMessageReactionRemoveEmoji] = &messageReactionRemoveEmojiHandlers{logger: logger}
+	d.handlersManagers[GatewayEventMessageReactionRemove] = &messageReactionRemoveHandlers{
+		logger: logger,
+	}
+	d.handlersManagers[GatewayEventMessageReactionRemoveAll] = &messageReactionRemoveAllHandlers{
+		logger: logger,
+	}
+	d.handlersManagers[GatewayEventMessageReactionRemoveEmoji] = &messageReactionRemoveEmojiHandlers{
+		logger: logger,
+	}
 	d.handlersManagers[GatewayEventMessagePollVoteAdd] = &messagePollVoteAddHandlers{logger: logger}
-	d.handlersManagers[GatewayEventMessagePollVoteRemove] = &messagePollVoteRemoveHandlers{logger: logger}
+	d.handlersManagers[GatewayEventMessagePollVoteRemove] = &messagePollVoteRemoveHandlers{
+		logger: logger,
+	}
 	d.handlersManagers[GatewayEventPresenceUpdate] = &presenceUpdateHandlers{logger: logger}
-	d.handlersManagers[GatewayEventStageInstanceCreate] = &stageInstanceCreateHandlers{logger: logger}
-	d.handlersManagers[GatewayEventStageInstanceUpdate] = &stageInstanceUpdateHandlers{logger: logger}
-	d.handlersManagers[GatewayEventStageInstanceDelete] = &stageInstanceDeleteHandlers{logger: logger}
+	d.handlersManagers[GatewayEventStageInstanceCreate] = &stageInstanceCreateHandlers{
+		logger: logger,
+	}
+	d.handlersManagers[GatewayEventStageInstanceUpdate] = &stageInstanceUpdateHandlers{
+		logger: logger,
+	}
+	d.handlersManagers[GatewayEventStageInstanceDelete] = &stageInstanceDeleteHandlers{
+		logger: logger,
+	}
 	d.handlersManagers[GatewayEventSubscriptionCreate] = &subscriptionCreateHandlers{logger: logger}
 	d.handlersManagers[GatewayEventSubscriptionUpdate] = &subscriptionUpdateHandlers{logger: logger}
 	d.handlersManagers[GatewayEventSubscriptionDelete] = &subscriptionDeleteHandlers{logger: logger}
 	d.handlersManagers[GatewayEventTypingStart] = &typingStartHandlers{logger: logger}
 	d.handlersManagers[GatewayEventUserUpdate] = &userUpdateHandlers{logger: logger}
-	d.handlersManagers[GatewayEventVoiceChannelEffectSend] = &voiceChannelEffectSendHandlers{logger: logger}
+	d.handlersManagers[GatewayEventVoiceChannelEffectSend] = &voiceChannelEffectSendHandlers{
+		logger: logger,
+	}
 	d.handlersManagers[GatewayEventVoiceStateUpdate] = &voiceStateUpdateHandlers{logger: logger}
 	d.handlersManagers[GatewayEventVoiceServerUpdate] = &voiceServerUpdateHandlers{logger: logger}
 	d.handlersManagers[GatewayEventWebhooksUpdate] = &webhooksUpdateHandlers{logger: logger}
-	d.handlersManagers[GatewayEventApplicationCommandPermissionsUpdate] = &applicationCommandPermissionsUpdateHandlers{logger: logger}
-	d.handlersManagers[GatewayEventAutoModerationRuleCreate] = &autoModerationRuleCreateHandlers{logger: logger}
-	d.handlersManagers[GatewayEventAutoModerationRuleUpdate] = &autoModerationRuleUpdateHandlers{logger: logger}
-	d.handlersManagers[GatewayEventAutoModerationRuleDelete] = &autoModerationRuleDeleteHandlers{logger: logger}
-	d.handlersManagers[GatewayEventAutoModerationActionExecution] = &autoModerationActionExecutionHandlers{logger: logger}
+	d.handlersManagers[GatewayEventApplicationCommandPermissionsUpdate] = &applicationCommandPermissionsUpdateHandlers{
+		logger: logger,
+	}
+	d.handlersManagers[GatewayEventAutoModerationRuleCreate] = &autoModerationRuleCreateHandlers{
+		logger: logger,
+	}
+	d.handlersManagers[GatewayEventAutoModerationRuleUpdate] = &autoModerationRuleUpdateHandlers{
+		logger: logger,
+	}
+	d.handlersManagers[GatewayEventAutoModerationRuleDelete] = &autoModerationRuleDeleteHandlers{
+		logger: logger,
+	}
+	d.handlersManagers[GatewayEventAutoModerationActionExecution] = &autoModerationActionExecutionHandlers{
+		logger: logger,
+	}
 	d.handlersManagers[GatewayEventEntitlementCreate] = &entitlementCreateHandlers{logger: logger}
 	d.handlersManagers[GatewayEventEntitlementUpdate] = &entitlementUpdateHandlers{logger: logger}
 	d.handlersManagers[GatewayEventEntitlementDelete] = &entitlementDeleteHandlers{logger: logger}
 	d.handlersManagers[GatewayEventChannelInfo] = &channelInfoHandlers{logger: logger}
-	d.handlersManagers[GatewayEventVoiceChannelStatusUpdate] = &voiceChannelStatusUpdateHandlers{logger: logger}
-	d.handlersManagers[GatewayEventVoiceChannelStartTimeUpdate] = &voiceChannelStartTimeUpdateHandlers{logger: logger}
-	d.handlersManagers[GatewayEventApplicationAuthorized] = &applicationAuthorizedHandlers{logger: logger}
-	d.handlersManagers[GatewayEventApplicationDeauthorized] = &applicationDeauthorizedHandlers{logger: logger}
+	d.handlersManagers[GatewayEventVoiceChannelStatusUpdate] = &voiceChannelStatusUpdateHandlers{
+		logger: logger,
+	}
+	d.handlersManagers[GatewayEventVoiceChannelStartTimeUpdate] = &voiceChannelStartTimeUpdateHandlers{
+		logger: logger,
+	}
+	d.handlersManagers[GatewayEventApplicationAuthorized] = &applicationAuthorizedHandlers{
+		logger: logger,
+	}
+	d.handlersManagers[GatewayEventApplicationDeauthorized] = &applicationDeauthorizedHandlers{
+		logger: logger,
+	}
 	d.handlersManagers[GatewayEventRateLimited] = &rateLimitedHandlers{logger: logger}
-	d.handlersManagers[GatewayEventQuestUserEnrollment] = &questUserEnrollmentHandlers{logger: logger}
+	d.handlersManagers[GatewayEventQuestUserEnrollment] = &questUserEnrollmentHandlers{
+		logger: logger,
+	}
 	d.handlersManagers[GatewayEventLobbyMessageCreate] = &lobbyMessageCreateHandlers{logger: logger}
 	d.handlersManagers[GatewayEventLobbyMessageUpdate] = &lobbyMessageUpdateHandlers{logger: logger}
 	d.handlersManagers[GatewayEventLobbyMessageDelete] = &lobbyMessageDeleteHandlers{logger: logger}
-	d.handlersManagers[GatewayEventGameDirectMessageCreate] = &gameDirectMessageCreateHandlers{logger: logger}
-	d.handlersManagers[GatewayEventGameDirectMessageUpdate] = &gameDirectMessageUpdateHandlers{logger: logger}
-	d.handlersManagers[GatewayEventGameDirectMessageDelete] = &gameDirectMessageDeleteHandlers{logger: logger}
+	d.handlersManagers[GatewayEventGameDirectMessageCreate] = &gameDirectMessageCreateHandlers{
+		logger: logger,
+	}
+	d.handlersManagers[GatewayEventGameDirectMessageUpdate] = &gameDirectMessageUpdateHandlers{
+		logger: logger,
+	}
+	d.handlersManagers[GatewayEventGameDirectMessageDelete] = &gameDirectMessageDeleteHandlers{
+		logger: logger,
+	}
 
 	return d
 }
@@ -342,7 +421,13 @@ func (d *dispatcher) processEvent(shardID ShardID, eventName string, data []byte
 	}()
 
 	if hm, ok := d.handlersManagers[GatewayEvent(eventName)]; ok {
-		hm.handleEvent(d.ctx, d.cache, d.handlersExecutionMode == HandlersExecutionConcurrent, shardID, data)
+		hm.handleEvent(
+			d.ctx,
+			d.cache,
+			d.handlersExecutionMode == HandlersExecutionConcurrent,
+			shardID,
+			data,
+		)
 	}
 }
 
@@ -370,7 +455,11 @@ func (d *dispatcher) Shutdown(timeout time.Duration) {
 	case <-done:
 		d.logger.Debug("all in-flight event handlers drained successfully")
 	case <-time.After(timeout):
-		d.logger.Warn("timed out waiting for in-flight event handlers to drain", "timeout", timeout.String())
+		d.logger.Warn(
+			"timed out waiting for in-flight event handlers to drain",
+			"timeout",
+			timeout.String(),
+		)
 	}
 }
 
@@ -502,12 +591,16 @@ func (d *dispatcher) OnGuildStickersUpdate(h func(context.Context, GuildStickers
 }
 
 // OnGuildIntegrationsUpdate registers a handler for 'GUILD_INTEGRATIONS_UPDATE' (GatewayEventGuildIntegrationsUpdate) events.
-func (d *dispatcher) OnGuildIntegrationsUpdate(h func(context.Context, GuildIntegrationsUpdateEvent)) {
+func (d *dispatcher) OnGuildIntegrationsUpdate(
+	h func(context.Context, GuildIntegrationsUpdateEvent),
+) {
 	d.register(GatewayEventGuildIntegrationsUpdate, h)
 }
 
 // OnGuildAuditLogEntryCreate registers a handler for 'GUILD_AUDIT_LOG_ENTRY_CREATE' (GatewayEventGuildAuditLogEntryCreate) events.
-func (d *dispatcher) OnGuildAuditLogEntryCreate(h func(context.Context, GuildAuditLogEntryCreateEvent)) {
+func (d *dispatcher) OnGuildAuditLogEntryCreate(
+	h func(context.Context, GuildAuditLogEntryCreateEvent),
+) {
 	d.register(GatewayEventGuildAuditLogEntryCreate, h)
 }
 
@@ -522,47 +615,65 @@ func (d *dispatcher) OnGuildBanRemove(h func(context.Context, GuildBanRemoveEven
 }
 
 // OnGuildScheduledEventCreate registers a handler for 'GUILD_SCHEDULED_EVENT_CREATE' (GatewayEventGuildScheduledEventCreate) events.
-func (d *dispatcher) OnGuildScheduledEventCreate(h func(context.Context, GuildScheduledEventCreateEvent)) {
+func (d *dispatcher) OnGuildScheduledEventCreate(
+	h func(context.Context, GuildScheduledEventCreateEvent),
+) {
 	d.register(GatewayEventGuildScheduledEventCreate, h)
 }
 
 // OnGuildScheduledEventUpdate registers a handler for 'GUILD_SCHEDULED_EVENT_UPDATE' (GatewayEventGuildScheduledEventUpdate) events.
-func (d *dispatcher) OnGuildScheduledEventUpdate(h func(context.Context, GuildScheduledEventUpdateEvent)) {
+func (d *dispatcher) OnGuildScheduledEventUpdate(
+	h func(context.Context, GuildScheduledEventUpdateEvent),
+) {
 	d.register(GatewayEventGuildScheduledEventUpdate, h)
 }
 
 // OnGuildScheduledEventDelete registers a handler for 'GUILD_SCHEDULED_EVENT_DELETE' (GatewayEventGuildScheduledEventDelete) events.
-func (d *dispatcher) OnGuildScheduledEventDelete(h func(context.Context, GuildScheduledEventDeleteEvent)) {
+func (d *dispatcher) OnGuildScheduledEventDelete(
+	h func(context.Context, GuildScheduledEventDeleteEvent),
+) {
 	d.register(GatewayEventGuildScheduledEventDelete, h)
 }
 
 // OnGuildScheduledEventUserAdd registers a handler for 'GUILD_SCHEDULED_EVENT_USER_ADD' (GatewayEventGuildScheduledEventUserAdd) events.
-func (d *dispatcher) OnGuildScheduledEventUserAdd(h func(context.Context, GuildScheduledEventUserAddEvent)) {
+func (d *dispatcher) OnGuildScheduledEventUserAdd(
+	h func(context.Context, GuildScheduledEventUserAddEvent),
+) {
 	d.register(GatewayEventGuildScheduledEventUserAdd, h)
 }
 
 // OnGuildScheduledEventUserRemove registers a handler for 'GUILD_SCHEDULED_EVENT_USER_REMOVE' (GatewayEventGuildScheduledEventUserRemove) events.
-func (d *dispatcher) OnGuildScheduledEventUserRemove(h func(context.Context, GuildScheduledEventUserRemoveEvent)) {
+func (d *dispatcher) OnGuildScheduledEventUserRemove(
+	h func(context.Context, GuildScheduledEventUserRemoveEvent),
+) {
 	d.register(GatewayEventGuildScheduledEventUserRemove, h)
 }
 
 // OnGuildSoundboardSoundCreate registers a handler for 'GUILD_SOUNDBOARD_SOUND_CREATE' (GatewayEventGuildSoundboardSoundCreate) events.
-func (d *dispatcher) OnGuildSoundboardSoundCreate(h func(context.Context, GuildSoundboardSoundCreateEvent)) {
+func (d *dispatcher) OnGuildSoundboardSoundCreate(
+	h func(context.Context, GuildSoundboardSoundCreateEvent),
+) {
 	d.register(GatewayEventGuildSoundboardSoundCreate, h)
 }
 
 // OnGuildSoundboardSoundUpdate registers a handler for 'GUILD_SOUNDBOARD_SOUND_UPDATE' (GatewayEventGuildSoundboardSoundUpdate) events.
-func (d *dispatcher) OnGuildSoundboardSoundUpdate(h func(context.Context, GuildSoundboardSoundUpdateEvent)) {
+func (d *dispatcher) OnGuildSoundboardSoundUpdate(
+	h func(context.Context, GuildSoundboardSoundUpdateEvent),
+) {
 	d.register(GatewayEventGuildSoundboardSoundUpdate, h)
 }
 
 // OnGuildSoundboardSoundDelete registers a handler for 'GUILD_SOUNDBOARD_SOUND_DELETE' (GatewayEventGuildSoundboardSoundDelete) events.
-func (d *dispatcher) OnGuildSoundboardSoundDelete(h func(context.Context, GuildSoundboardSoundDeleteEvent)) {
+func (d *dispatcher) OnGuildSoundboardSoundDelete(
+	h func(context.Context, GuildSoundboardSoundDeleteEvent),
+) {
 	d.register(GatewayEventGuildSoundboardSoundDelete, h)
 }
 
 // OnGuildSoundboardSoundsUpdate registers a handler for 'GUILD_SOUNDBOARD_SOUNDS_UPDATE' (GatewayEventGuildSoundboardSoundsUpdate) events.
-func (d *dispatcher) OnGuildSoundboardSoundsUpdate(h func(context.Context, GuildSoundboardSoundsUpdateEvent)) {
+func (d *dispatcher) OnGuildSoundboardSoundsUpdate(
+	h func(context.Context, GuildSoundboardSoundsUpdateEvent),
+) {
 	d.register(GatewayEventGuildSoundboardSoundsUpdate, h)
 }
 
@@ -632,12 +743,16 @@ func (d *dispatcher) OnMessageReactionRemove(h func(context.Context, MessageReac
 }
 
 // OnMessageReactionRemoveAll registers a handler for 'MESSAGE_REACTION_REMOVE_ALL' (GatewayEventMessageReactionRemoveAll) events.
-func (d *dispatcher) OnMessageReactionRemoveAll(h func(context.Context, MessageReactionRemoveAllEvent)) {
+func (d *dispatcher) OnMessageReactionRemoveAll(
+	h func(context.Context, MessageReactionRemoveAllEvent),
+) {
 	d.register(GatewayEventMessageReactionRemoveAll, h)
 }
 
 // OnMessageReactionRemoveEmoji registers a handler for 'MESSAGE_REACTION_REMOVE_EMOJI' (GatewayEventMessageReactionRemoveEmoji) events.
-func (d *dispatcher) OnMessageReactionRemoveEmoji(h func(context.Context, MessageReactionRemoveEmojiEvent)) {
+func (d *dispatcher) OnMessageReactionRemoveEmoji(
+	h func(context.Context, MessageReactionRemoveEmojiEvent),
+) {
 	d.register(GatewayEventMessageReactionRemoveEmoji, h)
 }
 
@@ -697,7 +812,9 @@ func (d *dispatcher) OnUserUpdate(h func(context.Context, UserUpdateEvent)) {
 }
 
 // OnVoiceChannelEffectSend registers a handler for 'VOICE_CHANNEL_EFFECT_SEND' (GatewayEventVoiceChannelEffectSend) events.
-func (d *dispatcher) OnVoiceChannelEffectSend(h func(context.Context, VoiceChannelEffectSendEvent)) {
+func (d *dispatcher) OnVoiceChannelEffectSend(
+	h func(context.Context, VoiceChannelEffectSendEvent),
+) {
 	d.register(GatewayEventVoiceChannelEffectSend, h)
 }
 
@@ -717,27 +834,37 @@ func (d *dispatcher) OnWebhooksUpdate(h func(context.Context, WebhooksUpdateEven
 }
 
 // OnApplicationCommandPermissionsUpdate registers a handler for 'APPLICATION_COMMAND_PERMISSIONS_UPDATE' (GatewayEventApplicationCommandPermissionsUpdate) events.
-func (d *dispatcher) OnApplicationCommandPermissionsUpdate(h func(context.Context, ApplicationCommandPermissionsUpdateEvent)) {
+func (d *dispatcher) OnApplicationCommandPermissionsUpdate(
+	h func(context.Context, ApplicationCommandPermissionsUpdateEvent),
+) {
 	d.register(GatewayEventApplicationCommandPermissionsUpdate, h)
 }
 
 // OnAutoModerationRuleCreate registers a handler for 'AUTO_MODERATION_RULE_CREATE' (GatewayEventAutoModerationRuleCreate) events.
-func (d *dispatcher) OnAutoModerationRuleCreate(h func(context.Context, AutoModerationRuleCreateEvent)) {
+func (d *dispatcher) OnAutoModerationRuleCreate(
+	h func(context.Context, AutoModerationRuleCreateEvent),
+) {
 	d.register(GatewayEventAutoModerationRuleCreate, h)
 }
 
 // OnAutoModerationRuleUpdate registers a handler for 'AUTO_MODERATION_RULE_UPDATE' (GatewayEventAutoModerationRuleUpdate) events.
-func (d *dispatcher) OnAutoModerationRuleUpdate(h func(context.Context, AutoModerationRuleUpdateEvent)) {
+func (d *dispatcher) OnAutoModerationRuleUpdate(
+	h func(context.Context, AutoModerationRuleUpdateEvent),
+) {
 	d.register(GatewayEventAutoModerationRuleUpdate, h)
 }
 
 // OnAutoModerationRuleDelete registers a handler for 'AUTO_MODERATION_RULE_DELETE' (GatewayEventAutoModerationRuleDelete) events.
-func (d *dispatcher) OnAutoModerationRuleDelete(h func(context.Context, AutoModerationRuleDeleteEvent)) {
+func (d *dispatcher) OnAutoModerationRuleDelete(
+	h func(context.Context, AutoModerationRuleDeleteEvent),
+) {
 	d.register(GatewayEventAutoModerationRuleDelete, h)
 }
 
 // OnAutoModerationActionExecution registers a handler for 'AUTO_MODERATION_ACTION_EXECUTION' (GatewayEventAutoModerationActionExecution) events.
-func (d *dispatcher) OnAutoModerationActionExecution(h func(context.Context, AutoModerationActionExecutionEvent)) {
+func (d *dispatcher) OnAutoModerationActionExecution(
+	h func(context.Context, AutoModerationActionExecutionEvent),
+) {
 	d.register(GatewayEventAutoModerationActionExecution, h)
 }
 
@@ -762,12 +889,16 @@ func (d *dispatcher) OnChannelInfo(h func(context.Context, ChannelInfoEvent)) {
 }
 
 // OnVoiceChannelStatusUpdate registers a handler for 'VOICE_CHANNEL_STATUS_UPDATE' (GatewayEventVoiceChannelStatusUpdate) events.
-func (d *dispatcher) OnVoiceChannelStatusUpdate(h func(context.Context, VoiceChannelStatusUpdateEvent)) {
+func (d *dispatcher) OnVoiceChannelStatusUpdate(
+	h func(context.Context, VoiceChannelStatusUpdateEvent),
+) {
 	d.register(GatewayEventVoiceChannelStatusUpdate, h)
 }
 
 // OnVoiceChannelStartTimeUpdate registers a handler for 'VOICE_CHANNEL_START_TIME_UPDATE' (GatewayEventVoiceChannelStartTimeUpdate) events.
-func (d *dispatcher) OnVoiceChannelStartTimeUpdate(h func(context.Context, VoiceChannelStartTimeUpdateEvent)) {
+func (d *dispatcher) OnVoiceChannelStartTimeUpdate(
+	h func(context.Context, VoiceChannelStartTimeUpdateEvent),
+) {
 	d.register(GatewayEventVoiceChannelStartTimeUpdate, h)
 }
 
@@ -777,7 +908,9 @@ func (d *dispatcher) OnApplicationAuthorized(h func(context.Context, Application
 }
 
 // OnApplicationDeauthorized registers a handler for 'APPLICATION_DEAUTHORIZED' (GatewayEventApplicationDeauthorized) webhook events.
-func (d *dispatcher) OnApplicationDeauthorized(h func(context.Context, ApplicationDeauthorizedEvent)) {
+func (d *dispatcher) OnApplicationDeauthorized(
+	h func(context.Context, ApplicationDeauthorizedEvent),
+) {
 	d.register(GatewayEventApplicationDeauthorized, h)
 }
 
@@ -807,16 +940,22 @@ func (d *dispatcher) OnLobbyMessageDelete(h func(context.Context, LobbyMessageDe
 }
 
 // OnGameDirectMessageCreate registers a handler for 'GAME_DIRECT_MESSAGE_CREATE' (GatewayEventGameDirectMessageCreate) webhook events.
-func (d *dispatcher) OnGameDirectMessageCreate(h func(context.Context, GameDirectMessageCreateEvent)) {
+func (d *dispatcher) OnGameDirectMessageCreate(
+	h func(context.Context, GameDirectMessageCreateEvent),
+) {
 	d.register(GatewayEventGameDirectMessageCreate, h)
 }
 
 // OnGameDirectMessageUpdate registers a handler for 'GAME_DIRECT_MESSAGE_UPDATE' (GatewayEventGameDirectMessageUpdate) webhook events.
-func (d *dispatcher) OnGameDirectMessageUpdate(h func(context.Context, GameDirectMessageUpdateEvent)) {
+func (d *dispatcher) OnGameDirectMessageUpdate(
+	h func(context.Context, GameDirectMessageUpdateEvent),
+) {
 	d.register(GatewayEventGameDirectMessageUpdate, h)
 }
 
 // OnGameDirectMessageDelete registers a handler for 'GAME_DIRECT_MESSAGE_DELETE' (GatewayEventGameDirectMessageDelete) webhook events.
-func (d *dispatcher) OnGameDirectMessageDelete(h func(context.Context, GameDirectMessageDeleteEvent)) {
+func (d *dispatcher) OnGameDirectMessageDelete(
+	h func(context.Context, GameDirectMessageDeleteEvent),
+) {
 	d.register(GatewayEventGameDirectMessageDelete, h)
 }

@@ -441,7 +441,8 @@ func (u *User) AvatarDecorationURLWith(size ImageSize) string {
 //
 //	url := user.GuildTagBadgeURL()
 func (u *User) GuildTagBadgeURL() string {
-	if u.PrimaryGuild != nil && u.PrimaryGuild.IdentityGuildID != nil && u.PrimaryGuild.Badge != nil {
+	if u.PrimaryGuild != nil && u.PrimaryGuild.IdentityGuildID != nil &&
+		u.PrimaryGuild.Badge != nil {
 		return GuildTagBadgeURL(
 			*u.PrimaryGuild.IdentityGuildID, *u.PrimaryGuild.Badge,
 			ImageFormatDefault, ImageSizeDefault,

@@ -31,9 +31,13 @@ import (
 func TestOAuth2_GenerateAuthorizeURL(t *testing.T) {
 	integrationType := wumpkit.ApplicationIntegrationTypeGuildInstall
 	authURL := wumpkit.GenerateOAuth2AuthorizeURL(wumpkit.OAuth2AuthorizeURLOptions{
-		ClientID:           123456789012345678,
-		RedirectURI:        "https://example.com/callback",
-		Scopes:             []wumpkit.OAuth2Scope{wumpkit.OAuth2ScopeBot, wumpkit.OAuth2ScopeApplicationsCommands, wumpkit.OAuth2ScopeIdentify},
+		ClientID:    123456789012345678,
+		RedirectURI: "https://example.com/callback",
+		Scopes: []wumpkit.OAuth2Scope{
+			wumpkit.OAuth2ScopeBot,
+			wumpkit.OAuth2ScopeApplicationsCommands,
+			wumpkit.OAuth2ScopeIdentify,
+		},
 		State:              "secret_csrf_state",
 		Permissions:        wumpkit.PermissionSendMessages | wumpkit.PermissionViewChannel,
 		Prompt:             "consent",
@@ -98,9 +102,18 @@ func TestOAuth2_ExchangeOAuth2Code(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := wumpkit.New(context.Background(), wumpkit.WithRESTConfig(wumpkit.RequesterConfig{BaseURL: server.URL}))
+	client := wumpkit.New(
+		context.Background(),
+		wumpkit.WithRESTConfig(wumpkit.RequesterConfig{BaseURL: server.URL}),
+	)
 
-	resp, err := client.ExchangeOAuth2Code(context.Background(), 111222333, "client_secret_xyz", "auth_code_789", "https://app.local/callback")
+	resp, err := client.ExchangeOAuth2Code(
+		context.Background(),
+		111222333,
+		"client_secret_xyz",
+		"auth_code_789",
+		"https://app.local/callback",
+	)
 	require.NoError(t, err)
 
 	assert.Equal(t, "POST", capturedMethod)
@@ -115,7 +128,11 @@ func TestOAuth2_ExchangeOAuth2Code(t *testing.T) {
 	assert.Equal(t, "Bearer", resp.TokenType)
 	assert.Equal(t, 604800, resp.ExpiresIn)
 	assert.Equal(t, "mock_refresh_token_456", resp.RefreshToken)
-	assert.Equal(t, []wumpkit.OAuth2Scope{wumpkit.OAuth2ScopeIdentify, wumpkit.OAuth2ScopeGuilds}, resp.ScopesList())
+	assert.Equal(
+		t,
+		[]wumpkit.OAuth2Scope{wumpkit.OAuth2ScopeIdentify, wumpkit.OAuth2ScopeGuilds},
+		resp.ScopesList(),
+	)
 }
 
 func TestOAuth2_RefreshOAuth2Token(t *testing.T) {
@@ -136,9 +153,17 @@ func TestOAuth2_RefreshOAuth2Token(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := wumpkit.New(context.Background(), wumpkit.WithRESTConfig(wumpkit.RequesterConfig{BaseURL: server.URL}))
+	client := wumpkit.New(
+		context.Background(),
+		wumpkit.WithRESTConfig(wumpkit.RequesterConfig{BaseURL: server.URL}),
+	)
 
-	resp, err := client.RefreshOAuth2Token(context.Background(), 111222333, "client_secret_xyz", "old_refresh_token")
+	resp, err := client.RefreshOAuth2Token(
+		context.Background(),
+		111222333,
+		"client_secret_xyz",
+		"old_refresh_token",
+	)
 	require.NoError(t, err)
 
 	assert.Equal(t, "refresh_token", capturedForm.Get("grant_type"))
@@ -163,9 +188,17 @@ func TestOAuth2_ClientCredentialsGrant(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := wumpkit.New(context.Background(), wumpkit.WithRESTConfig(wumpkit.RequesterConfig{BaseURL: server.URL}))
+	client := wumpkit.New(
+		context.Background(),
+		wumpkit.WithRESTConfig(wumpkit.RequesterConfig{BaseURL: server.URL}),
+	)
 
-	resp, err := client.ClientCredentialsGrant(context.Background(), 111222333, "client_secret_xyz", wumpkit.OAuth2ScopeApplicationsCommandsUpdate)
+	resp, err := client.ClientCredentialsGrant(
+		context.Background(),
+		111222333,
+		"client_secret_xyz",
+		wumpkit.OAuth2ScopeApplicationsCommandsUpdate,
+	)
 	require.NoError(t, err)
 
 	assert.Equal(t, "client_credentials", capturedForm.Get("grant_type"))
@@ -185,9 +218,18 @@ func TestOAuth2_RevokeOAuth2Token(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := wumpkit.New(context.Background(), wumpkit.WithRESTConfig(wumpkit.RequesterConfig{BaseURL: server.URL}))
+	client := wumpkit.New(
+		context.Background(),
+		wumpkit.WithRESTConfig(wumpkit.RequesterConfig{BaseURL: server.URL}),
+	)
 
-	err := client.RevokeOAuth2Token(context.Background(), 111222333, "client_secret_xyz", "token_to_revoke", "access_token")
+	err := client.RevokeOAuth2Token(
+		context.Background(),
+		111222333,
+		"client_secret_xyz",
+		"token_to_revoke",
+		"access_token",
+	)
 	require.NoError(t, err)
 
 	assert.Equal(t, "/oauth2/token/revoke", capturedPath)
@@ -216,7 +258,10 @@ func TestOAuth2_FetchCurrentAuthorization(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := wumpkit.New(context.Background(), wumpkit.WithRESTConfig(wumpkit.RequesterConfig{BaseURL: server.URL}))
+	client := wumpkit.New(
+		context.Background(),
+		wumpkit.WithRESTConfig(wumpkit.RequesterConfig{BaseURL: server.URL}),
+	)
 
 	info, err := client.FetchCurrentAuthorization(context.Background(), "mock_user_bearer_token")
 	require.NoError(t, err)
