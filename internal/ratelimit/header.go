@@ -67,7 +67,9 @@ func ParseHeaders(headers http.Header, statusCode int) HeaderInfo {
 	// use Retry-After for globals, shared limits, or when reset-after is omitted
 	// for shared/global 429s, Retry-After reflects the actual resource/global wait time
 	// which may differ from the per-route Reset-After
-	if resetAfterStr == "" || (scope != "user" && retryAfterStr != "") || (isGlobal && retryAfterStr != "") {
+	if resetAfterStr == "" ||
+		(scope != "user" && retryAfterStr != "") ||
+		(isGlobal && retryAfterStr != "") {
 		if retryAfterStr != "" {
 			resetAfterStr = retryAfterStr
 		}

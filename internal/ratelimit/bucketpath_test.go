@@ -6,7 +6,7 @@ import (
 )
 
 func TestPaths(t *testing.T) {
-	var tests = []struct {
+	tests := []struct {
 		path, method, want string
 	}{
 		// guild Major

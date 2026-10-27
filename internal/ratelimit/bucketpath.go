@@ -218,7 +218,8 @@ func NormalizeRoute(url string, method string) string {
 	for _, part := range parts[2:numParts] {
 		if IsSnowflake(part) {
 			// discord 14-day message delete rate limit rule
-			if currMajor == MajorChannels && numParts == 4 && parts[2] == "messages" && method == "DELETE" {
+			if currMajor == MajorChannels && numParts == 4 &&
+				parts[2] == "messages" && method == "DELETE" {
 				createdAt, _ := SnowflakeCreatedAt(part)
 				now := time.Now()
 				if createdAt.Before(now.Add(-14 * 24 * time.Hour)) {
