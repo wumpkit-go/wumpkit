@@ -608,9 +608,11 @@ func (c *InMemoryCacheManager) CountStickers(ctx context.Context) int    { retur
 func (c *InMemoryCacheManager) CountStageInstances(ctx context.Context) int {
 	return c.stageInstances.Len()
 }
+
 func (c *InMemoryCacheManager) CountGuildScheduledEvents(ctx context.Context) int {
 	return c.scheduledEvents.Len()
 }
+
 func (c *InMemoryCacheManager) CountAutoModerationRules(ctx context.Context) int {
 	return c.autoModRules.Len()
 }

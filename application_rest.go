@@ -73,7 +73,7 @@ func (r *requester) FetchCurrentApplication(ctx context.Context) (Application, e
 	if err != nil {
 		return Application{}, err
 	}
-	defer body.Close()
+	defer func() { _ = body.Close() }()
 
 	var app Application
 	if err := json.NewDecoder(body).Decode(&app); err != nil {
@@ -100,7 +100,7 @@ func (r *requester) EditCurrentApplication(ctx context.Context, opts EditCurrent
 	if err != nil {
 		return Application{}, err
 	}
-	defer body.Close()
+	defer func() { _ = body.Close() }()
 
 	var app Application
 	if err := json.NewDecoder(body).Decode(&app); err != nil {
@@ -125,7 +125,7 @@ func (r *requester) FetchApplicationActivityInstance(ctx context.Context, applic
 	if err != nil {
 		return ApplicationActivityInstance{}, err
 	}
-	defer body.Close()
+	defer func() { _ = body.Close() }()
 
 	var instance ApplicationActivityInstance
 	if err := json.NewDecoder(body).Decode(&instance); err != nil {
@@ -150,7 +150,7 @@ func (r *requester) FetchApplicationRoleConnectionMetadata(ctx context.Context, 
 	if err != nil {
 		return nil, err
 	}
-	defer body.Close()
+	defer func() { _ = body.Close() }()
 
 	var records []ApplicationRoleConnectionMetadata
 	if err := json.NewDecoder(body).Decode(&records); err != nil {
@@ -177,7 +177,7 @@ func (r *requester) UpdateApplicationRoleConnectionMetadata(ctx context.Context,
 	if err != nil {
 		return nil, err
 	}
-	defer body.Close()
+	defer func() { _ = body.Close() }()
 
 	var updated []ApplicationRoleConnectionMetadata
 	if err := json.NewDecoder(body).Decode(&updated); err != nil {

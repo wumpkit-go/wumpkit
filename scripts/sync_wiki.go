@@ -21,9 +21,11 @@ type Page struct {
 	Content  string
 }
 
-var frontmatterRegex = regexp.MustCompile(`(?s)^---\r?\n(.*?)\r?\n---\r?\n?`)
-var titleRegex = regexp.MustCompile(`(?m)^title:\s*["']?(.*?)["']?$`)
-var weightRegex = regexp.MustCompile(`(?m)^weight:\s*(\d+)$`)
+var (
+	frontmatterRegex = regexp.MustCompile(`(?s)^---\r?\n(.*?)\r?\n---\r?\n?`)
+	titleRegex       = regexp.MustCompile(`(?m)^title:\s*["']?(.*?)["']?$`)
+	weightRegex      = regexp.MustCompile(`(?m)^weight:\s*(\d+)$`)
+)
 
 func main() {
 	contentDir := flag.String("content", "docs/content", "path to hugo content directory")
