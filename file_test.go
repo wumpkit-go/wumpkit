@@ -47,7 +47,7 @@ func TestFile_Download(t *testing.T) {
 
 func TestFile_NewImageFile(t *testing.T) {
 	imgPath := filepath.Join(t.TempDir(), "test.png")
-	err := os.WriteFile(imgPath, decodeBase64(base64Png), 0644)
+	err := os.WriteFile(imgPath, decodeBase64(base64Png), 0o644)
 	require.NoError(t, err)
 
 	dataURI, err := NewImageFile(imgPath)
@@ -57,7 +57,7 @@ func TestFile_NewImageFile(t *testing.T) {
 
 func TestFile_NewImageFile_NonImage(t *testing.T) {
 	txtPath := filepath.Join(t.TempDir(), "not_image.txt")
-	err := os.WriteFile(txtPath, []byte("hello world"), 0644)
+	err := os.WriteFile(txtPath, []byte("hello world"), 0o644)
 	require.NoError(t, err)
 
 	_, err = NewImageFile(txtPath)

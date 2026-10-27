@@ -50,7 +50,8 @@ func (r *requester) FetchGuild(ctx context.Context, guildID Snowflake, opts ...F
 	var guild RestGuild
 	if err := json.NewDecoder(body).Decode(&guild); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}",
 				"error", err.Error(),
 			)
@@ -74,7 +75,8 @@ func (r *requester) FetchGuildPreview(ctx context.Context, guildID Snowflake) (G
 	var preview GuildPreview
 	if err := json.NewDecoder(body).Decode(&preview); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/preview",
 				"error", err.Error(),
 			)
@@ -171,7 +173,8 @@ func (r *requester) FetchGuildChannels(ctx context.Context, guildID Snowflake) (
 	var rawChannels []json.RawMessage
 	if err := json.NewDecoder(body).Decode(&rawChannels); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/channels",
 				"error", err.Error(),
 			)
@@ -350,7 +353,8 @@ func (r *requester) CreateChannel(ctx context.Context, guildID Snowflake, opts C
 	channel, err := UnmarshalChannel(bodyBytes)
 	if err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "POST",
+			Error(
+				"failed parsing response", "method", "POST",
 				"url", "/guilds/{id}/channels",
 				"error", err.Error(),
 			)
@@ -431,7 +435,8 @@ func (r *requester) ListActiveGuildThreads(ctx context.Context, guildID Snowflak
 	var response ActiveThreadsResponse
 	if err := json.NewDecoder(body).Decode(&response); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/threads/active",
 				"error", err.Error(),
 			)
@@ -453,7 +458,8 @@ func (r *requester) FetchMember(ctx context.Context, guildID, userID Snowflake) 
 	var member FullMember
 	if err := json.NewDecoder(body).Decode(&member); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/members/{user_id}",
 				"error", err.Error(),
 			)
@@ -514,7 +520,8 @@ func (r *requester) ListMembers(ctx context.Context, guildID Snowflake, opts ...
 	var members []FullMember
 	if err := json.NewDecoder(body).Decode(&members); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/members",
 				"error", err.Error(),
 			)
@@ -564,7 +571,8 @@ func (r *requester) SearchMembers(ctx context.Context, guildID Snowflake, opts S
 	var members []FullMember
 	if err := json.NewDecoder(body).Decode(&members); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/members/search",
 				"error", err.Error(),
 			)
@@ -637,7 +645,8 @@ func (r *requester) AddGuildMember(ctx context.Context, guildID, userID Snowflak
 	var member FullMember
 	if err := json.NewDecoder(body).Decode(&member); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "PUT",
+			Error(
+				"failed parsing response", "method", "PUT",
 				"url", "/guilds/{id}/members/{user_id}",
 				"error", err.Error(),
 			)
@@ -724,7 +733,8 @@ func (r *requester) ModifyMember(ctx context.Context, guildID, userID Snowflake,
 	var member FullMember
 	if err := json.NewDecoder(body).Decode(&member); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "PATCH",
+			Error(
+				"failed parsing response", "method", "PATCH",
 				"url", "/guilds/{id}/members/{user_id}",
 				"error", err.Error(),
 			)
@@ -782,7 +792,8 @@ func (r *requester) ModifyCurrentMember(ctx context.Context, guildID Snowflake, 
 	var member FullMember
 	if err := json.NewDecoder(body).Decode(&member); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "PATCH",
+			Error(
+				"failed parsing response", "method", "PATCH",
 				"url", "/guilds/{id}/members/@me",
 				"error", err.Error(),
 			)
@@ -909,7 +920,8 @@ func (r *requester) FetchGuildBans(ctx context.Context, guildID Snowflake, opts 
 	var bans []Ban
 	if err := json.NewDecoder(body).Decode(&bans); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/bans",
 				"error", err.Error(),
 			)
@@ -938,7 +950,8 @@ func (r *requester) FetchGuildBan(ctx context.Context, guildID, userID Snowflake
 		}
 
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/bans/{user_id}",
 				"error", err.Error(),
 			)
@@ -1041,7 +1054,8 @@ func (r *requester) BulkBanMembers(ctx context.Context, guildID Snowflake, opts 
 	var response BulkBanResponse
 	if err := json.NewDecoder(body).Decode(&response); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "POST",
+			Error(
+				"failed parsing response", "method", "POST",
 				"url", "/guilds/{id}/bulk-ban",
 				"error", err.Error(),
 			)
@@ -1064,7 +1078,8 @@ func (r *requester) FetchRoles(ctx context.Context, guildID Snowflake) ([]Role, 
 	var roles []Role
 	if err := json.NewDecoder(body).Decode(&roles); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/roles",
 				"error", err.Error(),
 			)
@@ -1090,7 +1105,8 @@ func (r *requester) FetchRole(ctx context.Context, guildID, roleID Snowflake) (R
 	var role Role
 	if err := json.NewDecoder(body).Decode(&role); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/roles/{id}",
 				"error", err.Error(),
 			)
@@ -1117,7 +1133,8 @@ func (r *requester) FetchRolesMemberCount(ctx context.Context, guildID Snowflake
 	var rolesMemberCount map[Snowflake]int
 	if err := json.NewDecoder(body).Decode(&rolesMemberCount); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/roles/member-counts",
 				"error", err.Error(),
 			)
@@ -1174,7 +1191,8 @@ func (r *requester) CreateRole(ctx context.Context, guildID Snowflake, opts Crea
 	var role Role
 	if err := json.NewDecoder(body).Decode(&role); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "POST",
+			Error(
+				"failed parsing response", "method", "POST",
 				"url", "/guilds/{id}/roles",
 				"error", err.Error(),
 			)
@@ -1218,7 +1236,8 @@ func (r *requester) ModifyRolePositions(ctx context.Context, guildID Snowflake, 
 	var roles []Role
 	if err := json.NewDecoder(body).Decode(&roles); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "PATCH",
+			Error(
+				"failed parsing response", "method", "PATCH",
 				"url", "/guilds/{id}/roles",
 				"error", err.Error(),
 			)
@@ -1275,7 +1294,8 @@ func (r *requester) ModifyRole(ctx context.Context, guildID, roleID Snowflake, o
 	var role Role
 	if err := json.NewDecoder(body).Decode(&role); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "PATCH",
+			Error(
+				"failed parsing response", "method", "PATCH",
 				"url", "/guilds/{id}/roles/{role_id}",
 				"error", err.Error(),
 			)
@@ -1359,7 +1379,8 @@ func (r *requester) FetchGuildPruneCount(ctx context.Context, guildID Snowflake,
 	var count PruneCount
 	if err := json.NewDecoder(body).Decode(&count); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/prune",
 				"error", err.Error(),
 			)
@@ -1405,7 +1426,8 @@ func (r *requester) BeginGuildPrune(ctx context.Context, guildID Snowflake, opts
 	var count PruneCount
 	if err := json.NewDecoder(body).Decode(&count); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "POST",
+			Error(
+				"failed parsing response", "method", "POST",
 				"url", "/guilds/{id}/prune",
 				"error", err.Error(),
 			)
@@ -1428,7 +1450,8 @@ func (r *requester) FetchGuildVoiceRegions(ctx context.Context, guildID Snowflak
 	var regions []VoiceRegion
 	if err := json.NewDecoder(body).Decode(&regions); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/regions",
 				"error", err.Error(),
 			)
@@ -1453,7 +1476,8 @@ func (r *requester) FetchGuildInvites(ctx context.Context, guildID Snowflake) ([
 	var invites []FullInvite
 	if err := json.NewDecoder(body).Decode(&invites); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/invites",
 				"error", err.Error(),
 			)
@@ -1480,7 +1504,8 @@ func (r *requester) FetchGuildIntegrations(ctx context.Context, guildID Snowflak
 	var integrations []Integration
 	if err := json.NewDecoder(body).Decode(&integrations); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/integrations",
 				"error", err.Error(),
 			)
@@ -1524,7 +1549,8 @@ func (r *requester) FetchGuildWidgetSettings(ctx context.Context, guildID Snowfl
 	var settings GuildWidgetSettings
 	if err := json.NewDecoder(body).Decode(&settings); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/widget",
 				"error", err.Error(),
 			)
@@ -1559,7 +1585,8 @@ func (r *requester) ModifyGuildWidget(ctx context.Context, guildID Snowflake, op
 	var settings GuildWidgetSettings
 	if err := json.NewDecoder(body).Decode(&settings); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "PATCH",
+			Error(
+				"failed parsing response", "method", "PATCH",
 				"url", "/guilds/{id}/widget",
 				"error", err.Error(),
 			)
@@ -1581,7 +1608,8 @@ func (r *requester) FetchGuildWidget(ctx context.Context, guildID Snowflake) (Gu
 	var widget GuildWidget
 	if err := json.NewDecoder(body).Decode(&widget); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/widget.json",
 				"error", err.Error(),
 			)
@@ -1616,7 +1644,8 @@ func (r *requester) FetchGuildVanityURL(ctx context.Context, guildID Snowflake) 
 	var partialInvite PartialInvite
 	if err := json.NewDecoder(body).Decode(&partialInvite); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/vanity-url",
 				"error", err.Error(),
 			)
@@ -1676,7 +1705,8 @@ func (r *requester) FetchGuildWelcomeScreen(ctx context.Context, guildID Snowfla
 	var screen GuildWelcomeScreen
 	if err := json.NewDecoder(body).Decode(&screen); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/welcome-screen",
 				"error", err.Error(),
 			)
@@ -1722,7 +1752,8 @@ func (r *requester) ModifyGuildWelcomeScreen(ctx context.Context, guildID Snowfl
 	var screen GuildWelcomeScreen
 	if err := json.NewDecoder(body).Decode(&screen); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "PATCH",
+			Error(
+				"failed parsing response", "method", "PATCH",
 				"url", "/guilds/{id}/welcome-screen",
 				"error", err.Error(),
 			)
@@ -1746,7 +1777,8 @@ func (r *requester) FetchGuildOnboarding(ctx context.Context, guildID Snowflake)
 	var onboarding GuildOnboarding
 	if err := json.NewDecoder(body).Decode(&onboarding); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/onboarding",
 				"error", err.Error(),
 			)
@@ -1800,7 +1832,8 @@ func (r *requester) ModifyGuildOnboarding(ctx context.Context, guildID Snowflake
 	var onboarding GuildOnboarding
 	if err := json.NewDecoder(body).Decode(&onboarding); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "PUT",
+			Error(
+				"failed parsing response", "method", "PUT",
 				"url", "/guilds/{id}/onboarding",
 				"error", err.Error(),
 			)
@@ -1847,7 +1880,8 @@ func (r *requester) ModifyGuildIncidentActions(ctx context.Context, guildID Snow
 	var incidentsData GuildIncidentsData
 	if err := json.NewDecoder(body).Decode(&incidentsData); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "PUT",
+			Error(
+				"failed parsing response", "method", "PUT",
 				"url", "/guilds/{id}/incident-actions",
 				"error", err.Error(),
 			)

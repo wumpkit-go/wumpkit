@@ -331,7 +331,8 @@ func (sm *ShardManager) Start(ctx context.Context, totalShards int) error {
 		}
 	}
 
-	sm.logger.Info("starting shard manager",
+	sm.logger.Info(
+		"starting shard manager",
 		"total_shards", totalShards,
 		"managed_shards", shardIDs,
 		"compression", sm.compression,
@@ -964,7 +965,8 @@ func (s *Shard) handleDisconnectError(err error) {
 		reason = closeErr.Reason
 	}
 
-	s.logger.Warn("gateway connection closed",
+	s.logger.Warn(
+		"gateway connection closed",
 		"code", code,
 		"reason", reason,
 		"error", err.Error(),

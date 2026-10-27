@@ -38,7 +38,8 @@ func (r *requester) FetchGateway(ctx context.Context) (GatewayInfo, error) {
 
 	var obj GatewayInfo
 	if err := json.NewDecoder(body).Decode(&obj); err != nil {
-		r.logger.Error("failed parsing response",
+		r.logger.Error(
+			"failed parsing response",
 			"method", "GET",
 			"url", "/gateway",
 			"error", err.Error(),
@@ -63,7 +64,8 @@ func (r *requester) FetchGatewayBot(ctx context.Context) (GatewayBot, error) {
 
 	var obj GatewayBot
 	if err := json.NewDecoder(body).Decode(&obj); err != nil {
-		r.logger.Error("failed parsing response",
+		r.logger.Error(
+			"failed parsing response",
 			"method", "GET",
 			"url", "/gateway/bot",
 			"error", err.Error(),

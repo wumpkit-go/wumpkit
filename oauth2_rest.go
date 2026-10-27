@@ -48,7 +48,8 @@ func (r *requester) ExchangeOAuth2Code(ctx context.Context, clientID Snowflake, 
 
 	var resp OAuth2TokenResponse
 	if err := json.NewDecoder(body).Decode(&resp); err != nil {
-		r.logger.Error("failed parsing response",
+		r.logger.Error(
+			"failed parsing response",
 			"method", "POST",
 			"url", "/oauth2/token",
 			"error", err.Error(),
@@ -84,7 +85,8 @@ func (r *requester) RefreshOAuth2Token(ctx context.Context, clientID Snowflake, 
 
 	var resp OAuth2TokenResponse
 	if err := json.NewDecoder(body).Decode(&resp); err != nil {
-		r.logger.Error("failed parsing response",
+		r.logger.Error(
+			"failed parsing response",
 			"method", "POST",
 			"url", "/oauth2/token",
 			"error", err.Error(),
@@ -127,7 +129,8 @@ func (r *requester) ClientCredentialsGrant(ctx context.Context, clientID Snowfla
 
 	var resp OAuth2TokenResponse
 	if err := json.NewDecoder(body).Decode(&resp); err != nil {
-		r.logger.Error("failed parsing response",
+		r.logger.Error(
+			"failed parsing response",
 			"method", "POST",
 			"url", "/oauth2/token",
 			"error", err.Error(),
@@ -185,7 +188,8 @@ func (r *requester) FetchCurrentAuthorization(ctx context.Context, accessToken s
 
 	var info CurrentAuthorizationInformation
 	if err := json.NewDecoder(body).Decode(&info); err != nil {
-		r.logger.Error("failed parsing response",
+		r.logger.Error(
+			"failed parsing response",
 			"method", "GET",
 			"url", "/oauth2/@me",
 			"error", err.Error(),

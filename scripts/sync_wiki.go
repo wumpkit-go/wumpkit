@@ -53,14 +53,14 @@ func main() {
 		return
 	}
 
-	if err := os.MkdirAll(*targetDir, 0755); err != nil {
+	if err := os.MkdirAll(*targetDir, 0o755); err != nil {
 		fmt.Printf("failed creating target dir: %v\n", err)
 		os.Exit(1)
 	}
 
 	for _, p := range pages {
 		destPath := filepath.Join(*targetDir, p.WikiName+".md")
-		if err := os.WriteFile(destPath, []byte(p.Content), 0644); err != nil {
+		if err := os.WriteFile(destPath, []byte(p.Content), 0o644); err != nil {
 			fmt.Printf("failed writing %s: %v\n", destPath, err)
 			os.Exit(1)
 		}
@@ -68,7 +68,7 @@ func main() {
 	}
 
 	sidebarPath := filepath.Join(*targetDir, "_Sidebar.md")
-	if err := os.WriteFile(sidebarPath, []byte(sidebarContent), 0644); err != nil {
+	if err := os.WriteFile(sidebarPath, []byte(sidebarContent), 0o644); err != nil {
 		fmt.Printf("failed writing _Sidebar.md: %v\n", err)
 		os.Exit(1)
 	}

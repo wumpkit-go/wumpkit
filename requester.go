@@ -285,7 +285,8 @@ func (r *requester) DoRequest(ctx context.Context, req Request) (io.ReadCloser, 
 
 	for i := range r.config.MaxRetries + 1 {
 		if i > 0 {
-			r.logger.Debug("retrying request",
+			r.logger.Debug(
+				"retrying request",
 				"method", req.Method,
 				"url", fullURL,
 				"attempt", i+1,
@@ -351,7 +352,8 @@ func (r *requester) DoRequest(ctx context.Context, req Request) (io.ReadCloser, 
 				break
 			}
 			backoff := computeBackoff(i, 100*time.Millisecond, 3*time.Second)
-			r.logger.Warn("request network error, retrying",
+			r.logger.Warn(
+				"request network error, retrying",
 				"method", req.Method,
 				"endpoint", req.URL,
 				"error", err,
@@ -386,7 +388,7 @@ func (r *requester) DoRequest(ctx context.Context, req Request) (io.ReadCloser, 
 
 		// rate limited (429): sleep according to retry-after header or json body with small jitter
 		if resp.StatusCode == http.StatusTooManyRequests {
-			var sleepDuration = 500 * time.Millisecond
+			sleepDuration := 500 * time.Millisecond
 			if retryAfterHeader := resp.Header.Get(headerRetryAfter); retryAfterHeader != "" {
 				if s, parseErr := strconv.ParseFloat(retryAfterHeader, 64); parseErr == nil && s > 0 {
 					sleepDuration = time.Duration(s * float64(time.Second))
@@ -406,7 +408,8 @@ func (r *requester) DoRequest(ctx context.Context, req Request) (io.ReadCloser, 
 			jitter := time.Duration(rand.Int64N(40)+10) * time.Millisecond
 			sleepDuration += jitter
 
-			r.logger.Warn("rate limited by Discord",
+			r.logger.Warn(
+				"rate limited by Discord",
 				"method", req.Method,
 				"endpoint", req.URL,
 				"retry_after", sleepDuration.String(),
@@ -421,7 +424,8 @@ func (r *requester) DoRequest(ctx context.Context, req Request) (io.ReadCloser, 
 
 		// server Error (5xx / 524): exponential backoff with jitter
 		backoff := computeBackoff(i, 100*time.Millisecond, 3*time.Second)
-		r.logger.Warn("request failed with retryable status",
+		r.logger.Warn(
+			"request failed with retryable status",
 			"method", req.Method,
 			"endpoint", req.URL,
 			"status", resp.StatusCode,

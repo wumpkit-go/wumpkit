@@ -112,7 +112,8 @@ func (r *requester) ListDefaultSoundboardSounds(ctx context.Context) ([]SoundBoa
 
 	var sounds []SoundBoardSound
 	if err := json.NewDecoder(body).Decode(&sounds); err != nil {
-		r.logger.Error("failed parsing response",
+		r.logger.Error(
+			"failed parsing response",
 			"method", "GET",
 			"url", "/soundboard-default-sounds",
 			"error", err.Error(),
@@ -138,7 +139,8 @@ func (r *requester) ListGuildSoundboardSounds(ctx context.Context, guildID Snowf
 	var resp GuildSoundboardSoundsResponse
 	if err := json.NewDecoder(body).Decode(&resp); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/soundboard-sounds",
 				"error", err.Error(),
 			)
@@ -166,7 +168,8 @@ func (r *requester) FetchGuildSoundboardSound(ctx context.Context, guildID, soun
 	var sound SoundBoardSound
 	if err := json.NewDecoder(body).Decode(&sound); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/soundboard-sounds/{id}",
 				"error", err.Error(),
 			)
@@ -197,7 +200,8 @@ func (r *requester) CreateGuildSoundboardSound(ctx context.Context, guildID Snow
 	var sound SoundBoardSound
 	if err := json.NewDecoder(body).Decode(&sound); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "POST",
+			Error(
+				"failed parsing response", "method", "POST",
 				"url", "/guilds/{id}/soundboard-sounds",
 				"error", err.Error(),
 			)
@@ -228,7 +232,8 @@ func (r *requester) ModifyGuildSoundboardSound(ctx context.Context, guildID, sou
 	var sound SoundBoardSound
 	if err := json.NewDecoder(body).Decode(&sound); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "PATCH",
+			Error(
+				"failed parsing response", "method", "PATCH",
 				"url", "/guilds/{id}/soundboard-sounds/{id}",
 				"error", err.Error(),
 			)

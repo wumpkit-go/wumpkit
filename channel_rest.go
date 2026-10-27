@@ -337,7 +337,8 @@ func (r *requester) FetchChannel(ctx context.Context, channelID Snowflake) (Chan
 	channel, err := UnmarshalChannel(bodyBytes)
 	if err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/channels/{id}",
 				"error", err.Error(),
 			)
@@ -366,7 +367,8 @@ func (r *requester) modifyChannel(ctx context.Context, channelID Snowflake, reqB
 	channel, err := UnmarshalChannel(bodyBytes)
 	if err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "PATCH",
+			Error(
+				"failed parsing response", "method", "PATCH",
 				"url", "/channels/{id}",
 				"error", err.Error(),
 			)
@@ -440,7 +442,8 @@ func (r *requester) DeleteChannel(ctx context.Context, channelID Snowflake, opts
 	channel, err := UnmarshalChannel(bodyBytes)
 	if err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "DELETE",
+			Error(
+				"failed parsing response", "method", "DELETE",
 				"url", "/channels/{id}",
 				"error", err.Error(),
 			)
@@ -481,7 +484,8 @@ func (r *requester) FetchChannelInvites(ctx context.Context, channelID Snowflake
 	var invites []FullInvite
 	if err := json.NewDecoder(body).Decode(&invites); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/channels/{id}/invites",
 				"error", err.Error(),
 			)
@@ -509,7 +513,8 @@ func (r *requester) CreateChannelInvite(ctx context.Context, channelID Snowflake
 	var invite Invite
 	if err := json.NewDecoder(body).Decode(&invite); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "POST",
+			Error(
+				"failed parsing response", "method", "POST",
 				"url", "/channels/{id}/invites",
 				"error", err.Error(),
 			)
@@ -553,7 +558,8 @@ func (r *requester) FollowAnnouncementChannel(ctx context.Context, channelID Sno
 	var followedChannel FollowedChannel
 	if err := json.NewDecoder(body).Decode(&followedChannel); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "POST",
+			Error(
+				"failed parsing response", "method", "POST",
 				"url", "/channels/{id}/followers",
 				"error", err.Error(),
 			)
@@ -625,7 +631,8 @@ func (r *requester) StartThreadFromMessage(ctx context.Context, channelID Snowfl
 	channel, err := UnmarshalChannel(bodyBytes)
 	if err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "POST",
+			Error(
+				"failed parsing response", "method", "POST",
 				"url", "/channels/{id}/messages/{msg_id}/threads",
 				"error", err.Error(),
 			)
@@ -659,7 +666,8 @@ func (r *requester) StartThreadWithoutMessage(ctx context.Context, channelID Sno
 	channel, err := UnmarshalChannel(bodyBytes)
 	if err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "POST",
+			Error(
+				"failed parsing response", "method", "POST",
 				"url", "/channels/{id}/threads",
 				"error", err.Error(),
 			)
@@ -742,7 +750,8 @@ func (r *requester) FetchThreadMember(ctx context.Context, channelID Snowflake, 
 	var member ThreadMember
 	if err := json.NewDecoder(body).Decode(&member); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/channels/{id}/thread-members/{id}",
 				"error", err.Error(),
 			)
@@ -779,7 +788,8 @@ func (r *requester) ListThreadMembers(ctx context.Context, channelID Snowflake, 
 	var members []ThreadMember
 	if err := json.NewDecoder(body).Decode(&members); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/channels/{id}/thread-members",
 				"error", err.Error(),
 			)
@@ -803,7 +813,8 @@ func (r *requester) listArchivedThreads(ctx context.Context, channelID Snowflake
 	var response ListArchivedThreadsResponse
 	if err := json.NewDecoder(body).Decode(&response); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/channels/{id}"+subEndPoint,
 				"error", err.Error(),
 			)

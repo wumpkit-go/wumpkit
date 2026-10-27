@@ -71,7 +71,8 @@ func (r *requester) FetchSticker(ctx context.Context, stickerID Snowflake) (Stic
 	var sticker Sticker
 	if err := json.NewDecoder(body).Decode(&sticker); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/stickers/{id}",
 				"error", err.Error(),
 			)
@@ -95,7 +96,8 @@ func (r *requester) ListNitroStickerPacks(ctx context.Context) ([]StickerPack, e
 
 	var response NitroStickerPacksResponse
 	if err := json.NewDecoder(body).Decode(&response); err != nil {
-		r.logger.Error("failed parsing response",
+		r.logger.Error(
+			"failed parsing response",
 			"method", "GET",
 			"url", "/sticker-packs",
 			"error", err.Error(),
@@ -121,7 +123,8 @@ func (r *requester) ListGuildStickers(ctx context.Context, guildID Snowflake) ([
 	var stickers []Sticker
 	if err := json.NewDecoder(body).Decode(&stickers); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/stickers",
 				"error", err.Error(),
 			)
@@ -149,7 +152,8 @@ func (r *requester) FetchGuildSticker(ctx context.Context, guildID, stickerID Sn
 	var sticker Sticker
 	if err := json.NewDecoder(body).Decode(&sticker); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/stickers/{id}",
 				"error", err.Error(),
 			)
@@ -188,7 +192,8 @@ func (r *requester) CreateGuildSticker(ctx context.Context, guildID Snowflake, o
 	var sticker Sticker
 	if err := json.NewDecoder(body).Decode(&sticker); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "POST",
+			Error(
+				"failed parsing response", "method", "POST",
 				"url", "/guilds/{id}/stickers",
 				"error", err.Error(),
 			)
@@ -219,7 +224,8 @@ func (r *requester) ModifyGuildSticker(ctx context.Context, guildID, stickerID S
 	var sticker Sticker
 	if err := json.NewDecoder(body).Decode(&sticker); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "PATCH",
+			Error(
+				"failed parsing response", "method", "PATCH",
 				"url", "/guilds/{id}/stickers/{id}",
 				"error", err.Error(),
 			)

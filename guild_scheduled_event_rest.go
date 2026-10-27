@@ -151,7 +151,8 @@ func (r *requester) ListGuildScheduledEvents(ctx context.Context, guildID Snowfl
 	var events []GuildScheduledEvent
 	if err := json.NewDecoder(body).Decode(&events); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/scheduled-events",
 				"error", err.Error(),
 			)
@@ -184,7 +185,8 @@ func (r *requester) CreateGuildScheduledEvent(ctx context.Context, guildID Snowf
 	var event GuildScheduledEvent
 	if err := json.NewDecoder(body).Decode(&event); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "POST",
+			Error(
+				"failed parsing response", "method", "POST",
 				"url", "/guilds/{id}/scheduled-events",
 				"error", err.Error(),
 			)
@@ -215,7 +217,8 @@ func (r *requester) FetchGuildScheduledEvent(ctx context.Context, guildID, event
 	var event GuildScheduledEvent
 	if err := json.NewDecoder(body).Decode(&event); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/scheduled-events/{id}",
 				"error", err.Error(),
 			)
@@ -244,7 +247,8 @@ func (r *requester) ModifyGuildScheduledEvent(ctx context.Context, guildID, even
 	var event GuildScheduledEvent
 	if err := json.NewDecoder(body).Decode(&event); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "PATCH",
+			Error(
+				"failed parsing response", "method", "PATCH",
 				"url", "/guilds/{id}/scheduled-events/{id}",
 				"error", err.Error(),
 			)
@@ -309,7 +313,8 @@ func (r *requester) FetchGuildScheduledEventUsers(ctx context.Context, guildID, 
 	var users []GuildScheduledEventUser
 	if err := json.NewDecoder(body).Decode(&users); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/scheduled-events/{id}/users",
 				"error", err.Error(),
 			)

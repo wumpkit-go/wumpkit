@@ -92,7 +92,8 @@ func (r *requester) ListGuildEmojis(ctx context.Context, guildID Snowflake) ([]E
 	var emojis []Emoji
 	if err := json.NewDecoder(body).Decode(&emojis); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/emojis",
 				"error", err.Error(),
 			)
@@ -120,7 +121,8 @@ func (r *requester) FetchGuildEmoji(ctx context.Context, guildID, emojiID Snowfl
 	var emoji Emoji
 	if err := json.NewDecoder(body).Decode(&emoji); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/emojis/{id}",
 				"error", err.Error(),
 			)
@@ -153,7 +155,8 @@ func (r *requester) CreateGuildEmoji(ctx context.Context, guildID Snowflake, opt
 	var emoji Emoji
 	if err := json.NewDecoder(body).Decode(&emoji); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "POST",
+			Error(
+				"failed parsing response", "method", "POST",
 				"url", "/guilds/{id}/emojis",
 				"error", err.Error(),
 			)
@@ -184,7 +187,8 @@ func (r *requester) ModifyGuildEmoji(ctx context.Context, guildID, emojiID Snowf
 	var emoji Emoji
 	if err := json.NewDecoder(body).Decode(&emoji); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "PATCH",
+			Error(
+				"failed parsing response", "method", "PATCH",
 				"url", "/guilds/{id}/emojis/{id}",
 				"error", err.Error(),
 			)
@@ -231,7 +235,8 @@ func (r *requester) ListApplicationEmojis(ctx context.Context, applicationID Sno
 	var response applicationEmojisResponse
 	if err := json.NewDecoder(body).Decode(&response); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/applications/{id}/emojis",
 				"error", err.Error(),
 			)
@@ -258,7 +263,8 @@ func (r *requester) FetchApplicationEmoji(ctx context.Context, applicationID, em
 	var emoji Emoji
 	if err := json.NewDecoder(body).Decode(&emoji); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/applications/{id}/emojis/{id}",
 				"error", err.Error(),
 			)
@@ -288,7 +294,8 @@ func (r *requester) CreateApplicationEmoji(ctx context.Context, applicationID Sn
 	var emoji Emoji
 	if err := json.NewDecoder(body).Decode(&emoji); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "POST",
+			Error(
+				"failed parsing response", "method", "POST",
 				"url", "/applications/{id}/emojis",
 				"error", err.Error(),
 			)
@@ -315,7 +322,8 @@ func (r *requester) ModifyApplicationEmoji(ctx context.Context, applicationID, e
 	var emoji Emoji
 	if err := json.NewDecoder(body).Decode(&emoji); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "PATCH",
+			Error(
+				"failed parsing response", "method", "PATCH",
 				"url", "/applications/{id}/emojis/{id}",
 				"error", err.Error(),
 			)

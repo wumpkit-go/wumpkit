@@ -97,7 +97,8 @@ func (r *requester) ListSKUs(ctx context.Context, applicationID Snowflake) ([]SK
 	var skus []SKU
 	if err := json.NewDecoder(body).Decode(&skus); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/applications/{id}/skus",
 				"error", err.Error(),
 			)
@@ -165,7 +166,8 @@ func (r *requester) ListEntitlements(ctx context.Context, applicationID Snowflak
 	var entitlements []Entitlement
 	if err := json.NewDecoder(body).Decode(&entitlements); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/applications/{id}/entitlements",
 				"error", err.Error(),
 			)
@@ -190,7 +192,8 @@ func (r *requester) FetchEntitlement(ctx context.Context, applicationID, entitle
 	var ent Entitlement
 	if err := json.NewDecoder(body).Decode(&ent); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/applications/{id}/entitlements/{id}",
 				"error", err.Error(),
 			)
@@ -232,7 +235,8 @@ func (r *requester) CreateTestEntitlement(ctx context.Context, applicationID Sno
 	var ent Entitlement
 	if err := json.NewDecoder(body).Decode(&ent); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "POST",
+			Error(
+				"failed parsing response", "method", "POST",
 				"url", "/applications/{id}/entitlements",
 				"error", err.Error(),
 			)
@@ -296,7 +300,8 @@ func (r *requester) ListSKUSubscriptions(ctx context.Context, skuID Snowflake, o
 	var subs []Subscription
 	if err := json.NewDecoder(body).Decode(&subs); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/skus/{id}/subscriptions",
 				"error", err.Error(),
 			)
@@ -321,7 +326,8 @@ func (r *requester) FetchSKUSubscription(ctx context.Context, skuID, subscriptio
 	var sub Subscription
 	if err := json.NewDecoder(body).Decode(&sub); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/skus/{id}/subscriptions/{id}",
 				"error", err.Error(),
 			)

@@ -71,7 +71,8 @@ func main() {
 		for range ticker.C {
 			if sm := bot.ShardManager(); sm != nil {
 				for _, shard := range sm.Shards() {
-					log.Printf("[Shard %d/%d] Connected: %v | Latency: %v | Seq: %d",
+					log.Printf(
+						"[Shard %d/%d] Connected: %v | Latency: %v | Seq: %d",
 						shard.ShardID(),
 						shard.TotalShards(),
 						shard.IsConnected(),

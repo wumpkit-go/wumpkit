@@ -96,7 +96,8 @@ func (r *requester) FetchCurrentUser(ctx context.Context) (User, error) {
 
 	var user User
 	if err := json.NewDecoder(body).Decode(&user); err != nil {
-		r.logger.Error("failed parsing response",
+		r.logger.Error(
+			"failed parsing response",
 			"method", "GET",
 			"url", "/users/@me",
 			"error", err.Error(),
@@ -122,7 +123,8 @@ func (r *requester) FetchUser(ctx context.Context, userID Snowflake) (User, erro
 	var user User
 	if err := json.NewDecoder(body).Decode(&user); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/users/{id}",
 				"error", err.Error(),
 			)
@@ -148,7 +150,8 @@ func (r *requester) ModifyCurrentUser(ctx context.Context, opts ModifyCurrentUse
 
 	var user User
 	if err := json.NewDecoder(body).Decode(&user); err != nil {
-		r.logger.Error("failed parsing response",
+		r.logger.Error(
+			"failed parsing response",
 			"method", "PATCH",
 			"url", "/users/@me",
 			"error", err.Error(),
@@ -200,7 +203,8 @@ func (r *requester) FetchCurrentUserGuilds(ctx context.Context, opts ...FetchCur
 
 	var guilds []PartialGuild
 	if err := json.NewDecoder(body).Decode(&guilds); err != nil {
-		r.logger.Error("failed parsing response",
+		r.logger.Error(
+			"failed parsing response",
 			"method", "GET",
 			"url", "/users/@me/guilds",
 			"error", err.Error(),
@@ -226,7 +230,8 @@ func (r *requester) FetchCurrentUserGuildMember(ctx context.Context, guildID Sno
 	var member FullMember
 	if err := json.NewDecoder(body).Decode(&member); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/users/@me/guilds/{id}/member",
 				"error", err.Error(),
 			)
@@ -276,7 +281,8 @@ func (r *requester) CreateDM(ctx context.Context, recipientID Snowflake) (*DMCha
 
 	channel, err := UnmarshalChannel(bodyBytes)
 	if err != nil {
-		r.logger.Error("failed parsing response",
+		r.logger.Error(
+			"failed parsing response",
 			"method", "POST",
 			"url", "/users/@me/channels",
 			"error", err.Error(),
@@ -311,7 +317,8 @@ func (r *requester) CreateGroupDM(ctx context.Context, opts CreateGroupDMOptions
 
 	channel, err := UnmarshalChannel(bodyBytes)
 	if err != nil {
-		r.logger.Error("failed parsing response",
+		r.logger.Error(
+			"failed parsing response",
 			"method", "POST",
 			"url", "/users/@me/channels",
 			"error", err.Error(),
@@ -339,7 +346,8 @@ func (r *requester) FetchCurrentUserConnections(ctx context.Context) ([]Connecti
 
 	var connections []Connection
 	if err := json.NewDecoder(body).Decode(&connections); err != nil {
-		r.logger.Error("failed parsing response",
+		r.logger.Error(
+			"failed parsing response",
 			"method", "GET",
 			"url", "/users/@me/connections",
 			"error", err.Error(),
@@ -365,7 +373,8 @@ func (r *requester) FetchCurrentUserApplicationRoleConnection(ctx context.Contex
 	var roleConn ApplicationRoleConnection
 	if err := json.NewDecoder(body).Decode(&roleConn); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/users/@me/applications/{id}/role-connection",
 				"error", err.Error(),
 			)
@@ -392,7 +401,8 @@ func (r *requester) UpdateCurrentUserApplicationRoleConnection(ctx context.Conte
 	var roleConn ApplicationRoleConnection
 	if err := json.NewDecoder(body).Decode(&roleConn); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "PUT",
+			Error(
+				"failed parsing response", "method", "PUT",
 				"url", "/users/@me/applications/{id}/role-connection",
 				"error", err.Error(),
 			)
@@ -420,7 +430,8 @@ func (r *requester) FetchCurrentUserWithToken(ctx context.Context, accessToken s
 
 	var user User
 	if err := json.NewDecoder(body).Decode(&user); err != nil {
-		r.logger.Error("failed parsing response",
+		r.logger.Error(
+			"failed parsing response",
 			"method", "GET",
 			"url", "/users/@me",
 			"error", err.Error(),
@@ -472,7 +483,8 @@ func (r *requester) FetchCurrentUserGuildsWithToken(ctx context.Context, accessT
 
 	var guilds []PartialGuild
 	if err := json.NewDecoder(body).Decode(&guilds); err != nil {
-		r.logger.Error("failed parsing response",
+		r.logger.Error(
+			"failed parsing response",
 			"method", "GET",
 			"url", "/users/@me/guilds",
 			"error", err.Error(),

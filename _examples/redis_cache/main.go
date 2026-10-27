@@ -7,9 +7,9 @@ import (
 	"os"
 	"time"
 
+	goredis "github.com/redis/go-redis/v9"
 	"github.com/wumpkit/wumpkit"
 	"github.com/wumpkit/wumpkit/extra/redis"
-	goredis "github.com/redis/go-redis/v9"
 )
 
 func main() {

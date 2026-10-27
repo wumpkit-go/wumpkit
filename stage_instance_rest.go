@@ -75,7 +75,8 @@ func (r *requester) CreateStageInstance(ctx context.Context, opts CreateStageIns
 
 	var stage StageInstance
 	if err := json.NewDecoder(body).Decode(&stage); err != nil {
-		r.logger.Error("failed parsing response",
+		r.logger.Error(
+			"failed parsing response",
 			"method", "POST",
 			"url", "/stage-instances",
 			"error", err.Error(),
@@ -101,7 +102,8 @@ func (r *requester) FetchStageInstance(ctx context.Context, channelID Snowflake)
 	var stage StageInstance
 	if err := json.NewDecoder(body).Decode(&stage); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/stage-instances/{id}",
 				"error", err.Error(),
 			)
@@ -131,7 +133,8 @@ func (r *requester) ModifyStageInstance(ctx context.Context, channelID Snowflake
 	var stage StageInstance
 	if err := json.NewDecoder(body).Decode(&stage); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "PATCH",
+			Error(
+				"failed parsing response", "method", "PATCH",
 				"url", "/stage-instances/{id}",
 				"error", err.Error(),
 			)

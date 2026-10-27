@@ -77,7 +77,8 @@ func (r *requester) FetchCurrentApplication(ctx context.Context) (Application, e
 
 	var app Application
 	if err := json.NewDecoder(body).Decode(&app); err != nil {
-		r.logger.Error("failed parsing response",
+		r.logger.Error(
+			"failed parsing response",
 			"method", "GET",
 			"url", "/applications/@me",
 			"error", err.Error(),
@@ -104,7 +105,8 @@ func (r *requester) EditCurrentApplication(ctx context.Context, opts EditCurrent
 
 	var app Application
 	if err := json.NewDecoder(body).Decode(&app); err != nil {
-		r.logger.Error("failed parsing response",
+		r.logger.Error(
+			"failed parsing response",
 			"method", "PATCH",
 			"url", "/applications/@me",
 			"error", err.Error(),
@@ -130,7 +132,8 @@ func (r *requester) FetchApplicationActivityInstance(ctx context.Context, applic
 	var instance ApplicationActivityInstance
 	if err := json.NewDecoder(body).Decode(&instance); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/applications/{id}/activity-instances/{instance_id}",
 				"error", err.Error(),
 			)
@@ -155,7 +158,8 @@ func (r *requester) FetchApplicationRoleConnectionMetadata(ctx context.Context, 
 	var records []ApplicationRoleConnectionMetadata
 	if err := json.NewDecoder(body).Decode(&records); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/applications/{id}/role-connections/metadata",
 				"error", err.Error(),
 			)
@@ -182,7 +186,8 @@ func (r *requester) UpdateApplicationRoleConnectionMetadata(ctx context.Context,
 	var updated []ApplicationRoleConnectionMetadata
 	if err := json.NewDecoder(body).Decode(&updated); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "PUT",
+			Error(
+				"failed parsing response", "method", "PUT",
 				"url", "/applications/{id}/role-connections/metadata",
 				"error", err.Error(),
 			)

@@ -26,11 +26,13 @@ func TestSlashCommandBuilder(t *testing.T) {
 		SetDefaultMemberPermissions(PermissionBanMembers).
 		SetNSFW(false).
 		AddUserOption("target", "User to ban", true).
-		AddStringOption("reason", "Reason for the ban", false,
+		AddStringOption(
+			"reason", "Reason for the ban", false,
 			NewStringChoice("Spam", "spam"),
 			NewStringChoice("Harassment", "harassment"),
 		).
-		AddIntegerOption("delete_messages_days", "Days of messages to delete", false,
+		AddIntegerOption(
+			"delete_messages_days", "Days of messages to delete", false,
 			NewIntegerChoice("None", 0),
 			NewIntegerChoice("1 Day", 1),
 			NewIntegerChoice("7 Days", 7),
@@ -40,7 +42,8 @@ func TestSlashCommandBuilder(t *testing.T) {
 		AddMentionableOption("notify", "Entity to notify", false).
 		AddBooleanOption("silent", "Whether to ban silently", false).
 		AddAttachmentOption("proof", "Evidence screenshot or file", false).
-		AddFloatOption("score", "Confidence score", false,
+		AddFloatOption(
+			"score", "Confidence score", false,
 			NewFloatChoice("High", 1.0),
 			NewFloatChoice("Low", 0.5),
 		).

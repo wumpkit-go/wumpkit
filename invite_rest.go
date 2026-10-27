@@ -52,7 +52,8 @@ func (r *requester) FetchInvite(ctx context.Context, code string, opts FetchInvi
 	var invite Invite
 	if err := json.NewDecoder(body).Decode(&invite); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/invites/{code}",
 				"error", err.Error(),
 			)
@@ -78,7 +79,8 @@ func (r *requester) DeleteInvite(ctx context.Context, code string, opts DeleteIn
 	var invite Invite
 	if err := json.NewDecoder(body).Decode(&invite); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "DELETE",
+			Error(
+				"failed parsing response", "method", "DELETE",
 				"url", "/invites/{code}",
 				"error", err.Error(),
 			)

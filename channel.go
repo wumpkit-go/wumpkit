@@ -549,12 +549,14 @@ type TopicChannelFields struct {
 
 type Bitrate int
 
-const BitrateMin Bitrate = 8000
-const BitrateMaxForStageChannels Bitrate = 64000
-const BitrateMaxForNormalGuilds Bitrate = 96000
-const BitrateMaxForLevel1Guilds Bitrate = 128000
-const BitrateMaxForLevel2Guilds Bitrate = 256000
-const BitrateMaxForLevel3Guilds Bitrate = 384000
+const (
+	BitrateMin                 Bitrate = 8000
+	BitrateMaxForStageChannels Bitrate = 64000
+	BitrateMaxForNormalGuilds  Bitrate = 96000
+	BitrateMaxForLevel1Guilds  Bitrate = 128000
+	BitrateMaxForLevel2Guilds  Bitrate = 256000
+	BitrateMaxForLevel3Guilds  Bitrate = 384000
+)
 
 // AudioChannelFields holds voice-related configuration fields.
 type AudioChannelFields struct {

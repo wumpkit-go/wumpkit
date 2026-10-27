@@ -33,7 +33,8 @@ func main() {
 	)
 
 	bot.OnReady(func(ctx context.Context, event wumpkit.ReadyEvent) {
-		logger.Info("Bot connected and ready",
+		logger.Info(
+			"Bot connected and ready",
 			"username", event.User.Username,
 			"guilds_count", len(event.Guilds),
 		)

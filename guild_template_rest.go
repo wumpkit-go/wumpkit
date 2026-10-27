@@ -65,7 +65,8 @@ func (r *requester) FetchGuildTemplate(ctx context.Context, templateCode string)
 	var template GuildTemplate
 	if err := json.NewDecoder(body).Decode(&template); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/templates/{code}",
 				"error", err.Error(),
 			)
@@ -95,7 +96,8 @@ func (r *requester) CreateGuildFromTemplate(ctx context.Context, templateCode st
 	var guild RestGuild
 	if err := json.NewDecoder(body).Decode(&guild); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "POST",
+			Error(
+				"failed parsing response", "method", "POST",
 				"url", "/guilds/templates/{code}",
 				"error", err.Error(),
 			)
@@ -122,7 +124,8 @@ func (r *requester) FetchGuildTemplates(ctx context.Context, guildID Snowflake) 
 	var templates []GuildTemplate
 	if err := json.NewDecoder(body).Decode(&templates); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/guilds/{id}/templates",
 				"error", err.Error(),
 			)
@@ -151,7 +154,8 @@ func (r *requester) CreateGuildTemplate(ctx context.Context, guildID Snowflake, 
 	var template GuildTemplate
 	if err := json.NewDecoder(body).Decode(&template); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "POST",
+			Error(
+				"failed parsing response", "method", "POST",
 				"url", "/guilds/{id}/templates",
 				"error", err.Error(),
 			)
@@ -178,7 +182,8 @@ func (r *requester) SyncGuildTemplate(ctx context.Context, guildID Snowflake, te
 	var template GuildTemplate
 	if err := json.NewDecoder(body).Decode(&template); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "PUT",
+			Error(
+				"failed parsing response", "method", "PUT",
 				"url", "/guilds/{id}/templates/{code}",
 				"error", err.Error(),
 			)
@@ -207,7 +212,8 @@ func (r *requester) ModifyGuildTemplate(ctx context.Context, guildID Snowflake, 
 	var template GuildTemplate
 	if err := json.NewDecoder(body).Decode(&template); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "PATCH",
+			Error(
+				"failed parsing response", "method", "PATCH",
 				"url", "/guilds/{id}/templates/{code}",
 				"error", err.Error(),
 			)

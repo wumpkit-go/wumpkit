@@ -233,7 +233,8 @@ func (r *requester) FetchOriginalInteractionResponse(ctx context.Context, applic
 	var msg Message
 	if err := json.NewDecoder(body).Decode(&msg); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/webhooks/{id}/{token}/messages/@original",
 				"error", err.Error(),
 			)
@@ -282,7 +283,8 @@ func (r *requester) EditOriginalInteractionResponse(ctx context.Context, applica
 	var msg Message
 	if err := json.NewDecoder(body).Decode(&msg); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "PATCH",
+			Error(
+				"failed parsing response", "method", "PATCH",
 				"url", "/webhooks/{id}/{token}/messages/@original",
 				"error", err.Error(),
 			)
@@ -347,7 +349,8 @@ func (r *requester) CreateFollowupMessage(ctx context.Context, applicationID Sno
 	var msg Message
 	if err := json.NewDecoder(body).Decode(&msg); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "POST",
+			Error(
+				"failed parsing response", "method", "POST",
 				"url", "/webhooks/{id}/{token}",
 				"error", err.Error(),
 			)
@@ -373,7 +376,8 @@ func (r *requester) FetchFollowupMessage(ctx context.Context, applicationID Snow
 	var msg Message
 	if err := json.NewDecoder(body).Decode(&msg); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/webhooks/{id}/{token}/messages/{id}",
 				"error", err.Error(),
 			)
@@ -422,7 +426,8 @@ func (r *requester) EditFollowupMessage(ctx context.Context, applicationID Snowf
 	var msg Message
 	if err := json.NewDecoder(body).Decode(&msg); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "PATCH",
+			Error(
+				"failed parsing response", "method", "PATCH",
 				"url", "/webhooks/{id}/{token}/messages/{id}",
 				"error", err.Error(),
 			)

@@ -43,7 +43,8 @@ func main() {
 		// 2. fluent Slash Command: /info with options and choices
 		infoCmd := wumpkit.NewSlashCommandBuilder("info", "Get server or user information").
 			AddUserOption("target", "Target user to inspect", false).
-			AddStringOption("detail", "Detail level", false,
+			AddStringOption(
+				"detail", "Detail level", false,
 				wumpkit.NewStringChoice("Standard", "standard"),
 				wumpkit.NewStringChoice("Extended", "extended"),
 			).
@@ -63,7 +64,6 @@ func main() {
 
 	// handle Slash Command and Context Menu Interactions
 	bot.OnInteractionCreate(func(ctx context.Context, event wumpkit.InteractionCreateEvent) {
-
 		switch in := event.Interaction.(type) {
 		case *wumpkit.ChatInputCommandInteraction:
 			switch in.Data.Name {

@@ -331,7 +331,8 @@ func (d *dispatcher) processEvent(shardID ShardID, eventName string, data []byte
 			if tmErr, ok := r.(*TypeMismatchError); ok {
 				panic(tmErr)
 			}
-			d.logger.Error("Recovered from panic while handling event",
+			d.logger.Error(
+				"Recovered from panic while handling event",
 				"event", eventName,
 				"shard_id", shardID,
 				"panic", r,

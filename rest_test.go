@@ -18,7 +18,8 @@ func newTestClientWithServer(t *testing.T, handler http.HandlerFunc) (*Client, *
 	ts := httptest.NewServer(handler)
 	cfg := DefaultRequesterConfig()
 	cfg.BaseURL = ts.URL
-	c := New(context.Background(),
+	c := New(
+		context.Background(),
 		WithToken("test_token_secret"),
 		WithRequesterConfig(cfg),
 	)
@@ -39,7 +40,8 @@ func TestDiscordRestError_Parsing(t *testing.T) {
 
 	cfg := DefaultRequesterConfig()
 	cfg.BaseURL = ts.URL
-	c := New(context.Background(),
+	c := New(
+		context.Background(),
 		WithToken("test_token"),
 		WithRequesterConfig(cfg),
 	)

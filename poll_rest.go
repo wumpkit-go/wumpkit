@@ -64,7 +64,8 @@ func (r *requester) FetchAnswerVoters(ctx context.Context, channelID, messageID 
 	var resp PollAnswerVotersResponse
 	if err := json.NewDecoder(body).Decode(&resp); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "GET",
+			Error(
+				"failed parsing response", "method", "GET",
 				"url", "/channels/{id}/polls/{id}/answers/{id}",
 				"error", err.Error(),
 			)
@@ -92,7 +93,8 @@ func (r *requester) EndPoll(ctx context.Context, channelID, messageID Snowflake)
 	var msg Message
 	if err := json.NewDecoder(body).Decode(&msg); err != nil {
 		r.logger.
-			Error("failed parsing response", "method", "POST",
+			Error(
+				"failed parsing response", "method", "POST",
 				"url", "/channels/{id}/polls/{id}/expire",
 				"error", err.Error(),
 			)
