@@ -2,7 +2,7 @@
   <div class="sidebar-box">
     <div class="sidebar-box-header">Documentation</div>
     <ul class="sidebar-menu">
-      <li><a href="{{ "/" | relURL }}" class="{{ if .IsHome }}current{{ end }}">Overview</a></li>
+      <li><a href="{{ "" | relURL }}" class="{{ if .IsHome }}current{{ end }}">Overview</a></li>
       {{ range .Site.Home.Sections }}
         <li class="sidebar-group">
           <div class="sidebar-group-title">{{ .Title }}</div>

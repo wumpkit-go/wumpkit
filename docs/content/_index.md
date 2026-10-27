@@ -8,10 +8,10 @@ Wumpkit is a lightweight Discord API library written in Go. It connects to Disco
 
 ## Documentation Sections
 
-* [Getting Started](/getting-started/): Prerequisites, installation, and your first working bot.
-* [Core Concepts](/core-concepts/): Client options, Gateway intents, event listeners, and REST calls.
-* [Interactions](/interactions/): Slash commands, buttons, dropdown menus, and modal dialogs.
-* [Sharding and Redis](/clustering/): Running multiple shards, tracking shard latency, and sharing rate limits with Redis.
+* [Getting Started](getting-started/): Prerequisites, installation, and your first working bot.
+* [Core Concepts](core-concepts/): Client options, Gateway intents, event listeners, and REST calls.
+* [Interactions](interactions/): Slash commands, buttons, dropdown menus, and modal dialogs.
+* [Sharding and Redis](clustering/): Running multiple shards, tracking shard latency, and sharing rate limits with Redis.
 
 ## Quick Example
 

@@ -1,4 +1,4 @@
-baseURL = "/"
+baseURL = "https://wumpkit-go.github.io/wumpkit/"
 locale = "en-us"
 title = "Wumpkit Documentation"
 
