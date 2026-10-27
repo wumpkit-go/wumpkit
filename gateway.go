@@ -366,8 +366,6 @@ func (v GatewayCloseEventCode) Is(other GatewayCloseEventCode) bool {
 	return v == other
 }
 
-
-
 // GatewayBot is Discord Gateway Bot.
 type GatewayBot struct {
 	// WSS URL that can be used for connecting to the Gateway

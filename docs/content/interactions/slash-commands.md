@@ -15,7 +15,7 @@ Use `wumpkit.NewSlashCommandBuilder()` to define your commands:
 package main
 
 import (
-	"github.com/wumpkit-go/wumpkit"
+	"github.com/wumpkit/wumpkit"
 )
 
 // simple ping command

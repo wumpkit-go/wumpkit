@@ -28,7 +28,7 @@ go mod init mybot
 Then download Wumpkit:
 
 ```bash
-go get github.com/wumpkit-go/wumpkit
+go get github.com/wumpkit/wumpkit
 ```
 
 ## Optional Redis Support

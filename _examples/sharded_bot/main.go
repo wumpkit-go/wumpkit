@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/wumpkit-go/wumpkit"
+	"github.com/wumpkit/wumpkit"
 )
 
 func main() {

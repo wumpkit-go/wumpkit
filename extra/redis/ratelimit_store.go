@@ -21,8 +21,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/wumpkit-go/wumpkit"
 	goredis "github.com/redis/go-redis/v9"
+	"github.com/wumpkit/wumpkit"
 )
 
 // RedisRateLimitStore implements wumpkit.RateLimitStore using Redis for multi-cluster synchronization.

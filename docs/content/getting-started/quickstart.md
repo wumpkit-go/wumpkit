@@ -42,7 +42,7 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/wumpkit-go/wumpkit"
+	"github.com/wumpkit/wumpkit"
 )
 
 func main() {

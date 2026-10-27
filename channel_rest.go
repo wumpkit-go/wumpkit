@@ -818,7 +818,7 @@ func (r *requester) ListPublicArchivedThreads(ctx context.Context, channelID Sno
 	if len(opts) > 0 {
 		first = opts[0]
 	}
-	
+
 	params := url.Values{}
 	if first.Limit > 0 {
 		params.Set("limit", strconv.Itoa(first.Limit))

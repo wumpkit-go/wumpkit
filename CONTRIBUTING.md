@@ -19,7 +19,7 @@ Small changes, such as typo corrections or minor documentation updates, can be s
 
 ### For Larger Changes
 For significant contributions, such as new features, refactors, or performance optimizations:
-1. Check the [issue tracker](https://github.com/wumpkit-go/wumpkit/issues) and [discussions](https://github.com/wumpkit-go/wumpkit/discussions) to ensure your proposed change hasn’t already been reported or discussed.
+1. Check the [issue tracker](https://github.com/wumpkit/wumpkit/issues) and [discussions](https://github.com/wumpkit/wumpkit/discussions) to ensure your proposed change hasn’t already been reported or discussed.
 2. If no existing issue or discussion covers your proposal, create a new issue or start a discussion to outline your idea and engage with maintainers and the community. This step helps align your contribution with the project’s goals and prevents wasted effort or rejection.
 
 ### Branching Strategy
@@ -72,7 +72,7 @@ This convention ensures a clear and consistent commit history.
 ### Submitting Pull Requests
 
 To ensure your pull request is effective and not duplicated:
-1. Review [existing PRs](https://github.com/wumpkit-go/wumpkit/pulls) to confirm no one else is working on the same change.
+1. Review [existing PRs](https://github.com/wumpkit/wumpkit/pulls) to confirm no one else is working on the same change.
 2. For larger changes, verify that an issue or discussion has been opened and approved by maintainers to align with project goals.
 
 To submit a PR:
@@ -114,10 +114,10 @@ To report a bug or propose a feature, open an issue on GitHub with:
 - Expected and actual behavior.
 - Relevant logs or code snippets.
 
-For broader ideas or suggestions, start a discussion in the [GitHub Discussions](https://github.com/wumpkit-go/wumpkit/discussions) to collaborate with the community.
+For broader ideas or suggestions, start a discussion in the [GitHub Discussions](https://github.com/wumpkit/wumpkit/discussions) to collaborate with the community.
 
 ## Contact
 
-If you have questions or need assistance, please open an issue or join the [GitHub Discussions](https://github.com/wumpkit-go/wumpkit/discussions). We value your contributions and are committed to making Wumpkit a robust and reliable library for the community.
+If you have questions or need assistance, please open an issue or join the [GitHub Discussions](https://github.com/wumpkit/wumpkit/discussions). We value your contributions and are committed to making Wumpkit a robust and reliable library for the community.
 
 Thank you for contributing to Wumpkit!

@@ -17,7 +17,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/wumpkit-go/wumpkit"
+	"github.com/wumpkit/wumpkit"
 )
 
 // RedisCacheResourceTTLs specifies Time-To-Live durations for individual Discord entity types.

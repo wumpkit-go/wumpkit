@@ -12,12 +12,12 @@ import (
 )
 
 type Page struct {
-	Title       string
-	Section     string
-	Weight      int
-	RelPath     string
-	WikiName    string
-	Content     string
+	Title    string
+	Section  string
+	Weight   int
+	RelPath  string
+	WikiName string
+	Content  string
 }
 
 var frontmatterRegex = regexp.MustCompile(`(?s)^---\r?\n(.*?)\r?\n---\r?\n?`)

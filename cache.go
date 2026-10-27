@@ -16,7 +16,7 @@ package wumpkit
 import (
 	"context"
 
-	"github.com/wumpkit-go/wumpkit/internal/shardedmap"
+	"github.com/wumpkit/wumpkit/internal/shardedmap"
 )
 
 // CacheFlags defines bit flags to configure which entities are cached.
@@ -1185,5 +1185,3 @@ func (c *InMemoryCacheManager) DelGuildStickers(ctx context.Context, guildID Sno
 	}
 	return ok
 }
-
-

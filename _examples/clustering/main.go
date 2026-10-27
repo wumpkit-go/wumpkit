@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/wumpkit-go/wumpkit"
-	"github.com/wumpkit-go/wumpkit/extra/redis"
+	"github.com/wumpkit/wumpkit"
+	"github.com/wumpkit/wumpkit/extra/redis"
 	goredis "github.com/redis/go-redis/v9"
 )
 

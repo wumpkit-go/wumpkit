@@ -5,7 +5,7 @@ weight: 2
 
 # Distributed Redis Cache & Rate Limiting
 
-When you scale your bot across multiple separate machines or containers, each process runs independently. Wumpkit provides an official Redis extension under `github.com/wumpkit-go/wumpkit/extra/redis` to share state, rate limits, and caches across all nodes.
+When you scale your bot across multiple separate machines or containers, each process runs independently. Wumpkit provides an official Redis extension under `github.com/wumpkit/wumpkit/extra/redis` to share state, rate limits, and caches across all nodes.
 
 ## The Clustering Challenges
 
@@ -33,8 +33,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/wumpkit-go/wumpkit"
-	"github.com/wumpkit-go/wumpkit/extra/redis"
+	"github.com/wumpkit/wumpkit"
+	"github.com/wumpkit/wumpkit/extra/redis"
 	goredis "github.com/redis/go-redis/v9"
 )
 

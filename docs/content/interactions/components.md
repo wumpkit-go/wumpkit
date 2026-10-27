@@ -29,7 +29,7 @@ Use `wumpkit.NewButtonBuilder()` to construct buttons. Discord offers five butto
 package main
 
 import (
-	"github.com/wumpkit-go/wumpkit"
+	"github.com/wumpkit/wumpkit"
 )
 
 // confirmation button
@@ -48,7 +48,7 @@ btnDecline := wumpkit.NewButtonBuilder().
 
 // external link button
 btnDocs := wumpkit.NewButtonBuilder().
-	SetURL("https://github.com/wumpkit-go/wumpkit").
+	SetURL("https://github.com/wumpkit/wumpkit").
 	SetLabel("Read Docs").
 	SetStyle(wumpkit.ButtonStyleLink).
 	Build()

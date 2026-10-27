@@ -1,9 +1,9 @@
 # wumpkit
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/wumpkit-go/wumpkit.svg)](https://pkg.go.dev/github.com/wumpkit-go/wumpkit)
-[![Go Report Card](https://goreportcard.com/badge/github.com/wumpkit-go/wumpkit)](https://goreportcard.com/report/github.com/wumpkit-go/wumpkit)
-[![Test](https://github.com/wumpkit-go/wumpkit/actions/workflows/test.yml/badge.svg)](https://github.com/wumpkit-go/wumpkit/actions/workflows/test.yml)
-[![Release](https://img.shields.io/github/v/release/wumpkit-go/wumpkit?include_prereleases)](https://github.com/wumpkit-go/wumpkit/releases)
+[![Go Reference](https://pkg.go.dev/badge/github.com/wumpkit/wumpkit.svg)](https://pkg.go.dev/github.com/wumpkit/wumpkit)
+[![Go Report Card](https://goreportcard.com/badge/github.com/wumpkit/wumpkit)](https://goreportcard.com/report/github.com/wumpkit/wumpkit)
+[![Test](https://github.com/wumpkit/wumpkit/actions/workflows/test.yml/badge.svg)](https://github.com/wumpkit/wumpkit/actions/workflows/test.yml)
+[![Release](https://img.shields.io/github/v/release/wumpkit/wumpkit?include_prereleases)](https://github.com/wumpkit/wumpkit/releases)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](LICENSE)
 
 A lightweight and idiomatic Discord API wrapper for Go.
@@ -21,7 +21,7 @@ A lightweight and idiomatic Discord API wrapper for Go.
 ## Installation
 
 ```bash
-go get github.com/wumpkit-go/wumpkit
+go get github.com/wumpkit/wumpkit
 ```
 
 > Requires **Go 1.25+**.
@@ -39,7 +39,7 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/wumpkit-go/wumpkit"
+	"github.com/wumpkit/wumpkit"
 )
 
 func main() {
@@ -88,8 +88,8 @@ For clustered bots sharing rate limits and cache across multiple nodes:
 
 ```go
 import (
-	"github.com/wumpkit-go/wumpkit"
-	"github.com/wumpkit-go/wumpkit/extra/redis"
+	"github.com/wumpkit/wumpkit"
+	"github.com/wumpkit/wumpkit/extra/redis"
 	goredis "github.com/redis/go-redis/v9"
 )
 

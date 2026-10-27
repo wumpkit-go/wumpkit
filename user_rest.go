@@ -163,7 +163,7 @@ func (r *requester) ModifyCurrentUser(ctx context.Context, opts ModifyCurrentUse
 // Reference: https://discord.com/developers/docs/resources/user#get-current-user-guilds
 func (r *requester) FetchCurrentUserGuilds(ctx context.Context, opts ...FetchCurrentUserGuildsOptions) ([]PartialGuild, error) {
 	var first FetchCurrentUserGuildsOptions
-	if len(opts) > 0{ 
+	if len(opts) > 0 {
 		first = opts[0]
 	}
 

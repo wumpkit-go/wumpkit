@@ -1,4 +1,4 @@
-baseURL = "https://wumpkit-go.github.io/wumpkit/"
+baseURL = "https://wumpkit.github.io/wumpkit/"
 locale = "en-us"
 title = "Wumpkit Documentation"
 
@@ -18,6 +18,6 @@ title = "Wumpkit Documentation"
 
 [params]
   description = "A lightweight and high-performance Discord API library for Go"
-  repoURL = "https://github.com/wumpkit-go/wumpkit"
-  wikiURL = "https://github.com/wumpkit-go/wumpkit/wiki"
+  repoURL = "https://github.com/wumpkit/wumpkit"
+  wikiURL = "https://github.com/wumpkit/wumpkit/wiki"
   version = "v1.0.0"

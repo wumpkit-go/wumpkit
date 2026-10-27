@@ -94,7 +94,7 @@ type VoiceStateUpdateEvent struct {
 
 // ApplicationCommandPermissionsUpdateEvent is dispatched when application command permissions are updated.
 type ApplicationCommandPermissionsUpdateEvent struct {
-	ShardID                                ShardID
+	ShardID                               ShardID
 	OldGuildApplicationCommandPermissions GuildApplicationCommandPermissions `json:"-"`
 	NewGuildApplicationCommandPermissions GuildApplicationCommandPermissions `json:"-"`
 }
@@ -798,15 +798,15 @@ type VoiceChannelStatusUpdateEvent struct {
 // VoiceChannelStartTimeUpdateEvent is dispatched when a voice channel's start time changes.
 type VoiceChannelStartTimeUpdateEvent struct {
 	ShardID           ShardID
-	ID                Snowflake  `json:"id"`
-	GuildID           Snowflake  `json:"guild_id"`
-	OldVoiceStartTime *int64     `json:"-"`
-	NewVoiceStartTime *int64     `json:"voice_start_time,omitempty"`
+	ID                Snowflake `json:"id"`
+	GuildID           Snowflake `json:"guild_id"`
+	OldVoiceStartTime *int64    `json:"-"`
+	NewVoiceStartTime *int64    `json:"voice_start_time,omitempty"`
 }
 
 // ApplicationAuthorizedEvent is dispatched when an app was authorized by a user to a server or their account.
 type ApplicationAuthorizedEvent struct {
-	ShardID         ShardID                         `json:"-"`
+	ShardID         ShardID                     `json:"-"`
 	IntegrationType *ApplicationIntegrationType `json:"integration_type,omitempty"`
 	User            User                        `json:"user"`
 	Scopes          []OAuth2Scope               `json:"scopes"`
@@ -815,8 +815,8 @@ type ApplicationAuthorizedEvent struct {
 
 // ApplicationDeauthorizedEvent is dispatched when an app was deauthorized by a user.
 type ApplicationDeauthorizedEvent struct {
-	ShardID ShardID  `json:"-"`
-	User    User `json:"user"`
+	ShardID ShardID `json:"-"`
+	User    User    `json:"user"`
 }
 
 // RateLimitMeta contains metadata for a rate limited gateway opcode.
@@ -861,7 +861,7 @@ type LobbyMessageCreateEvent struct {
 
 // LobbyMessageUpdateEvent is dispatched when a message is updated in a lobby.
 type LobbyMessageUpdateEvent struct {
-	ShardID         ShardID    `json:"-"`
+	ShardID ShardID `json:"-"`
 	LobbyMessage
 	EditedTimestamp *time.Time `json:"edited_timestamp,omitempty"`
 	Timestamp       *time.Time `json:"timestamp,omitempty"`

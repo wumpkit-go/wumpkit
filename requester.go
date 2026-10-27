@@ -31,7 +31,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/wumpkit-go/wumpkit/internal/ratelimit"
+	"github.com/wumpkit/wumpkit/internal/ratelimit"
 )
 
 /*********************************

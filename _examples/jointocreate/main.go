@@ -6,7 +6,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/wumpkit-go/wumpkit"
+	"github.com/wumpkit/wumpkit"
 )
 
 // Config

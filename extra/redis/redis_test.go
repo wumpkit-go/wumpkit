@@ -19,13 +19,13 @@ import (
 	"time"
 
 	"github.com/alicebob/miniredis/v2"
-	"github.com/wumpkit-go/wumpkit"
-	wumpkitredis "github.com/wumpkit-go/wumpkit/extra/redis"
 	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
 	redismodule "github.com/testcontainers/testcontainers-go/modules/redis"
+	"github.com/wumpkit/wumpkit"
+	wumpkitredis "github.com/wumpkit/wumpkit/extra/redis"
 )
 
 // testRedisBackend encapsulates a Redis UniversalClient and provides an AdvanceTime helper
@@ -466,4 +466,3 @@ func TestRedisRateLimitStore(t *testing.T) {
 	gotGlobal := store.GetGlobalLock()
 	assert.WithinDuration(t, globalUntil, gotGlobal, 50*time.Millisecond)
 }
-

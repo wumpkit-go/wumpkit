@@ -19,7 +19,7 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/wumpkit-go/wumpkit"
+	"github.com/wumpkit/wumpkit"
 )
 
 func main() {
@@ -56,7 +56,7 @@ Here are the primary options you can pass to `wumpkit.New()`:
   Supplies a custom logger. If omitted, Wumpkit uses Go standard `slog.Default()` at the Info level.
 
 * `wumpkit.WithCacheManager(manager)`:
-  Swaps the default in-memory cache with another implementation, such as the distributed Redis cache manager from `github.com/wumpkit-go/wumpkit/extra/redis`.
+  Swaps the default in-memory cache with another implementation, such as the distributed Redis cache manager from `github.com/wumpkit/wumpkit/extra/redis`.
 
 * `wumpkit.WithRESTConfig(config)`:
   Customizes HTTP client behavior, including request timeouts, retry counts, or custom rate limit stores. You can also use its alias `wumpkit.WithRequesterConfig(config)`.

@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wumpkit-go/wumpkit/internal/ratelimit"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/wumpkit/wumpkit/internal/ratelimit"
 )
 
 // generateSnowflake creates a valid Discord Snowflake ID for a given timestamp.

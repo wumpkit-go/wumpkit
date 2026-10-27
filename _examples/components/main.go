@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/wumpkit-go/wumpkit"
+	"github.com/wumpkit/wumpkit"
 )
 
 func main() {
@@ -47,7 +47,7 @@ func main() {
 				Build()
 
 			btnLink := wumpkit.NewButtonBuilder().
-				SetURL("https://github.com/wumpkit-go/wumpkit").
+				SetURL("https://github.com/wumpkit/wumpkit").
 				SetLabel("GitHub Docs").
 				SetStyle(wumpkit.ButtonStyleLink).
 				Build()

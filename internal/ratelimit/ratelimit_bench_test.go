@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/wumpkit-go/wumpkit/internal/ratelimit"
+	"github.com/wumpkit/wumpkit/internal/ratelimit"
 )
 
 func BenchmarkNormalizeRoute(b *testing.B) {

@@ -24,9 +24,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wumpkit-go/wumpkit"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/wumpkit/wumpkit"
 )
 
 func TestShardID_IsWebhookEventsDispatched(t *testing.T) {

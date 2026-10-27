@@ -20,8 +20,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/wumpkit-go/wumpkit"
 	goredis "github.com/redis/go-redis/v9"
+	"github.com/wumpkit/wumpkit"
 )
 
 //go:embed scripts/identify.lua

@@ -4,8 +4,8 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/wumpkit-go/wumpkit/internal/shardedmap"
 	"github.com/stretchr/testify/assert"
+	"github.com/wumpkit/wumpkit/internal/shardedmap"
 )
 
 type customKey struct {

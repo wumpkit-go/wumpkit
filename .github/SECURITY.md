@@ -13,7 +13,7 @@ Only the latest minor and patch versions of the current major version receive se
 
 The Wumpkit team takes security vulnerabilities seriously. If you discover a potential vulnerability in Wumpkit, please report it privately:
 
-1. **GitHub Private Vulnerability Reporting**: Use the **"Report a vulnerability"** button under the [Security Advisories](https://github.com/wumpkit-go/wumpkit/security/advisories) tab on GitHub.
+1. **GitHub Private Vulnerability Reporting**: Use the **"Report a vulnerability"** button under the [Security Advisories](https://github.com/wumpkit/wumpkit/security/advisories) tab on GitHub.
 2. Direct message the maintainers on Discord or GitHub.
 
 Please do **NOT** disclose vulnerabilities publicly in issues or pull requests until a fix has been released.

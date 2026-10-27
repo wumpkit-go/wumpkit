@@ -28,7 +28,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/wumpkit-go/wumpkit/internal/shardedmap"
+	"github.com/wumpkit/wumpkit/internal/shardedmap"
 )
 
 type routeKey struct {

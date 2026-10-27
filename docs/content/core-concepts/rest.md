@@ -29,7 +29,7 @@ Wumpkit provides a fluent builder called `wumpkit.NewEmbedBuilder()` to create D
 ```go
 import (
 	"time"
-	"github.com/wumpkit-go/wumpkit"
+	"github.com/wumpkit/wumpkit"
 )
 
 embed := wumpkit.NewEmbedBuilder().
@@ -98,7 +98,7 @@ When Discord rejects a request, Wumpkit returns a structured `*wumpkit.DiscordRe
 ```go
 import (
 	"errors"
-	"github.com/wumpkit-go/wumpkit"
+	"github.com/wumpkit/wumpkit"
 )
 
 _, err := bot.CreateMessage(ctx, channelID, options)

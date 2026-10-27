@@ -30,7 +30,7 @@ import (
 
 	"github.com/coder/websocket"
 	"github.com/klauspost/compress/zstd"
-	"github.com/wumpkit-go/wumpkit/internal/ratelimit"
+	"github.com/wumpkit/wumpkit/internal/ratelimit"
 )
 
 /*******************************

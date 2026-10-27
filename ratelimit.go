@@ -14,7 +14,7 @@
 package wumpkit
 
 import (
-	"github.com/wumpkit-go/wumpkit/internal/ratelimit"
+	"github.com/wumpkit/wumpkit/internal/ratelimit"
 )
 
 // RateLimitBucketState represents the quota state for a rate-limit bucket.

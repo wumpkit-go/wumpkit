@@ -19,9 +19,9 @@ import (
 	"testing"
 	"time"
 
-	wumpkitredis "github.com/wumpkit-go/wumpkit/extra/redis"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	wumpkitredis "github.com/wumpkit/wumpkit/extra/redis"
 )
 
 func TestRedisShardsIdentifyRateLimiter_Basic(t *testing.T) {

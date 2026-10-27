@@ -39,6 +39,7 @@ import (
 // It encapsulates:
 //   - REST API interactions via requester.
 //   - Caching via CacheManager.
+//
 // Client manages interactions with Discord's API, WebSocket Gateway, and HTTP Webhook Events.
 // It coordinates:
 //   - REST API requests via requester.
@@ -51,17 +52,17 @@ type Client struct {
 	ctx                    context.Context
 	cancel                 context.CancelFunc
 	shutdownOnce           sync.Once
-	isGatewayRunning       atomic.Bool               // indicates whether Gateway is active on this client
-	isWebhookEventsRunning atomic.Bool               // indicates whether Webhook Events server is active on this client
-	logger                 Logger                    // logger used throughout the client
-	token                  string                    // bot token (without "Bot " prefix)
-	publicKey              string                    // application public key for HTTP interaction verification
-	publicKeyBytes         ed25519.PublicKey         // pre-parsed ed25519 public key
-	httpServer             *http.Server              // dedicated HTTP interactions server
-	shardManager           *ShardManager             // manages Gateway shard lifecycle
-	*requester                                       // REST API client
-	CacheManager                                     // CacheManager for caching discord entities
-	*dispatcher                                      // event dispatcher
+	isGatewayRunning       atomic.Bool       // indicates whether Gateway is active on this client
+	isWebhookEventsRunning atomic.Bool       // indicates whether Webhook Events server is active on this client
+	logger                 Logger            // logger used throughout the client
+	token                  string            // bot token (without "Bot " prefix)
+	publicKey              string            // application public key for HTTP interaction verification
+	publicKeyBytes         ed25519.PublicKey // pre-parsed ed25519 public key
+	httpServer             *http.Server      // dedicated HTTP interactions server
+	shardManager           *ShardManager     // manages Gateway shard lifecycle
+	*requester                               // REST API client
+	CacheManager                             // CacheManager for caching discord entities
+	*dispatcher                              // event dispatcher
 }
 
 // clientConfig holds temporary configuration used only during Client initialization in New().

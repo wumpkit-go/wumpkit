@@ -17,7 +17,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/wumpkit-go/wumpkit/internal/shardedmap"
+	"github.com/wumpkit/wumpkit/internal/shardedmap"
 )
 
 // BucketState represents the quota state for a Discord rate limit bucket.
