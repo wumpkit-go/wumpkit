@@ -54,7 +54,10 @@ var _ wumpkit.CacheManager = (*RedisCacheManager)(nil)
 //		Prefix:     "mybot:cache:",
 //		DefaultTTL: 1 * time.Hour,
 //	}))
-func NewRedisCacheManager(client redis.UniversalClient, opts ...RedisCacheOption) *RedisCacheManager {
+func NewRedisCacheManager(
+	client redis.UniversalClient,
+	opts ...RedisCacheOption,
+) *RedisCacheManager {
 	optsData := redisCacheOptions{
 		config: DefaultRedisCacheConfig(),
 	}

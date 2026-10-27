@@ -529,7 +529,7 @@ func (c *Client) Requester() *requester {
 // RateLimitStore returns the configured RateLimitStore instance.
 func (c *Client) RateLimitStore() RateLimitStore {
 	if c.requester != nil {
-		return c.requester.rateLimitStore
+		return c.rateLimitStore
 	}
 	return nil
 }

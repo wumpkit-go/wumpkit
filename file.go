@@ -97,7 +97,7 @@ func DownloadFile(ctx context.Context, url, baseName, dir string) (string, error
 	if err != nil {
 		return "", fmt.Errorf("failed to fetch headers: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("failed to fetch headers: status %d", resp.StatusCode)
 	}
@@ -122,7 +122,7 @@ func DownloadFile(ctx context.Context, url, baseName, dir string) (string, error
 	if err != nil {
 		return "", fmt.Errorf("failed to fetch file: %w", err)
 	}
-	defer respGet.Body.Close()
+	defer func() { _ = respGet.Body.Close() }()
 
 	if respGet.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("failed to fetch file: status %d", respGet.StatusCode)
@@ -132,7 +132,7 @@ func DownloadFile(ctx context.Context, url, baseName, dir string) (string, error
 	if err != nil {
 		return "", fmt.Errorf("failed to create file: %w", err)
 	}
-	defer outFile.Close()
+	defer func() { _ = outFile.Close() }()
 
 	_, err = io.Copy(outFile, respGet.Body)
 	if err != nil {

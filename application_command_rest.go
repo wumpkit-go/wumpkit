@@ -49,7 +49,7 @@ func (r *requester) FetchGlobalApplicationCommands(ctx context.Context, appID Sn
 	if err != nil {
 		return nil, err
 	}
-	defer body.Close()
+	defer func() { _ = body.Close() }()
 
 	bodyBytes, err := io.ReadAll(body)
 	if err != nil {
@@ -75,7 +75,7 @@ func (r *requester) CreateGlobalApplicationCommand(ctx context.Context, appID Sn
 	if err != nil {
 		return nil, err
 	}
-	defer body.Close()
+	defer func() { _ = body.Close() }()
 
 	bodyBytes, err := io.ReadAll(body)
 	if err != nil {
@@ -95,7 +95,7 @@ func (r *requester) FetchGlobalApplicationCommand(ctx context.Context, appID, cm
 	if err != nil {
 		return nil, err
 	}
-	defer body.Close()
+	defer func() { _ = body.Close() }()
 
 	bodyBytes, err := io.ReadAll(body)
 	if err != nil {
@@ -121,7 +121,7 @@ func (r *requester) EditGlobalApplicationCommand(ctx context.Context, appID, cmd
 	if err != nil {
 		return nil, err
 	}
-	defer body.Close()
+	defer func() { _ = body.Close() }()
 
 	bodyBytes, err := io.ReadAll(body)
 	if err != nil {
@@ -157,7 +157,7 @@ func (r *requester) BulkOverwriteGlobalApplicationCommands(ctx context.Context, 
 	if err != nil {
 		return nil, err
 	}
-	defer body.Close()
+	defer func() { _ = body.Close() }()
 
 	bodyBytes, err := io.ReadAll(body)
 	if err != nil {
@@ -182,7 +182,7 @@ func (r *requester) FetchGuildApplicationCommands(ctx context.Context, appID, gu
 	if err != nil {
 		return nil, err
 	}
-	defer body.Close()
+	defer func() { _ = body.Close() }()
 
 	bodyBytes, err := io.ReadAll(body)
 	if err != nil {
@@ -208,7 +208,7 @@ func (r *requester) CreateGuildApplicationCommand(ctx context.Context, appID, gu
 	if err != nil {
 		return nil, err
 	}
-	defer body.Close()
+	defer func() { _ = body.Close() }()
 
 	bodyBytes, err := io.ReadAll(body)
 	if err != nil {
@@ -228,7 +228,7 @@ func (r *requester) FetchGuildApplicationCommand(ctx context.Context, appID, gui
 	if err != nil {
 		return nil, err
 	}
-	defer body.Close()
+	defer func() { _ = body.Close() }()
 
 	bodyBytes, err := io.ReadAll(body)
 	if err != nil {
@@ -254,7 +254,7 @@ func (r *requester) EditGuildApplicationCommand(ctx context.Context, appID, guil
 	if err != nil {
 		return nil, err
 	}
-	defer body.Close()
+	defer func() { _ = body.Close() }()
 
 	bodyBytes, err := io.ReadAll(body)
 	if err != nil {
@@ -290,7 +290,7 @@ func (r *requester) BulkOverwriteGuildApplicationCommands(ctx context.Context, a
 	if err != nil {
 		return nil, err
 	}
-	defer body.Close()
+	defer func() { _ = body.Close() }()
 
 	bodyBytes, err := io.ReadAll(body)
 	if err != nil {

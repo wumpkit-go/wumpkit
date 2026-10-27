@@ -45,7 +45,7 @@ func TestDispatcher_CachePopulatedWithoutUserHandlers(t *testing.T) {
 		]
 	}`
 
-	client.dispatcher.Dispatch(0, "GUILD_CREATE", []byte(guildCreateJSON))
+	client.Dispatch(0, "GUILD_CREATE", []byte(guildCreateJSON))
 
 	// give the dispatch goroutine a moment to finish
 	var g Guild

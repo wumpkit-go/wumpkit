@@ -25,7 +25,7 @@ func TestEvent_JSONUnmarshaling(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, Snowflake(111), gma.GuildID)
 	assert.Equal(t, "wumpkit_user", gma.Member.User.Username)
-	assert.Equal(t, Snowflake(111), gma.Member.Member.GuildID)
+	assert.Equal(t, Snowflake(111), gma.Member.GuildID)
 
 	// threadCreateEvent
 	threadJSON := `{

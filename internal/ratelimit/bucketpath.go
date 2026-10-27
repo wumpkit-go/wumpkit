@@ -168,7 +168,7 @@ func NormalizeRoute(url string, method string) string {
 	b.Grow(len(url) + 16)
 	b.WriteByte('/')
 
-	currMajor := MajorUnknown
+	var currMajor string
 
 	switch parts[0] {
 	case MajorChannels:

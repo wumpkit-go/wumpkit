@@ -276,7 +276,7 @@ func (c *Client) WebhookEventsHandler() http.Handler {
 					if len(payloadData) == 0 {
 						payloadData = body
 					}
-					c.dispatcher.Dispatch(-1, webhookPayload.Event.Type, payloadData)
+					c.Dispatch(-1, webhookPayload.Event.Type, payloadData)
 				}
 				// webhook events acknowledge with 204 No Content
 				w.WriteHeader(http.StatusNoContent)
@@ -303,7 +303,7 @@ func (c *Client) WebhookEventsHandler() http.Handler {
 
 		// dispatch interaction to event handlers
 		if c.dispatcher != nil {
-			c.dispatcher.Dispatch(-1, "INTERACTION_CREATE", body)
+			c.Dispatch(-1, "INTERACTION_CREATE", body)
 		}
 
 		// acknowledge http interaction with deferred response to satisfy discord protocol

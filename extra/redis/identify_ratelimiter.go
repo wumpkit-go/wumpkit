@@ -15,13 +15,14 @@ package redis
 
 import (
 	"context"
-	_ "embed"
 	"strconv"
 	"strings"
 	"time"
 
 	goredis "github.com/redis/go-redis/v9"
 	"github.com/wumpkit/wumpkit"
+
+	_ "embed"
 )
 
 //go:embed scripts/identify.lua
@@ -80,7 +81,10 @@ func WithIdentifyKey(key string) RedisIdentifyLimiterOption {
 }
 
 // NewRedisShardsIdentifyRateLimiter creates a new RedisShardsIdentifyRateLimiter for multi-process cluster synchronization.
-func NewRedisShardsIdentifyRateLimiter(client goredis.UniversalClient, options ...RedisIdentifyLimiterOption) *RedisShardsIdentifyRateLimiter {
+func NewRedisShardsIdentifyRateLimiter(
+	client goredis.UniversalClient,
+	options ...RedisIdentifyLimiterOption,
+) *RedisShardsIdentifyRateLimiter {
 	r := &RedisShardsIdentifyRateLimiter{
 		client:         client,
 		maxConcurrency: 1,

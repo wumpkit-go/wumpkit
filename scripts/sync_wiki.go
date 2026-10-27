@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"unicode"
 )
@@ -170,7 +171,9 @@ func parseMarkdown(raw, fileName string) (string, string, int) {
 			title = tm[1]
 		}
 		if wm := weightRegex.FindStringSubmatch(fm); len(wm) > 1 {
-			fmt.Sscanf(wm[1], "%d", &weight)
+			if w, err := strconv.Atoi(wm[1]); err == nil {
+				weight = w
+			}
 		}
 	}
 
@@ -215,7 +218,7 @@ func generateSidebar(pages []Page, sections []string) string {
 	sb.WriteString("### [Overview](Home)\n\n")
 
 	for _, sec := range sections {
-		sb.WriteString(fmt.Sprintf("### %s\n", sec))
+		fmt.Fprintf(&sb, "### %s\n", sec)
 		var secPages []Page
 		for _, p := range pages {
 			if p.Section == sec && !strings.HasSuffix(p.RelPath, "_index.md") {
@@ -230,7 +233,7 @@ func generateSidebar(pages []Page, sections []string) string {
 		})
 
 		for _, p := range secPages {
-			sb.WriteString(fmt.Sprintf("- [%s](%s)\n", p.Title, p.WikiName))
+			fmt.Fprintf(&sb, "- [%s](%s)\n", p.Title, p.WikiName)
 		}
 		sb.WriteString("\n")
 	}

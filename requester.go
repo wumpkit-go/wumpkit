@@ -371,7 +371,7 @@ func (r *requester) DoRequest(ctx context.Context, req Request) (io.ReadCloser, 
 		}
 
 		bodyBytes, _ := io.ReadAll(resp.Body)
-		resp.Body.Close()
+		_ = resp.Body.Close()
 		lastStatus = resp.StatusCode
 		lastBody = bodyBytes
 
@@ -386,7 +386,7 @@ func (r *requester) DoRequest(ctx context.Context, req Request) (io.ReadCloser, 
 
 		// rate limited (429): sleep according to retry-after header or json body with small jitter
 		if resp.StatusCode == http.StatusTooManyRequests {
-			var sleepDuration time.Duration = 500 * time.Millisecond
+			var sleepDuration = 500 * time.Millisecond
 			if retryAfterHeader := resp.Header.Get(headerRetryAfter); retryAfterHeader != "" {
 				if s, parseErr := strconv.ParseFloat(retryAfterHeader, 64); parseErr == nil && s > 0 {
 					sleepDuration = time.Duration(s * float64(time.Second))
