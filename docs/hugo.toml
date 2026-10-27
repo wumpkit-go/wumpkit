@@ -15,6 +15,7 @@ title = "Wumpkit Documentation"
     guessSyntax = true
     lineNos = false
     noClasses = false
+    tabWidth = 4
 
 [params]
   description = "A lightweight and high-performance Discord API library for Go"

@@ -6,6 +6,15 @@
   padding: 0;
 }
 
+pre,
+code,
+kbd,
+samp {
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+}
+
 body {
   background-color: #ffffff;
   color: #000000;
@@ -257,8 +266,13 @@ a:hover {
 /* code blocks */
 .article-body pre,
 .article-body .highlight,
-.article-body .chroma {
+.article-body .chroma,
+.chroma pre,
+.chroma code {
   background-color: #f7f7f7;
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
 }
 
 .article-body pre {
@@ -269,6 +283,9 @@ a:hover {
   font-size: 13px;
   line-height: 1.4;
   overflow-x: auto;
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
 }
 
 .article-body code {
@@ -278,6 +295,9 @@ a:hover {
   border: 1px solid #dcdcdc;
   padding: 1px 3px;
   color: #000000;
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
 }
 
 .article-body pre code {
@@ -285,6 +305,9 @@ a:hover {
   border: none;
   padding: 0;
   color: inherit;
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
 }
 
 /* syntax highlighting */
