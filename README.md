@@ -24,7 +24,7 @@ A lightweight and idiomatic Discord API wrapper for Go.
 go get github.com/wumpkit/wumpkit
 ```
 
-> Requires **Go 1.25+**.
+> Requires **Go 1.27+**.
 
 ---
 

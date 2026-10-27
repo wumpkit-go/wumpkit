@@ -7,7 +7,7 @@ weight: 1
 
 ## Requirements
 
-Wumpkit requires Go 1.25 or newer. You can check your Go version in your terminal:
+Wumpkit requires Go 1.27 or newer. You can check your Go version in your terminal:
 
 ```bash
 go version

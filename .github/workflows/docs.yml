@@ -38,9 +38,10 @@ jobs:
           extended: true
 
       - name: Setup Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v7
         with:
-          go-version: '1.25.x'
+          go-version: '1.27.x'
+          check-latest: true
           cache: false
 
       - name: Build Hugo site
