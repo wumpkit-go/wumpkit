@@ -46,6 +46,22 @@
         localStorage.setItem('wumpkit-theme', next);
         updateBtnText(next);
       });
+    (function() {
+      var path = window.location.pathname;
+      if (!path) return;
+      var clean = function(p) {
+        return p.replace(/\/+$/, '').toLowerCase();
+      };
+      var cur = clean(path);
+      var links = document.querySelectorAll('.sidebar-menu a');
+      links.forEach(function(link) {
+        var href = link.getAttribute('href');
+        if (!href) return;
+        var h = clean(href);
+        if (cur === h || (h !== '' && h !== '/wumpkit' && cur.endsWith(h))) {
+          link.classList.add('current');
+        }
+      });
     })();
   </script>
 </body>
