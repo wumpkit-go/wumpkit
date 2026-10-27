@@ -5,7 +5,8 @@ weight: 10
 
 # Getting Started
 
-This section walks you through installing Wumpkit and running your first Discord bot.
+Learn how to install Wumpkit, configure your bot client, and write your first Discord application in Go.
 
-* [Installation](/getting-started/installation/): Go version requirements and installing the module.
-* [Quickstart](/getting-started/quickstart/): Getting your bot token and running a ping pong bot.
+* [Installation](installation/): Requirements and adding the module to your Go project.
+* [Quickstart Bot](quickstart/): Build a working bot with ping command, embeds, and buttons.
+* [Client Options](client-options/): Configure tokens, logger output, REST retries, and shutdown signals.
