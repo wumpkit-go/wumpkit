@@ -1,11 +1,16 @@
 ---
-title: "Interactions"
-weight: 30
+title: "Interactions & UI"
+weight: 60
 ---
 
-# Interactions
+# Interactions & UI
 
-Discord interactions include application commands and UI components. Wumpkit provides fluent builders to create commands, buttons, and select menus, as well as helpers to reply, defer, or edit responses.
+Discord interactions let users interact directly with your application through slash commands, clickable buttons, dropdown select menus, and popup modal forms.
 
-* [Slash Commands](/interactions/slash-commands/): Building slash commands, syncing them with Discord, receiving command invocations, and replying.
-* [Buttons & Menus](/interactions/components/): Interactive buttons, dropdown menus, action rows, and updating component messages.
+wumpkit provides fluent builders to build UI layouts easily and high-level methods to acknowledge and reply to interactions in a single call.
+
+* [Slash Commands](slash-commands/): Defining commands, options, choices, autocomplete, and deferred responses.
+* [Buttons](buttons/): Creating interactive buttons, button styles, custom IDs, URLs, and click handlers.
+* [Select Menus](select-menus/): String, user, role, channel, and mentionable dropdown select menus.
+* [Modals & Text Inputs](modals/): Displaying pop-up forms, collecting user input, and handling modal submissions.
+* [Context Menus](context-menus/): Adding right-click menu items to users and messages.
